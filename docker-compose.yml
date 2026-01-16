@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    container_name: itinavi_cn_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: itinavi
+      POSTGRES_PASSWORD: itinavi
+      POSTGRES_DB: itinavi_cn
+    volumes:
+      - itinavi_cn_dbdata:/var/lib/postgresql/data
+
+volumes:
+  itinavi_cn_dbdata:

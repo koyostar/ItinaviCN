@@ -1,0 +1,171 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum DisplayCurrencyMode {
+  DestinationOnly
+  OriginOnly
+  Both
+}
+
+enum LocationCategory {
+  Place
+  Restaurant
+  Accommodation
+  TransportNode
+  Shop
+  Other
+}
+
+enum ItineraryItemType {
+  Flight
+  Transport
+  Accommodation
+  PlaceVisit
+  Food
+}
+
+enum ItineraryStatus {
+  Planned
+  Booked
+  Done
+  Skipped
+}
+
+enum ExpenseCategory {
+  Accommodation
+  Transport
+  Food
+  Shop
+  Attraction
+  Other
+}
+
+enum ExchangeRateSource {
+  Manual
+  Provider
+}
+
+model Trip {
+  id                  String              @id @default(uuid())
+  title               String
+  destination         String?
+  startDate           DateTime
+  endDate             DateTime
+
+  destinationCurrency String              @default("CNY")
+  originCurrency      String              @default("SGD")
+  displayCurrencyMode DisplayCurrencyMode @default(Both)
+  defaultExchangeRate Decimal?
+  notes               String?
+
+  locations           Location[]
+  itineraryItems      ItineraryItem[]
+  exchangeRates       ExchangeRate[]
+  expenses            Expense[]
+
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+}
+
+model Location {
+  id           String           @id @default(uuid())
+  tripId       String
+  trip         Trip             @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  name         String
+  category     LocationCategory
+  address      String?
+  latitude     Decimal?
+  longitude    Decimal?
+  baiduPlaceId String?
+  notes        String?
+
+  itineraryItems ItineraryItem[]
+  expenses       Expense[]
+
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([tripId])
+}
+
+model ItineraryItem {
+  id            String          @id @default(uuid())
+  tripId        String
+  trip          Trip            @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  type          ItineraryItemType
+  title         String
+  startDateTime DateTime
+  endDateTime   DateTime?
+  timezone      String          @default("Asia/Shanghai")
+  status        ItineraryStatus @default(Planned)
+
+  locationId    String?
+  location      Location?       @relation(fields: [locationId], references: [id], onDelete: SetNull)
+
+  bookingRef    String?
+  url           String?
+  notes         String?
+  details       Json?
+
+  expenses      Expense[]
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([tripId])
+  @@index([locationId])
+}
+
+model ExchangeRate {
+  id            String            @id @default(uuid())
+  tripId        String
+  trip          Trip              @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  baseCurrency  String            @default("CNY")
+  quoteCurrency String            @default("SGD")
+  rate          Decimal
+  rateDate      DateTime
+  source        ExchangeRateSource @default(Manual)
+
+  createdAt     DateTime          @default(now())
+
+  @@unique([tripId, rateDate])
+  @@index([tripId])
+}
+
+model Expense {
+  id                    String          @id @default(uuid())
+  tripId                String
+  trip                  Trip            @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  title                 String
+  category              ExpenseCategory
+  expenseDateTime       DateTime
+
+  amountDestinationMinor Int
+  destinationCurrency   String
+
+  exchangeRateUsed      Decimal?
+
+  linkedItineraryItemId String?
+  linkedItineraryItem   ItineraryItem?  @relation(fields: [linkedItineraryItemId], references: [id], onDelete: SetNull)
+
+  linkedLocationId      String?
+  linkedLocation        Location?       @relation(fields: [linkedLocationId], references: [id], onDelete: SetNull)
+
+  notes                 String?
+
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  @@index([tripId])
+  @@index([linkedItineraryItemId])
+  @@index([linkedLocationId])
+}
