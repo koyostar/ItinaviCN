@@ -40,6 +40,8 @@ exports.TransportDetailsSchema = zod_1.z.object({
     toLocationId: zod_1.z.string().uuid().optional(),
 });
 exports.AccommodationDetailsSchema = zod_1.z.object({
+    hotelName: zod_1.z.string().optional(),
+    address: zod_1.z.string().optional(),
     checkInDateTime: zod_1.z.string().datetime().optional(),
     checkOutDateTime: zod_1.z.string().datetime().optional(),
     guests: zod_1.z.number().int().positive().optional(),

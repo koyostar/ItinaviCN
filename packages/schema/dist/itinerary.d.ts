@@ -43,14 +43,20 @@ export declare const TransportDetailsSchema: z.ZodObject<{
 }>;
 export type TransportDetails = z.infer<typeof TransportDetailsSchema>;
 export declare const AccommodationDetailsSchema: z.ZodObject<{
+    hotelName: z.ZodOptional<z.ZodString>;
+    address: z.ZodOptional<z.ZodString>;
     checkInDateTime: z.ZodOptional<z.ZodString>;
     checkOutDateTime: z.ZodOptional<z.ZodString>;
     guests: z.ZodOptional<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
+    hotelName?: string | undefined;
+    address?: string | undefined;
     checkInDateTime?: string | undefined;
     checkOutDateTime?: string | undefined;
     guests?: number | undefined;
 }, {
+    hotelName?: string | undefined;
+    address?: string | undefined;
     checkInDateTime?: string | undefined;
     checkOutDateTime?: string | undefined;
     guests?: number | undefined;
@@ -236,14 +242,20 @@ export declare const CreateAccommodationRequestSchema: z.ZodObject<{
 } & {
     type: z.ZodLiteral<"Accommodation">;
     details: z.ZodOptional<z.ZodObject<{
+        hotelName: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodString>;
         checkInDateTime: z.ZodOptional<z.ZodString>;
         checkOutDateTime: z.ZodOptional<z.ZodString>;
         guests: z.ZodOptional<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
     }, {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -262,6 +274,8 @@ export declare const CreateAccommodationRequestSchema: z.ZodObject<{
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -280,6 +294,8 @@ export declare const CreateAccommodationRequestSchema: z.ZodObject<{
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -559,14 +575,20 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
 } & {
     type: z.ZodLiteral<"Accommodation">;
     details: z.ZodOptional<z.ZodObject<{
+        hotelName: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodString>;
         checkInDateTime: z.ZodOptional<z.ZodString>;
         checkOutDateTime: z.ZodOptional<z.ZodString>;
         guests: z.ZodOptional<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
     }, {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -585,6 +607,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -603,6 +627,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -984,14 +1010,20 @@ export declare const AccommodationResponseSchema: z.ZodObject<{
 } & {
     type: z.ZodLiteral<"Accommodation">;
     details: z.ZodNullable<z.ZodObject<{
+        hotelName: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodString>;
         checkInDateTime: z.ZodOptional<z.ZodString>;
         checkOutDateTime: z.ZodOptional<z.ZodString>;
         guests: z.ZodOptional<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
     }, {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -1014,6 +1046,8 @@ export declare const AccommodationResponseSchema: z.ZodObject<{
     bookingRef: string | null;
     url: string | null;
     details: {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -1036,6 +1070,8 @@ export declare const AccommodationResponseSchema: z.ZodObject<{
     bookingRef: string | null;
     url: string | null;
     details: {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -1367,14 +1403,20 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
 } & {
     type: z.ZodLiteral<"Accommodation">;
     details: z.ZodNullable<z.ZodObject<{
+        hotelName: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodString>;
         checkInDateTime: z.ZodOptional<z.ZodString>;
         checkOutDateTime: z.ZodOptional<z.ZodString>;
         guests: z.ZodOptional<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
     }, {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -1397,6 +1439,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     bookingRef: string | null;
     url: string | null;
     details: {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -1419,6 +1463,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     bookingRef: string | null;
     url: string | null;
     details: {
+        hotelName?: string | undefined;
+        address?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -1750,14 +1796,20 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
     } & {
         type: z.ZodLiteral<"Accommodation">;
         details: z.ZodNullable<z.ZodObject<{
+            hotelName: z.ZodOptional<z.ZodString>;
+            address: z.ZodOptional<z.ZodString>;
             checkInDateTime: z.ZodOptional<z.ZodString>;
             checkOutDateTime: z.ZodOptional<z.ZodString>;
             guests: z.ZodOptional<z.ZodNumber>;
         }, "strip", z.ZodTypeAny, {
+            hotelName?: string | undefined;
+            address?: string | undefined;
             checkInDateTime?: string | undefined;
             checkOutDateTime?: string | undefined;
             guests?: number | undefined;
         }, {
+            hotelName?: string | undefined;
+            address?: string | undefined;
             checkInDateTime?: string | undefined;
             checkOutDateTime?: string | undefined;
             guests?: number | undefined;
@@ -1780,6 +1832,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            hotelName?: string | undefined;
+            address?: string | undefined;
             checkInDateTime?: string | undefined;
             checkOutDateTime?: string | undefined;
             guests?: number | undefined;
@@ -1802,6 +1856,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            hotelName?: string | undefined;
+            address?: string | undefined;
             checkInDateTime?: string | undefined;
             checkOutDateTime?: string | undefined;
             guests?: number | undefined;
@@ -2013,6 +2069,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            hotelName?: string | undefined;
+            address?: string | undefined;
             checkInDateTime?: string | undefined;
             checkOutDateTime?: string | undefined;
             guests?: number | undefined;
@@ -2126,6 +2184,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            hotelName?: string | undefined;
+            address?: string | undefined;
             checkInDateTime?: string | undefined;
             checkOutDateTime?: string | undefined;
             guests?: number | undefined;

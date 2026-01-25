@@ -53,6 +53,8 @@ export const TransportDetailsSchema = z.object({
 export type TransportDetails = z.infer<typeof TransportDetailsSchema>;
 
 export const AccommodationDetailsSchema = z.object({
+  hotelName: z.string().optional(),
+  address: z.string().optional(),
   checkInDateTime: z.string().datetime().optional(),
   checkOutDateTime: z.string().datetime().optional(),
   guests: z.number().int().positive().optional(),
