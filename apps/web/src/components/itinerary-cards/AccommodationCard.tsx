@@ -1,17 +1,6 @@
 import { Box, Chip, Stack, Typography } from '@mui/material';
-
-function getUTCOffset(timezone: string): string {
-  try {
-    const date = new Date();
-    const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
-    const tzDate = new Date(date.toLocaleString('en-US', { timeZone: timezone }));
-    const offset = (tzDate.getTime() - utcDate.getTime()) / (1000 * 60 * 60);
-    const sign = offset >= 0 ? '+' : '';
-    return `UTC${sign}${offset}`;
-  } catch {
-    return timezone;
-  }
-}
+import { getUTCOffset } from '@/lib/utils/timezone';
+import { formatUTCDateTime } from '@/lib/dateUtils';
 
 interface AccommodationDetails {
   checkInDateTime?: string;
@@ -54,12 +43,7 @@ export function AccommodationCard({
             Check-in
           </Typography>
           <Typography variant="body2">
-            {new Date(startDateTime).toLocaleString('en-US', {
-              month: 'short',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
+            {formatUTCDateTime(startDateTime)}
           </Typography>
         </Box>
         <Typography variant="body2" color="text.secondary" alignSelf="center">
@@ -70,14 +54,7 @@ export function AccommodationCard({
             Check-out
           </Typography>
           <Typography variant="body2">
-            {endDateTime
-              ? new Date(endDateTime).toLocaleString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })
-              : 'TBD'}
+            {endDateTime ? formatUTCDateTime(endDateTime) : 'TBD'}
           </Typography>
         </Box>
         {details?.guests && (

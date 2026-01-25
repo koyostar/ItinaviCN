@@ -1,17 +1,6 @@
 import { Box, Chip, Stack, Typography } from '@mui/material';
-
-function getUTCOffset(timezone: string): string {
-  try {
-    const date = new Date();
-    const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
-    const tzDate = new Date(date.toLocaleString('en-US', { timeZone: timezone }));
-    const offset = (tzDate.getTime() - utcDate.getTime()) / (1000 * 60 * 60);
-    const sign = offset >= 0 ? '+' : '';
-    return `UTC${sign}${offset}`;
-  } catch {
-    return timezone;
-  }
-}
+import { getUTCOffset } from '@/lib/utils/timezone';
+import { formatUTCTime } from '@/lib/dateUtils';
 
 interface PlaceVisitDetails {
   ticketInfo?: string;
@@ -48,16 +37,8 @@ export function PlaceVisitCard({
       </Stack>
 
       <Typography variant="body2" color="text.secondary">
-        🕐{' '}
-        {new Date(startDateTime).toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-        })}
-        {endDateTime &&
-          ` - ${new Date(endDateTime).toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}`}
+        🕐 {formatUTCTime(startDateTime)}
+        {endDateTime && ` - ${formatUTCTime(endDateTime)}`}
         {startTimezone && ` (${getUTCOffset(startTimezone)})`}
       </Typography>
 

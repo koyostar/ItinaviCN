@@ -1,19 +1,6 @@
 import { Box, Chip, Stack, Typography } from "@mui/material";
-
-function getUTCOffset(timezone: string): string {
-  try {
-    const date = new Date();
-    const utcDate = new Date(date.toLocaleString("en-US", { timeZone: "UTC" }));
-    const tzDate = new Date(
-      date.toLocaleString("en-US", { timeZone: timezone }),
-    );
-    const offset = (tzDate.getTime() - utcDate.getTime()) / (1000 * 60 * 60);
-    const sign = offset >= 0 ? "+" : "";
-    return `UTC${sign}${offset}`;
-  } catch {
-    return timezone;
-  }
-}
+import { getUTCOffset } from "@/lib/utils/timezone";
+import { formatUTCTime, calculateDuration } from "@/lib/dateUtils";
 
 interface FlightDetails {
   flightNo?: string;
@@ -50,16 +37,7 @@ export function FlightCard({
   const cities = title.split(" - ");
   const departureCity = cities[0] || "Departure";
   const arrivalCity = cities[1] || "Arrival";
-  // Calculate flight duration
-  const calculateDuration = (): string => {
-    if (!endDateTime) return '';
-    const start = new Date(startDateTime);
-    const end = new Date(endDateTime);
-    const diffMs = end.getTime() - start.getTime();
-    const hours = Math.floor(diffMs / (1000 * 60 * 60));
-    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-    return `${hours}h ${minutes}m`;
-  };
+
   return (
     <Box>
       <Stack direction="row" spacing={1} alignItems="center" mb={1}>
@@ -83,11 +61,7 @@ export function FlightCard({
           </Typography>
           {startTimezone && (
             <Typography variant="caption" color="text.secondary">
-              {new Date(startDateTime).toLocaleTimeString("en-US", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}{" "}
-              ({getUTCOffset(startTimezone)})
+              {formatUTCTime(startDateTime)} ({getUTCOffset(startTimezone)})
             </Typography>
           )}
         </Box>
@@ -101,9 +75,10 @@ export function FlightCard({
           )}
           <Typography variant="body2" color="text.secondary">
             ————→
-          </Typography>          {endDateTime && (
+          </Typography>
+          {endDateTime && (
             <Typography variant="caption" color="text.secondary" display="block">
-              {calculateDuration()}
+              {calculateDuration(startDateTime, endDateTime)}
             </Typography>
           )}        </Box>
 
@@ -117,13 +92,7 @@ export function FlightCard({
           </Typography>
           {endTimezone && (
             <Typography variant="caption" color="text.secondary">
-              {endDateTime
-                ? new Date(endDateTime).toLocaleTimeString("en-US", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
-                : "TBD"}{" "}
-              ({getUTCOffset(endTimezone)})
+              {endDateTime ? formatUTCTime(endDateTime) : "TBD"} ({getUTCOffset(endTimezone)})
             </Typography>
           )}
         </Box>
