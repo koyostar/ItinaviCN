@@ -29,4 +29,9 @@ export class TripsService {
       data: input,
     });
   }
+
+  async deleteTrip(tripId: string) {
+    await this.getTrip(tripId);
+    await this.prisma.trip.delete({ where: { id: tripId } });
+  }
 }

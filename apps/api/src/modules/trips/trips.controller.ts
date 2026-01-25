@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import {
   CreateTripRequestSchema,
   ListTripsResponseSchema,
@@ -12,13 +12,11 @@ import { TripsService } from './trips.service';
 function toTripResponse(trip: {
   id: string;
   title: string;
-  destination: string | null;
+  destinations: unknown;
   startDate: Date;
   endDate: Date;
   destinationCurrency: string;
   originCurrency: string;
-  displayCurrencyMode: string;
-  defaultExchangeRate: unknown;
   notes: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -26,19 +24,13 @@ function toTripResponse(trip: {
   return TripResponseSchema.parse({
     id: trip.id,
     title: trip.title,
-    destination: trip.destination,
+    destinations: trip.destinations,
 
     startDate: trip.startDate.toISOString(),
     endDate: trip.endDate.toISOString(),
 
     destinationCurrency: trip.destinationCurrency,
     originCurrency: trip.originCurrency,
-    displayCurrencyMode: trip.displayCurrencyMode,
-
-    defaultExchangeRate:
-      trip.defaultExchangeRate === null
-        ? null
-        : Number(trip.defaultExchangeRate),
 
     notes: trip.notes,
 
@@ -71,13 +63,11 @@ export class TripsController {
 
     const trip = await this.trips.createTrip({
       title: input.title,
-      destination: input.destination ?? null,
+      destinations: input.destinations ? (input.destinations as object) : undefined,
       startDate: new Date(input.startDate),
       endDate: new Date(input.endDate),
       destinationCurrency: input.destinationCurrency,
       originCurrency: input.originCurrency,
-      displayCurrencyMode: input.displayCurrencyMode,
-      defaultExchangeRate: input.defaultExchangeRate ?? null,
       notes: input.notes ?? null,
     });
 
@@ -91,8 +81,8 @@ export class TripsController {
 
     const trip = await this.trips.updateTrip(tripId, {
       ...(input.title !== undefined ? { title: input.title } : {}),
-      ...(input.destination !== undefined
-        ? { destination: input.destination ?? null }
+      ...(input.destinations !== undefined
+        ? { destinations: input.destinations as object }
         : {}),
       ...(input.startDate !== undefined
         ? { startDate: new Date(input.startDate) }
@@ -106,15 +96,16 @@ export class TripsController {
       ...(input.originCurrency !== undefined
         ? { originCurrency: input.originCurrency }
         : {}),
-      ...(input.displayCurrencyMode !== undefined
-        ? { displayCurrencyMode: input.displayCurrencyMode }
-        : {}),
-      ...(input.defaultExchangeRate !== undefined
-        ? { defaultExchangeRate: input.defaultExchangeRate ?? null }
-        : {}),
       ...(input.notes !== undefined ? { notes: input.notes ?? null } : {}),
     });
 
     return toTripResponse(trip);
+  }
+
+  @Delete(':tripId')
+  async delete(@Param() params: unknown) {
+    const { tripId } = validate(TripIdParamSchema, params);
+    await this.trips.deleteTrip(tripId);
+    return { success: true };
   }
 }
