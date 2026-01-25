@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { HealthController } from './health.controller';
 import { TripsModule } from './modules/trips/trips.module';
+import { LocationsModule } from './modules/locations/locations.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { TripsModule } from './modules/trips/trips.module';
     }),
     PrismaModule,
     TripsModule,
+    LocationsModule,
   ],
   controllers: [HealthController],
 })
