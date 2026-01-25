@@ -6,12 +6,6 @@ datasource db {
   provider = "postgresql"
 }
 
-enum DisplayCurrencyMode {
-  DestinationOnly
-  OriginOnly
-  Both
-}
-
 enum LocationCategory {
   Place
   Restaurant
@@ -53,14 +47,12 @@ enum ExchangeRateSource {
 model Trip {
   id                  String              @id @default(uuid())
   title               String
-  destination         String?
+  destinations        Json?
   startDate           DateTime
   endDate             DateTime
 
   destinationCurrency String              @default("CNY")
   originCurrency      String              @default("SGD")
-  displayCurrencyMode DisplayCurrencyMode @default(Both)
-  defaultExchangeRate Decimal?
   notes               String?
 
   locations           Location[]
