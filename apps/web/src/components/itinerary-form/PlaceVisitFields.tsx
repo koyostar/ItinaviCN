@@ -1,14 +1,19 @@
 import { Stack, TextField, Typography } from "@mui/material";
+import { DateTimeFields } from "./DateTimeFields";
 
 interface PlaceVisitDetails {
   title: string;
   ticketInfo: string;
   openingHours: string;
+  startTimezone: string;
+  startDateTime: string;
+  endTimezone: string;
+  endDateTime: string;
 }
 
 interface PlaceVisitFieldsProps {
   placeVisitDetails: PlaceVisitDetails;
-  onPlaceVisitDetailsChange: (details: PlaceVisitDetails) => void;
+  onPlaceVisitDetailsChange: (details: Partial<PlaceVisitDetails>) => void;
 }
 
 export function PlaceVisitFields({
@@ -59,6 +64,31 @@ export function PlaceVisitFields({
           placeholder="e.g., 9:00 AM - 5:00 PM"
         />
       </Stack>
+
+      <DateTimeFields
+        label="Start Date & Time"
+        timezone={placeVisitDetails.startTimezone}
+        dateTime={placeVisitDetails.startDateTime}
+        required
+        onTimezoneChange={(tz) =>
+          onPlaceVisitDetailsChange({ startTimezone: tz })
+        }
+        onDateTimeChange={(dt) =>
+          onPlaceVisitDetailsChange({ startDateTime: dt })
+        }
+      />
+
+      <DateTimeFields
+        label="End Date & Time"
+        timezone={placeVisitDetails.endTimezone}
+        dateTime={placeVisitDetails.endDateTime}
+        onTimezoneChange={(tz) =>
+          onPlaceVisitDetailsChange({ endTimezone: tz })
+        }
+        onDateTimeChange={(dt) =>
+          onPlaceVisitDetailsChange({ endDateTime: dt })
+        }
+      />
     </>
   );
 }

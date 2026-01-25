@@ -1,14 +1,19 @@
 import { Stack, TextField, Typography } from "@mui/material";
+import { DateTimeFields } from "./DateTimeFields";
 
 interface FoodDetails {
   title: string;
   cuisine: string;
   reservationInfo: string;
+  startTimezone: string;
+  startDateTime: string;
+  endTimezone: string;
+  endDateTime: string;
 }
 
 interface FoodFieldsProps {
   foodDetails: FoodDetails;
-  onFoodDetailsChange: (details: FoodDetails) => void;
+  onFoodDetailsChange: (details: Partial<FoodDetails>) => void;
 }
 
 export function FoodFields({
@@ -59,6 +64,23 @@ export function FoodFields({
           placeholder="e.g., Reserved for 7 PM, Table 12"
         />
       </Stack>
+
+      <DateTimeFields
+        label="Start Date & Time"
+        timezone={foodDetails.startTimezone}
+        dateTime={foodDetails.startDateTime}
+        required
+        onTimezoneChange={(tz) => onFoodDetailsChange({ startTimezone: tz })}
+        onDateTimeChange={(dt) => onFoodDetailsChange({ startDateTime: dt })}
+      />
+
+      <DateTimeFields
+        label="End Date & Time"
+        timezone={foodDetails.endTimezone}
+        dateTime={foodDetails.endDateTime}
+        onTimezoneChange={(tz) => onFoodDetailsChange({ endTimezone: tz })}
+        onDateTimeChange={(dt) => onFoodDetailsChange({ endDateTime: dt })}
+      />
     </>
   );
 }

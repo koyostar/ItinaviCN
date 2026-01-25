@@ -1,4 +1,5 @@
 import { Stack, TextField, Typography } from "@mui/material";
+import { DateTimeFields } from "./DateTimeFields";
 
 interface FlightDetails {
   departureCity: string;
@@ -9,11 +10,15 @@ interface FlightDetails {
   arriveAirport: string;
   terminal: string;
   seat: string;
+  startTimezone: string;
+  startDateTime: string;
+  endTimezone: string;
+  endDateTime: string;
 }
 
 interface FlightFieldsProps {
   flightDetails: FlightDetails;
-  onFlightDetailsChange: (details: FlightDetails) => void;
+  onFlightDetailsChange: (details: Partial<FlightDetails>) => void;
 }
 
 export function FlightFields({
@@ -105,6 +110,23 @@ export function FlightFields({
           />
         </Stack>
       </Stack>
+
+      <DateTimeFields
+        label="Start Date & Time"
+        timezone={flightDetails.startTimezone}
+        dateTime={flightDetails.startDateTime}
+        required
+        onTimezoneChange={(tz) => onFlightDetailsChange({ startTimezone: tz })}
+        onDateTimeChange={(dt) => onFlightDetailsChange({ startDateTime: dt })}
+      />
+
+      <DateTimeFields
+        label="End Date & Time"
+        timezone={flightDetails.endTimezone}
+        dateTime={flightDetails.endDateTime}
+        onTimezoneChange={(tz) => onFlightDetailsChange({ endTimezone: tz })}
+        onDateTimeChange={(dt) => onFlightDetailsChange({ endDateTime: dt })}
+      />
     </>
   );
 }

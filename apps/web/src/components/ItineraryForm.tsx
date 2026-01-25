@@ -14,7 +14,6 @@ import { AccommodationFields } from "./itinerary-form/AccommodationFields";
 import { TransportFields } from "./itinerary-form/TransportFields";
 import { PlaceVisitFields } from "./itinerary-form/PlaceVisitFields";
 import { FoodFields } from "./itinerary-form/FoodFields";
-import { DateTimeFields } from "./itinerary-form/DateTimeFields";
 import {
   Box,
   Button,
@@ -82,29 +81,69 @@ export function ItineraryForm({
     arriveAirport: (initialData?.details as any)?.arriveAirport || "",
     terminal: (initialData?.details as any)?.terminal || "",
     seat: (initialData?.details as any)?.seat || "",
+    startTimezone: initialData?.startTimezone || defaultTimezone,
+    startDateTime: initialData?.startDateTime
+      ? utcToDateTimeLocal(initialData.startDateTime)
+      : "",
+    endTimezone: initialData?.endTimezone || defaultTimezone,
+    endDateTime: initialData?.endDateTime
+      ? utcToDateTimeLocal(initialData.endDateTime)
+      : "",
   });
 
   const [transportDetails, setTransportDetails] = useState({
     title: initialData?.type === "Transport" ? initialData.title : "",
     mode: ((initialData?.details as any)?.mode || "Metro") as TransportMode,
+    startTimezone: initialData?.startTimezone || defaultTimezone,
+    startDateTime: initialData?.startDateTime
+      ? utcToDateTimeLocal(initialData.startDateTime)
+      : "",
+    endTimezone: initialData?.endTimezone || defaultTimezone,
+    endDateTime: initialData?.endDateTime
+      ? utcToDateTimeLocal(initialData.endDateTime)
+      : "",
   });
 
   const [accommodationDetails, setAccommodationDetails] = useState({
     hotelName: initialData?.type === "Accommodation" ? initialData.title : "",
     address: (initialData?.details as any)?.address || "",
     guests: (initialData?.details as any)?.guests?.toString() || "",
+    startTimezone: initialData?.startTimezone || defaultTimezone,
+    startDateTime: initialData?.startDateTime
+      ? utcToDateTimeLocal(initialData.startDateTime)
+      : "",
+    endTimezone: initialData?.endTimezone || defaultTimezone,
+    endDateTime: initialData?.endDateTime
+      ? utcToDateTimeLocal(initialData.endDateTime)
+      : "",
   });
 
   const [placeVisitDetails, setPlaceVisitDetails] = useState({
     title: initialData?.type === "PlaceVisit" ? initialData.title : "",
     ticketInfo: (initialData?.details as any)?.ticketInfo || "",
     openingHours: (initialData?.details as any)?.openingHours || "",
+    startTimezone: initialData?.startTimezone || defaultTimezone,
+    startDateTime: initialData?.startDateTime
+      ? utcToDateTimeLocal(initialData.startDateTime)
+      : "",
+    endTimezone: initialData?.endTimezone || defaultTimezone,
+    endDateTime: initialData?.endDateTime
+      ? utcToDateTimeLocal(initialData.endDateTime)
+      : "",
   });
 
   const [foodDetails, setFoodDetails] = useState({
     title: initialData?.type === "Food" ? initialData.title : "",
     cuisine: (initialData?.details as any)?.cuisine || "",
     reservationInfo: (initialData?.details as any)?.reservationInfo || "",
+    startTimezone: initialData?.startTimezone || defaultTimezone,
+    startDateTime: initialData?.startDateTime
+      ? utcToDateTimeLocal(initialData.startDateTime)
+      : "",
+    endTimezone: initialData?.endTimezone || defaultTimezone,
+    endDateTime: initialData?.endDateTime
+      ? utcToDateTimeLocal(initialData.endDateTime)
+      : "",
   });
 
   useEffect(() => {
@@ -115,6 +154,11 @@ export function ItineraryForm({
         startTimezone: defaultTimezone,
         endTimezone: defaultTimezone,
       }));
+      setFlightDetails((prev) => ({ ...prev, startTimezone: defaultTimezone, endTimezone: defaultTimezone }));
+      setTransportDetails((prev) => ({ ...prev, startTimezone: defaultTimezone, endTimezone: defaultTimezone }));
+      setAccommodationDetails((prev) => ({ ...prev, startTimezone: defaultTimezone, endTimezone: defaultTimezone }));
+      setPlaceVisitDetails((prev) => ({ ...prev, startTimezone: defaultTimezone, endTimezone: defaultTimezone }));
+      setFoodDetails((prev) => ({ ...prev, startTimezone: defaultTimezone, endTimezone: defaultTimezone }));
     }
   }, [defaultTimezone, initialData]);
 
@@ -127,28 +171,29 @@ export function ItineraryForm({
     let endDateTime: string | undefined;
 
     if (type === "Flight") {
+      const { startTimezone: st, startDateTime: sdt, endTimezone: et, endDateTime: edt, ...flightData } = flightDetails;
       details = Object.fromEntries(
-        Object.entries(flightDetails).filter(([, v]) => v !== ""),
+        Object.entries(flightData).filter(([, v]) => v !== ""),
       );
       // For flights, combine departure and arrival cities into title
       title = `${flightDetails.departureCity} - ${flightDetails.arrivalCity}`;
-      startDateTime = dateTimeLocalToUTC(formData.startDateTime);
-      endDateTime = formData.endDateTime
-        ? dateTimeLocalToUTC(formData.endDateTime)
+      startDateTime = dateTimeLocalToUTC(flightDetails.startDateTime);
+      endDateTime = flightDetails.endDateTime
+        ? dateTimeLocalToUTC(flightDetails.endDateTime)
         : undefined;
     } else if (type === "Transport") {
       details = { mode: transportDetails.mode };
       title = transportDetails.title;
-      startDateTime = dateTimeLocalToUTC(formData.startDateTime);
-      endDateTime = formData.endDateTime
-        ? dateTimeLocalToUTC(formData.endDateTime)
+      startDateTime = dateTimeLocalToUTC(transportDetails.startDateTime);
+      endDateTime = transportDetails.endDateTime
+        ? dateTimeLocalToUTC(transportDetails.endDateTime)
         : undefined;
     } else if (type === "Accommodation") {
       // For accommodation: hotelName -> title, formData dates -> start/endDateTime, address -> details
       title = accommodationDetails.hotelName;
-      startDateTime = dateTimeLocalToUTC(formData.startDateTime);
-      endDateTime = formData.endDateTime
-        ? dateTimeLocalToUTC(formData.endDateTime)
+      startDateTime = dateTimeLocalToUTC(accommodationDetails.startDateTime);
+      endDateTime = accommodationDetails.endDateTime
+        ? dateTimeLocalToUTC(accommodationDetails.endDateTime)
         : undefined;
       details = Object.fromEntries(
         Object.entries({
@@ -160,21 +205,23 @@ export function ItineraryForm({
       );
     } else if (type === "PlaceVisit") {
       title = placeVisitDetails.title;
+      const { startTimezone: st, startDateTime: sdt, endTimezone: et, endDateTime: edt, title: t, ...placeData } = placeVisitDetails;
       details = Object.fromEntries(
-        Object.entries(placeVisitDetails).filter(([, v]) => v !== ""),
+        Object.entries(placeData).filter(([, v]) => v !== ""),
       );
-      startDateTime = dateTimeLocalToUTC(formData.startDateTime);
-      endDateTime = formData.endDateTime
-        ? dateTimeLocalToUTC(formData.endDateTime)
+      startDateTime = dateTimeLocalToUTC(placeVisitDetails.startDateTime);
+      endDateTime = placeVisitDetails.endDateTime
+        ? dateTimeLocalToUTC(placeVisitDetails.endDateTime)
         : undefined;
     } else if (type === "Food") {
       title = foodDetails.title;
+      const { startTimezone: st, startDateTime: sdt, endTimezone: et, endDateTime: edt, title: t, ...foodData } = foodDetails;
       details = Object.fromEntries(
-        Object.entries(foodDetails).filter(([, v]) => v !== ""),
+        Object.entries(foodData).filter(([, v]) => v !== ""),
       );
-      startDateTime = dateTimeLocalToUTC(formData.startDateTime);
-      endDateTime = formData.endDateTime
-        ? dateTimeLocalToUTC(formData.endDateTime)
+      startDateTime = dateTimeLocalToUTC(foodDetails.startDateTime);
+      endDateTime = foodDetails.endDateTime
+        ? dateTimeLocalToUTC(foodDetails.endDateTime)
         : undefined;
     } else {
       // Default fallback
@@ -184,14 +231,34 @@ export function ItineraryForm({
         : undefined;
     }
 
+    // Get timezones from the appropriate details object
+    let startTimezone = formData.startTimezone;
+    let endTimezone = formData.endTimezone;
+    if (type === "Flight") {
+      startTimezone = flightDetails.startTimezone;
+      endTimezone = flightDetails.endTimezone;
+    } else if (type === "Transport") {
+      startTimezone = transportDetails.startTimezone;
+      endTimezone = transportDetails.endTimezone;
+    } else if (type === "Accommodation") {
+      startTimezone = accommodationDetails.startTimezone;
+      endTimezone = accommodationDetails.endTimezone;
+    } else if (type === "PlaceVisit") {
+      startTimezone = placeVisitDetails.startTimezone;
+      endTimezone = placeVisitDetails.endTimezone;
+    } else if (type === "Food") {
+      startTimezone = foodDetails.startTimezone;
+      endTimezone = foodDetails.endTimezone;
+    }
+
     const payload: CreateItineraryItemRequest = {
       type,
       title,
       startDateTime,
       ...(endDateTime && { endDateTime }),
       timezone: formData.timezone,
-      startTimezone: formData.startTimezone,
-      ...(formData.endTimezone && { endTimezone: formData.endTimezone }),
+      startTimezone,
+      ...(endTimezone && { endTimezone }),
       status: formData.status,
       ...(formData.notes && { notes: formData.notes }),
       ...(formData.bookingRef && { bookingRef: formData.bookingRef }),
@@ -227,54 +294,39 @@ export function ItineraryForm({
         {type === "Flight" ? (
           <FlightFields
             flightDetails={flightDetails}
-            onFlightDetailsChange={setFlightDetails}
+            onFlightDetailsChange={(updates) =>
+              setFlightDetails({ ...flightDetails, ...updates })
+            }
           />
         ) : type === "Accommodation" ? (
           <AccommodationFields
             accommodationDetails={accommodationDetails}
-            onAccommodationDetailsChange={setAccommodationDetails}
+            onAccommodationDetailsChange={(updates) =>
+              setAccommodationDetails({ ...accommodationDetails, ...updates })
+            }
           />
         ) : type === "Transport" ? (
           <TransportFields
             transportDetails={transportDetails}
-            onTransportDetailsChange={setTransportDetails}
+            onTransportDetailsChange={(updates) =>
+              setTransportDetails({ ...transportDetails, ...updates })
+            }
           />
         ) : type === "PlaceVisit" ? (
           <PlaceVisitFields
             placeVisitDetails={placeVisitDetails}
-            onPlaceVisitDetailsChange={setPlaceVisitDetails}
+            onPlaceVisitDetailsChange={(updates) =>
+              setPlaceVisitDetails({ ...placeVisitDetails, ...updates })
+            }
           />
         ) : type === "Food" ? (
           <FoodFields
             foodDetails={foodDetails}
-            onFoodDetailsChange={setFoodDetails}
+            onFoodDetailsChange={(updates) =>
+              setFoodDetails({ ...foodDetails, ...updates })
+            }
           />
         ) : null}
-
-        <DateTimeFields
-          label={type === "Accommodation" ? "Check-In" : "Start Date & Time"}
-          timezone={formData.startTimezone}
-          dateTime={formData.startDateTime}
-          required
-          onTimezoneChange={(tz) =>
-            setFormData({ ...formData, startTimezone: tz })
-          }
-          onDateTimeChange={(dt) =>
-            setFormData({ ...formData, startDateTime: dt })
-          }
-        />
-
-        <DateTimeFields
-          label={type === "Accommodation" ? "Check-Out" : "End Date & Time"}
-          timezone={formData.endTimezone}
-          dateTime={formData.endDateTime}
-          onTimezoneChange={(tz) =>
-            setFormData({ ...formData, endTimezone: tz })
-          }
-          onDateTimeChange={(dt) =>
-            setFormData({ ...formData, endDateTime: dt })
-          }
-        />
 
         <TextField
           label="Notes"
