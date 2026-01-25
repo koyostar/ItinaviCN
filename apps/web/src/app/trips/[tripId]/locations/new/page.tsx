@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { use, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { CreateLocationRequest, LocationCategory } from '@itinavi/schema';
 import {
@@ -28,7 +28,8 @@ const CATEGORIES: LocationCategory[] = [
   'Other',
 ];
 
-export default function NewLocationPage({ params }: { params: { tripId: string } }) {
+export default function NewLocationPage({ params }: { params: Promise<{ tripId: string }> }) {
+  const { tripId } = use(params);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<CreateLocationRequest>({
@@ -56,8 +57,8 @@ export default function NewLocationPage({ params }: { params: { tripId: string }
         ...(formData.notes && { notes: formData.notes }),
       };
 
-      await api.locations.create(params.tripId, payload);
-      router.push(`/trips/${params.tripId}/locations`);
+      await api.locations.create(tripId, payload);
+      router.push(`/trips/${tripId}/locations`);
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to create location');
       setLoading(false);
@@ -160,7 +161,7 @@ export default function NewLocationPage({ params }: { params: { tripId: string }
               <Stack direction="row" spacing={2} justifyContent="flex-end">
                 <Button
                   variant="outlined"
-                  onClick={() => router.push(`/trips/${params.tripId}/locations`)}
+                  onClick={() => router.push(`/trips/${tripId}/locations`)}
                   disabled={loading}
                 >
                   Cancel

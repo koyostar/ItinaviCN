@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { use, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import type { TripResponse, CreateTripRequest } from '@itinavi/schema';
 import {
   Box,
@@ -31,11 +31,10 @@ import { TripForm } from '@/components/TripForm';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { formatUTCDate } from '@/lib/dateUtils';
 
-export default function TripDetailPage() {
-  const params = useParams();
+export default function TripDetailPage({ params }: { params: Promise<{ tripId: string }> }) {
+  const { tripId } = use(params);
   const router = useRouter();
   const { language } = useUserPreferences();
-  const tripId = params.tripId as string;
 
   const [trip, setTrip] = useState<TripResponse | null>(null);
   const [loading, setLoading] = useState(true);
