@@ -46,7 +46,7 @@ export function DateTimeFields({
         label={label}
         type="datetime-local"
         required={required}
-        sx={{ flex: 3 }}
+        sx={{ flex: 2 }}
         value={dateTime}
         onChange={(e) => onDateTimeChange(e.target.value)}
         InputLabelProps={{ shrink: true }}

@@ -28,8 +28,7 @@ export function FlightFields({
 }: FlightFieldsProps) {
   return (
     <>
-      {/* Two-column layout for Departure and Arrival */}
-      <Stack direction="row" spacing={3}>
+      <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
         {/* Departure Column */}
         <Box flex={1}>
           <Typography variant="subtitle2" color="primary" gutterBottom>

@@ -1,4 +1,4 @@
-import { Box, Chip, Stack, Typography } from "@mui/material";
+import { Box, Chip, Divider, Stack, Typography } from "@mui/material";
 import { getUTCOffset } from "@/lib/utils/timezone";
 import { formatUTCTime, calculateDuration } from "@/lib/dateUtils";
 
@@ -51,8 +51,12 @@ export function FlightCard({
           variant="outlined"
         />
       </Stack>
-
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2, my: 1 }}>
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        spacing={1}
+        alignItems="center"
+        mb={1}
+      >
         {/* Departure */}
         <Box sx={{ flex: 1 }}>
           <Typography variant="subtitle1" fontWeight="600">
@@ -75,9 +79,7 @@ export function FlightCard({
               ✈️ {details.flightNo}
             </Typography>
           )}
-          <Typography variant="body2" color="text.secondary">
-            ————→
-          </Typography>
+          <Divider variant="middle" flexItem sx={{ my: 1 }} />
           {endDateTime && (
             <Typography
               variant="caption"
@@ -104,7 +106,7 @@ export function FlightCard({
             </Typography>
           )}
         </Box>
-      </Box>
+      </Stack>
     </Box>
   );
 }
