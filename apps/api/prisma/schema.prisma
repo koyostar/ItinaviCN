@@ -96,6 +96,8 @@ model ItineraryItem {
   startDateTime DateTime
   endDateTime   DateTime?
   timezone      String          @default("Asia/Shanghai")
+  startTimezone String?
+  endTimezone   String?
   status        ItineraryStatus @default(Planned)
 
   locationId    String?

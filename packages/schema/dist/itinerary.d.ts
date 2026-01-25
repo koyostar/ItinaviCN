@@ -83,6 +83,8 @@ export declare const CreateFlightRequestSchema: z.ZodObject<{
     startDateTime: z.ZodString;
     endDateTime: z.ZodOptional<z.ZodString>;
     timezone: z.ZodDefault<z.ZodString>;
+    startTimezone: z.ZodOptional<z.ZodString>;
+    endTimezone: z.ZodOptional<z.ZodString>;
     status: z.ZodDefault<z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>>;
     locationId: z.ZodOptional<z.ZodString>;
     bookingRef: z.ZodOptional<z.ZodString>;
@@ -120,6 +122,8 @@ export declare const CreateFlightRequestSchema: z.ZodObject<{
     timezone: string;
     notes?: string | undefined;
     endDateTime?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -139,6 +143,8 @@ export declare const CreateFlightRequestSchema: z.ZodObject<{
     notes?: string | undefined;
     endDateTime?: string | undefined;
     timezone?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -156,6 +162,8 @@ export declare const CreateTransportRequestSchema: z.ZodObject<{
     startDateTime: z.ZodString;
     endDateTime: z.ZodOptional<z.ZodString>;
     timezone: z.ZodDefault<z.ZodString>;
+    startTimezone: z.ZodOptional<z.ZodString>;
+    endTimezone: z.ZodOptional<z.ZodString>;
     status: z.ZodDefault<z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>>;
     locationId: z.ZodOptional<z.ZodString>;
     bookingRef: z.ZodOptional<z.ZodString>;
@@ -184,6 +192,8 @@ export declare const CreateTransportRequestSchema: z.ZodObject<{
     timezone: string;
     notes?: string | undefined;
     endDateTime?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -200,6 +210,8 @@ export declare const CreateTransportRequestSchema: z.ZodObject<{
     notes?: string | undefined;
     endDateTime?: string | undefined;
     timezone?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -214,6 +226,8 @@ export declare const CreateAccommodationRequestSchema: z.ZodObject<{
     startDateTime: z.ZodString;
     endDateTime: z.ZodOptional<z.ZodString>;
     timezone: z.ZodDefault<z.ZodString>;
+    startTimezone: z.ZodOptional<z.ZodString>;
+    endTimezone: z.ZodOptional<z.ZodString>;
     status: z.ZodDefault<z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>>;
     locationId: z.ZodOptional<z.ZodString>;
     bookingRef: z.ZodOptional<z.ZodString>;
@@ -242,6 +256,8 @@ export declare const CreateAccommodationRequestSchema: z.ZodObject<{
     timezone: string;
     notes?: string | undefined;
     endDateTime?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -258,6 +274,8 @@ export declare const CreateAccommodationRequestSchema: z.ZodObject<{
     notes?: string | undefined;
     endDateTime?: string | undefined;
     timezone?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -272,6 +290,8 @@ export declare const CreatePlaceVisitRequestSchema: z.ZodObject<{
     startDateTime: z.ZodString;
     endDateTime: z.ZodOptional<z.ZodString>;
     timezone: z.ZodDefault<z.ZodString>;
+    startTimezone: z.ZodOptional<z.ZodString>;
+    endTimezone: z.ZodOptional<z.ZodString>;
     status: z.ZodDefault<z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>>;
     locationId: z.ZodOptional<z.ZodString>;
     bookingRef: z.ZodOptional<z.ZodString>;
@@ -297,6 +317,8 @@ export declare const CreatePlaceVisitRequestSchema: z.ZodObject<{
     timezone: string;
     notes?: string | undefined;
     endDateTime?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -312,6 +334,8 @@ export declare const CreatePlaceVisitRequestSchema: z.ZodObject<{
     notes?: string | undefined;
     endDateTime?: string | undefined;
     timezone?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -325,6 +349,8 @@ export declare const CreateFoodRequestSchema: z.ZodObject<{
     startDateTime: z.ZodString;
     endDateTime: z.ZodOptional<z.ZodString>;
     timezone: z.ZodDefault<z.ZodString>;
+    startTimezone: z.ZodOptional<z.ZodString>;
+    endTimezone: z.ZodOptional<z.ZodString>;
     status: z.ZodDefault<z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>>;
     locationId: z.ZodOptional<z.ZodString>;
     bookingRef: z.ZodOptional<z.ZodString>;
@@ -350,6 +376,8 @@ export declare const CreateFoodRequestSchema: z.ZodObject<{
     timezone: string;
     notes?: string | undefined;
     endDateTime?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -365,6 +393,8 @@ export declare const CreateFoodRequestSchema: z.ZodObject<{
     notes?: string | undefined;
     endDateTime?: string | undefined;
     timezone?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -378,6 +408,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     startDateTime: z.ZodString;
     endDateTime: z.ZodOptional<z.ZodString>;
     timezone: z.ZodDefault<z.ZodString>;
+    startTimezone: z.ZodOptional<z.ZodString>;
+    endTimezone: z.ZodOptional<z.ZodString>;
     status: z.ZodDefault<z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>>;
     locationId: z.ZodOptional<z.ZodString>;
     bookingRef: z.ZodOptional<z.ZodString>;
@@ -415,6 +447,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     timezone: string;
     notes?: string | undefined;
     endDateTime?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -434,6 +468,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     notes?: string | undefined;
     endDateTime?: string | undefined;
     timezone?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -450,6 +486,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     startDateTime: z.ZodString;
     endDateTime: z.ZodOptional<z.ZodString>;
     timezone: z.ZodDefault<z.ZodString>;
+    startTimezone: z.ZodOptional<z.ZodString>;
+    endTimezone: z.ZodOptional<z.ZodString>;
     status: z.ZodDefault<z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>>;
     locationId: z.ZodOptional<z.ZodString>;
     bookingRef: z.ZodOptional<z.ZodString>;
@@ -478,6 +516,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     timezone: string;
     notes?: string | undefined;
     endDateTime?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -494,6 +534,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     notes?: string | undefined;
     endDateTime?: string | undefined;
     timezone?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -507,6 +549,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     startDateTime: z.ZodString;
     endDateTime: z.ZodOptional<z.ZodString>;
     timezone: z.ZodDefault<z.ZodString>;
+    startTimezone: z.ZodOptional<z.ZodString>;
+    endTimezone: z.ZodOptional<z.ZodString>;
     status: z.ZodDefault<z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>>;
     locationId: z.ZodOptional<z.ZodString>;
     bookingRef: z.ZodOptional<z.ZodString>;
@@ -535,6 +579,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     timezone: string;
     notes?: string | undefined;
     endDateTime?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -551,6 +597,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     notes?: string | undefined;
     endDateTime?: string | undefined;
     timezone?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -564,6 +612,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     startDateTime: z.ZodString;
     endDateTime: z.ZodOptional<z.ZodString>;
     timezone: z.ZodDefault<z.ZodString>;
+    startTimezone: z.ZodOptional<z.ZodString>;
+    endTimezone: z.ZodOptional<z.ZodString>;
     status: z.ZodDefault<z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>>;
     locationId: z.ZodOptional<z.ZodString>;
     bookingRef: z.ZodOptional<z.ZodString>;
@@ -589,6 +639,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     timezone: string;
     notes?: string | undefined;
     endDateTime?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -604,6 +656,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     notes?: string | undefined;
     endDateTime?: string | undefined;
     timezone?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -616,6 +670,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     startDateTime: z.ZodString;
     endDateTime: z.ZodOptional<z.ZodString>;
     timezone: z.ZodDefault<z.ZodString>;
+    startTimezone: z.ZodOptional<z.ZodString>;
+    endTimezone: z.ZodOptional<z.ZodString>;
     status: z.ZodDefault<z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>>;
     locationId: z.ZodOptional<z.ZodString>;
     bookingRef: z.ZodOptional<z.ZodString>;
@@ -641,6 +697,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     timezone: string;
     notes?: string | undefined;
     endDateTime?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -656,6 +714,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     notes?: string | undefined;
     endDateTime?: string | undefined;
     timezone?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -670,6 +730,8 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     startDateTime: z.ZodOptional<z.ZodString>;
     endDateTime: z.ZodOptional<z.ZodOptional<z.ZodString>>;
     timezone: z.ZodOptional<z.ZodDefault<z.ZodString>>;
+    startTimezone: z.ZodOptional<z.ZodOptional<z.ZodString>>;
+    endTimezone: z.ZodOptional<z.ZodOptional<z.ZodString>>;
     status: z.ZodOptional<z.ZodDefault<z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>>>;
     locationId: z.ZodOptional<z.ZodOptional<z.ZodString>>;
     bookingRef: z.ZodOptional<z.ZodOptional<z.ZodString>>;
@@ -686,6 +748,8 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     startDateTime?: string | undefined;
     endDateTime?: string | undefined;
     timezone?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -698,6 +762,8 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     startDateTime?: string | undefined;
     endDateTime?: string | undefined;
     timezone?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -710,6 +776,8 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     startDateTime?: string | undefined;
     endDateTime?: string | undefined;
     timezone?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -722,6 +790,8 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     startDateTime?: string | undefined;
     endDateTime?: string | undefined;
     timezone?: string | undefined;
+    startTimezone?: string | undefined;
+    endTimezone?: string | undefined;
     locationId?: string | undefined;
     bookingRef?: string | undefined;
     url?: string | undefined;
@@ -735,6 +805,8 @@ export declare const FlightResponseSchema: z.ZodObject<{
     startDateTime: z.ZodString;
     endDateTime: z.ZodNullable<z.ZodString>;
     timezone: z.ZodString;
+    startTimezone: z.ZodNullable<z.ZodString>;
+    endTimezone: z.ZodNullable<z.ZodString>;
     status: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
     locationId: z.ZodNullable<z.ZodString>;
     bookingRef: z.ZodNullable<z.ZodString>;
@@ -778,6 +850,8 @@ export declare const FlightResponseSchema: z.ZodObject<{
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -801,6 +875,8 @@ export declare const FlightResponseSchema: z.ZodObject<{
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -820,6 +896,8 @@ export declare const TransportResponseSchema: z.ZodObject<{
     startDateTime: z.ZodString;
     endDateTime: z.ZodNullable<z.ZodString>;
     timezone: z.ZodString;
+    startTimezone: z.ZodNullable<z.ZodString>;
+    endTimezone: z.ZodNullable<z.ZodString>;
     status: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
     locationId: z.ZodNullable<z.ZodString>;
     bookingRef: z.ZodNullable<z.ZodString>;
@@ -854,6 +932,8 @@ export declare const TransportResponseSchema: z.ZodObject<{
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -874,6 +954,8 @@ export declare const TransportResponseSchema: z.ZodObject<{
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -890,6 +972,8 @@ export declare const AccommodationResponseSchema: z.ZodObject<{
     startDateTime: z.ZodString;
     endDateTime: z.ZodNullable<z.ZodString>;
     timezone: z.ZodString;
+    startTimezone: z.ZodNullable<z.ZodString>;
+    endTimezone: z.ZodNullable<z.ZodString>;
     status: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
     locationId: z.ZodNullable<z.ZodString>;
     bookingRef: z.ZodNullable<z.ZodString>;
@@ -924,6 +1008,8 @@ export declare const AccommodationResponseSchema: z.ZodObject<{
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -944,6 +1030,8 @@ export declare const AccommodationResponseSchema: z.ZodObject<{
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -960,6 +1048,8 @@ export declare const PlaceVisitResponseSchema: z.ZodObject<{
     startDateTime: z.ZodString;
     endDateTime: z.ZodNullable<z.ZodString>;
     timezone: z.ZodString;
+    startTimezone: z.ZodNullable<z.ZodString>;
+    endTimezone: z.ZodNullable<z.ZodString>;
     status: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
     locationId: z.ZodNullable<z.ZodString>;
     bookingRef: z.ZodNullable<z.ZodString>;
@@ -991,6 +1081,8 @@ export declare const PlaceVisitResponseSchema: z.ZodObject<{
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -1010,6 +1102,8 @@ export declare const PlaceVisitResponseSchema: z.ZodObject<{
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -1025,6 +1119,8 @@ export declare const FoodResponseSchema: z.ZodObject<{
     startDateTime: z.ZodString;
     endDateTime: z.ZodNullable<z.ZodString>;
     timezone: z.ZodString;
+    startTimezone: z.ZodNullable<z.ZodString>;
+    endTimezone: z.ZodNullable<z.ZodString>;
     status: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
     locationId: z.ZodNullable<z.ZodString>;
     bookingRef: z.ZodNullable<z.ZodString>;
@@ -1056,6 +1152,8 @@ export declare const FoodResponseSchema: z.ZodObject<{
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -1075,6 +1173,8 @@ export declare const FoodResponseSchema: z.ZodObject<{
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -1090,6 +1190,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     startDateTime: z.ZodString;
     endDateTime: z.ZodNullable<z.ZodString>;
     timezone: z.ZodString;
+    startTimezone: z.ZodNullable<z.ZodString>;
+    endTimezone: z.ZodNullable<z.ZodString>;
     status: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
     locationId: z.ZodNullable<z.ZodString>;
     bookingRef: z.ZodNullable<z.ZodString>;
@@ -1133,6 +1235,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -1156,6 +1260,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -1174,6 +1280,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     startDateTime: z.ZodString;
     endDateTime: z.ZodNullable<z.ZodString>;
     timezone: z.ZodString;
+    startTimezone: z.ZodNullable<z.ZodString>;
+    endTimezone: z.ZodNullable<z.ZodString>;
     status: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
     locationId: z.ZodNullable<z.ZodString>;
     bookingRef: z.ZodNullable<z.ZodString>;
@@ -1208,6 +1316,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -1228,6 +1338,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -1243,6 +1355,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     startDateTime: z.ZodString;
     endDateTime: z.ZodNullable<z.ZodString>;
     timezone: z.ZodString;
+    startTimezone: z.ZodNullable<z.ZodString>;
+    endTimezone: z.ZodNullable<z.ZodString>;
     status: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
     locationId: z.ZodNullable<z.ZodString>;
     bookingRef: z.ZodNullable<z.ZodString>;
@@ -1277,6 +1391,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -1297,6 +1413,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -1312,6 +1430,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     startDateTime: z.ZodString;
     endDateTime: z.ZodNullable<z.ZodString>;
     timezone: z.ZodString;
+    startTimezone: z.ZodNullable<z.ZodString>;
+    endTimezone: z.ZodNullable<z.ZodString>;
     status: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
     locationId: z.ZodNullable<z.ZodString>;
     bookingRef: z.ZodNullable<z.ZodString>;
@@ -1343,6 +1463,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -1362,6 +1484,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -1376,6 +1500,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     startDateTime: z.ZodString;
     endDateTime: z.ZodNullable<z.ZodString>;
     timezone: z.ZodString;
+    startTimezone: z.ZodNullable<z.ZodString>;
+    endTimezone: z.ZodNullable<z.ZodString>;
     status: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
     locationId: z.ZodNullable<z.ZodString>;
     bookingRef: z.ZodNullable<z.ZodString>;
@@ -1407,6 +1533,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -1426,6 +1554,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     startDateTime: string;
     endDateTime: string | null;
     timezone: string;
+    startTimezone: string | null;
+    endTimezone: string | null;
     locationId: string | null;
     bookingRef: string | null;
     url: string | null;
@@ -1443,6 +1573,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: z.ZodString;
         endDateTime: z.ZodNullable<z.ZodString>;
         timezone: z.ZodString;
+        startTimezone: z.ZodNullable<z.ZodString>;
+        endTimezone: z.ZodNullable<z.ZodString>;
         status: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
         locationId: z.ZodNullable<z.ZodString>;
         bookingRef: z.ZodNullable<z.ZodString>;
@@ -1486,6 +1618,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1509,6 +1643,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1527,6 +1663,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: z.ZodString;
         endDateTime: z.ZodNullable<z.ZodString>;
         timezone: z.ZodString;
+        startTimezone: z.ZodNullable<z.ZodString>;
+        endTimezone: z.ZodNullable<z.ZodString>;
         status: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
         locationId: z.ZodNullable<z.ZodString>;
         bookingRef: z.ZodNullable<z.ZodString>;
@@ -1561,6 +1699,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1581,6 +1721,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1596,6 +1738,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: z.ZodString;
         endDateTime: z.ZodNullable<z.ZodString>;
         timezone: z.ZodString;
+        startTimezone: z.ZodNullable<z.ZodString>;
+        endTimezone: z.ZodNullable<z.ZodString>;
         status: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
         locationId: z.ZodNullable<z.ZodString>;
         bookingRef: z.ZodNullable<z.ZodString>;
@@ -1630,6 +1774,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1650,6 +1796,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1665,6 +1813,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: z.ZodString;
         endDateTime: z.ZodNullable<z.ZodString>;
         timezone: z.ZodString;
+        startTimezone: z.ZodNullable<z.ZodString>;
+        endTimezone: z.ZodNullable<z.ZodString>;
         status: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
         locationId: z.ZodNullable<z.ZodString>;
         bookingRef: z.ZodNullable<z.ZodString>;
@@ -1696,6 +1846,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1715,6 +1867,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1729,6 +1883,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: z.ZodString;
         endDateTime: z.ZodNullable<z.ZodString>;
         timezone: z.ZodString;
+        startTimezone: z.ZodNullable<z.ZodString>;
+        endTimezone: z.ZodNullable<z.ZodString>;
         status: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
         locationId: z.ZodNullable<z.ZodString>;
         bookingRef: z.ZodNullable<z.ZodString>;
@@ -1760,6 +1916,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1779,6 +1937,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1800,6 +1960,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1823,6 +1985,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1843,6 +2007,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1863,6 +2029,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1882,6 +2050,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1903,6 +2073,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1926,6 +2098,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1946,6 +2120,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1966,6 +2142,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;
@@ -1985,6 +2163,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         startDateTime: string;
         endDateTime: string | null;
         timezone: string;
+        startTimezone: string | null;
+        endTimezone: string | null;
         locationId: string | null;
         bookingRef: string | null;
         url: string | null;

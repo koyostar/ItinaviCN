@@ -18,6 +18,8 @@ function toItineraryItemResponse(item: {
   startDateTime: Date;
   endDateTime: Date | null;
   timezone: string;
+  startTimezone: string | null;
+  endTimezone: string | null;
   status: string;
   locationId: string | null;
   bookingRef: string | null;
@@ -35,6 +37,8 @@ function toItineraryItemResponse(item: {
     startDateTime: item.startDateTime.toISOString(),
     endDateTime: item.endDateTime?.toISOString() ?? null,
     timezone: item.timezone,
+    startTimezone: item.startTimezone,
+    endTimezone: item.endTimezone,
     status: item.status,
     locationId: item.locationId,
     bookingRef: item.bookingRef,
@@ -76,6 +80,8 @@ export class ItineraryController {
       startDateTime: new Date(input.startDateTime),
       endDateTime: input.endDateTime ? new Date(input.endDateTime) : null,
       timezone: input.timezone,
+      startTimezone: input.startTimezone ?? null,
+      endTimezone: input.endTimezone ?? null,
       status: input.status,
       ...(input.locationId ? { location: { connect: { id: input.locationId } } } : {}),
       bookingRef: input.bookingRef ?? null,
@@ -102,6 +108,8 @@ export class ItineraryController {
         ? { endDateTime: input.endDateTime ? new Date(input.endDateTime) : null }
         : {}),
       ...(input.timezone !== undefined ? { timezone: input.timezone } : {}),
+      ...(input.startTimezone !== undefined ? { startTimezone: input.startTimezone ?? null } : {}),
+      ...(input.endTimezone !== undefined ? { endTimezone: input.endTimezone ?? null } : {}),
       ...(input.status !== undefined ? { status: input.status } : {}),
       ...(input.locationId !== undefined
         ? input.locationId
