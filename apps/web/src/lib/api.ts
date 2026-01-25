@@ -74,4 +74,25 @@ export const api = {
         method: 'DELETE',
       }),
   },
+
+  // Itinerary
+  itinerary: {
+    list: (tripId: string) => fetchApi(`/api/trips/${tripId}/itinerary`),
+    get: (tripId: string, itemId: string) =>
+      fetchApi(`/api/trips/${tripId}/itinerary/${itemId}`),
+    create: (tripId: string, data: unknown) =>
+      fetchApi(`/api/trips/${tripId}/itinerary`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    update: (tripId: string, itemId: string, data: unknown) =>
+      fetchApi(`/api/trips/${tripId}/itinerary/${itemId}`, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      }),
+    delete: (tripId: string, itemId: string) =>
+      fetchApi(`/api/trips/${tripId}/itinerary/${itemId}`, {
+        method: 'DELETE',
+      }),
+  },
 };

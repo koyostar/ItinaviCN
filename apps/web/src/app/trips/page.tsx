@@ -112,6 +112,13 @@ export default function TripsPage() {
                     <Button
                       variant="outlined"
                       size="small"
+                      href={`/trips/${trip.id}/itinerary`}
+                    >
+                      Itinerary
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      size="small"
                       href={`/trips/${trip.id}/locations`}
                     >
                       Locations
@@ -121,7 +128,7 @@ export default function TripsPage() {
                       size="small"
                       href={`/trips/${trip.id}`}
                     >
-                      View Details
+                      Details
                     </Button>
                   </Stack>
                 </Stack>
