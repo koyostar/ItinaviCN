@@ -113,8 +113,8 @@ export declare const CreateFlightRequestSchema: z.ZodObject<{
         seat?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Flight";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Flight";
     title: string;
     startDateTime: string;
     timezone: string;
@@ -177,8 +177,8 @@ export declare const CreateTransportRequestSchema: z.ZodObject<{
         toLocationId?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Transport";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Transport";
     title: string;
     startDateTime: string;
     timezone: string;
@@ -235,8 +235,8 @@ export declare const CreateAccommodationRequestSchema: z.ZodObject<{
         guests?: number | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Accommodation";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Accommodation";
     title: string;
     startDateTime: string;
     timezone: string;
@@ -290,8 +290,8 @@ export declare const CreatePlaceVisitRequestSchema: z.ZodObject<{
         openingHours?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "PlaceVisit";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "PlaceVisit";
     title: string;
     startDateTime: string;
     timezone: string;
@@ -343,8 +343,8 @@ export declare const CreateFoodRequestSchema: z.ZodObject<{
         reservationInfo?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Food";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Food";
     title: string;
     startDateTime: string;
     timezone: string;
@@ -408,8 +408,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
         seat?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Flight";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Flight";
     title: string;
     startDateTime: string;
     timezone: string;
@@ -471,8 +471,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
         toLocationId?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Transport";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Transport";
     title: string;
     startDateTime: string;
     timezone: string;
@@ -528,8 +528,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
         guests?: number | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Accommodation";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Accommodation";
     title: string;
     startDateTime: string;
     timezone: string;
@@ -582,8 +582,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
         openingHours?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "PlaceVisit";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "PlaceVisit";
     title: string;
     startDateTime: string;
     timezone: string;
@@ -634,8 +634,8 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
         reservationInfo?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Food";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Food";
     title: string;
     startDateTime: string;
     timezone: string;
@@ -679,8 +679,8 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     type: z.ZodOptional<z.ZodEnum<["Flight", "Transport", "Accommodation", "PlaceVisit", "Food"]>>;
     details: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
 }, "strip", z.ZodTypeAny, {
-    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "PlaceVisit" | undefined;
     status?: "Planned" | "Booked" | "Done" | "Skipped" | undefined;
+    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "PlaceVisit" | undefined;
     title?: string | undefined;
     notes?: string | undefined;
     startDateTime?: string | undefined;
@@ -691,8 +691,8 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     url?: string | undefined;
     details?: Record<string, unknown> | undefined;
 }, {
-    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "PlaceVisit" | undefined;
     status?: "Planned" | "Booked" | "Done" | "Skipped" | undefined;
+    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "PlaceVisit" | undefined;
     title?: string | undefined;
     notes?: string | undefined;
     startDateTime?: string | undefined;
@@ -703,8 +703,8 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     url?: string | undefined;
     details?: Record<string, unknown> | undefined;
 }>, {
-    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "PlaceVisit" | undefined;
     status?: "Planned" | "Booked" | "Done" | "Skipped" | undefined;
+    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "PlaceVisit" | undefined;
     title?: string | undefined;
     notes?: string | undefined;
     startDateTime?: string | undefined;
@@ -715,8 +715,8 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     url?: string | undefined;
     details?: Record<string, unknown> | undefined;
 }, {
-    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "PlaceVisit" | undefined;
     status?: "Planned" | "Booked" | "Done" | "Skipped" | undefined;
+    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "PlaceVisit" | undefined;
     title?: string | undefined;
     notes?: string | undefined;
     startDateTime?: string | undefined;
@@ -767,8 +767,8 @@ export declare const FlightResponseSchema: z.ZodObject<{
         seat?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Flight";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Flight";
     tripId: string;
     title: string;
     notes: string | null;
@@ -790,8 +790,8 @@ export declare const FlightResponseSchema: z.ZodObject<{
         seat?: string | undefined;
     } | null;
 }, {
-    type: "Flight";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Flight";
     tripId: string;
     title: string;
     notes: string | null;
@@ -843,8 +843,8 @@ export declare const TransportResponseSchema: z.ZodObject<{
         toLocationId?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Transport";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Transport";
     tripId: string;
     title: string;
     notes: string | null;
@@ -863,8 +863,8 @@ export declare const TransportResponseSchema: z.ZodObject<{
         toLocationId?: string | undefined;
     } | null;
 }, {
-    type: "Transport";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Transport";
     tripId: string;
     title: string;
     notes: string | null;
@@ -913,8 +913,8 @@ export declare const AccommodationResponseSchema: z.ZodObject<{
         guests?: number | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Accommodation";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Accommodation";
     tripId: string;
     title: string;
     notes: string | null;
@@ -933,8 +933,8 @@ export declare const AccommodationResponseSchema: z.ZodObject<{
         guests?: number | undefined;
     } | null;
 }, {
-    type: "Accommodation";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Accommodation";
     tripId: string;
     title: string;
     notes: string | null;
@@ -980,8 +980,8 @@ export declare const PlaceVisitResponseSchema: z.ZodObject<{
         openingHours?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "PlaceVisit";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "PlaceVisit";
     tripId: string;
     title: string;
     notes: string | null;
@@ -999,8 +999,8 @@ export declare const PlaceVisitResponseSchema: z.ZodObject<{
         openingHours?: string | undefined;
     } | null;
 }, {
-    type: "PlaceVisit";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "PlaceVisit";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1045,8 +1045,8 @@ export declare const FoodResponseSchema: z.ZodObject<{
         reservationInfo?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Food";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Food";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1064,8 +1064,8 @@ export declare const FoodResponseSchema: z.ZodObject<{
         reservationInfo?: string | undefined;
     } | null;
 }, {
-    type: "Food";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Food";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1122,8 +1122,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
         seat?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Flight";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Flight";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1145,8 +1145,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
         seat?: string | undefined;
     } | null;
 }, {
-    type: "Flight";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Flight";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1197,8 +1197,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
         toLocationId?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Transport";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Transport";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1217,8 +1217,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
         toLocationId?: string | undefined;
     } | null;
 }, {
-    type: "Transport";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Transport";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1266,8 +1266,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
         guests?: number | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Accommodation";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Accommodation";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1286,8 +1286,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
         guests?: number | undefined;
     } | null;
 }, {
-    type: "Accommodation";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Accommodation";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1332,8 +1332,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
         openingHours?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "PlaceVisit";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "PlaceVisit";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1351,8 +1351,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
         openingHours?: string | undefined;
     } | null;
 }, {
-    type: "PlaceVisit";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "PlaceVisit";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1396,8 +1396,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
         reservationInfo?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    type: "Food";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Food";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1415,8 +1415,8 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
         reservationInfo?: string | undefined;
     } | null;
 }, {
-    type: "Food";
     status: "Planned" | "Booked" | "Done" | "Skipped";
+    type: "Food";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1475,8 +1475,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             seat?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
-        type: "Flight";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Flight";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1498,8 +1498,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             seat?: string | undefined;
         } | null;
     }, {
-        type: "Flight";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Flight";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1550,8 +1550,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             toLocationId?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
-        type: "Transport";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Transport";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1570,8 +1570,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             toLocationId?: string | undefined;
         } | null;
     }, {
-        type: "Transport";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Transport";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1619,8 +1619,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             guests?: number | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
-        type: "Accommodation";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Accommodation";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1639,8 +1639,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             guests?: number | undefined;
         } | null;
     }, {
-        type: "Accommodation";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Accommodation";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1685,8 +1685,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             openingHours?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
-        type: "PlaceVisit";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "PlaceVisit";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1704,8 +1704,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             openingHours?: string | undefined;
         } | null;
     }, {
-        type: "PlaceVisit";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "PlaceVisit";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1749,8 +1749,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             reservationInfo?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
-        type: "Food";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Food";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1768,8 +1768,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             reservationInfo?: string | undefined;
         } | null;
     }, {
-        type: "Food";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Food";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1789,8 +1789,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
     }>]>, "many">;
 }, "strip", z.ZodTypeAny, {
     items: ({
-        type: "Flight";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Flight";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1812,8 +1812,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             seat?: string | undefined;
         } | null;
     } | {
-        type: "Transport";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Transport";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1832,8 +1832,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             toLocationId?: string | undefined;
         } | null;
     } | {
-        type: "Accommodation";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Accommodation";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1852,8 +1852,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             guests?: number | undefined;
         } | null;
     } | {
-        type: "PlaceVisit";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "PlaceVisit";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1871,8 +1871,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             openingHours?: string | undefined;
         } | null;
     } | {
-        type: "Food";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Food";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1892,8 +1892,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
     })[];
 }, {
     items: ({
-        type: "Flight";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Flight";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1915,8 +1915,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             seat?: string | undefined;
         } | null;
     } | {
-        type: "Transport";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Transport";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1935,8 +1935,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             toLocationId?: string | undefined;
         } | null;
     } | {
-        type: "Accommodation";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Accommodation";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1955,8 +1955,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             guests?: number | undefined;
         } | null;
     } | {
-        type: "PlaceVisit";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "PlaceVisit";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1974,8 +1974,8 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
             openingHours?: string | undefined;
         } | null;
     } | {
-        type: "Food";
         status: "Planned" | "Booked" | "Done" | "Skipped";
+        type: "Food";
         tripId: string;
         title: string;
         notes: string | null;

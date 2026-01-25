@@ -7,16 +7,16 @@ export declare const ExchangeRateSchema: z.ZodObject<{
     rate: z.ZodNumber;
     date: z.ZodString;
 }, "strip", z.ZodTypeAny, {
+    date: string;
     tripId: string;
     id: string;
-    date: string;
     fromCurrency: string;
     toCurrency: string;
     rate: number;
 }, {
+    date: string;
     tripId: string;
     id: string;
-    date: string;
     fromCurrency: string;
     toCurrency: string;
     rate: number;
@@ -30,14 +30,14 @@ export declare const CreateExchangeRateInputSchema: z.ZodObject<Omit<{
     rate: z.ZodNumber;
     date: z.ZodString;
 }, "id">, "strip", z.ZodTypeAny, {
-    tripId: string;
     date: string;
+    tripId: string;
     fromCurrency: string;
     toCurrency: string;
     rate: number;
 }, {
-    tripId: string;
     date: string;
+    tripId: string;
     fromCurrency: string;
     toCurrency: string;
     rate: number;

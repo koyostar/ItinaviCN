@@ -9,18 +9,18 @@ export declare const ExpenseSchema: z.ZodObject<{
     description: z.ZodOptional<z.ZodString>;
     notes: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    date: string;
     tripId: string;
     id: string;
-    date: string;
     amount: number;
     currency: string;
     category: "Food" | "Transport" | "Accommodation" | "Shopping" | "Entertainment" | "Other";
     notes?: string | undefined;
     description?: string | undefined;
 }, {
+    date: string;
     tripId: string;
     id: string;
-    date: string;
     amount: number;
     currency: string;
     notes?: string | undefined;
@@ -38,16 +38,16 @@ export declare const CreateExpenseInputSchema: z.ZodObject<Omit<{
     description: z.ZodOptional<z.ZodString>;
     notes: z.ZodOptional<z.ZodString>;
 }, "id">, "strip", z.ZodTypeAny, {
-    tripId: string;
     date: string;
+    tripId: string;
     amount: number;
     currency: string;
     category: "Food" | "Transport" | "Accommodation" | "Shopping" | "Entertainment" | "Other";
     notes?: string | undefined;
     description?: string | undefined;
 }, {
-    tripId: string;
     date: string;
+    tripId: string;
     amount: number;
     currency: string;
     notes?: string | undefined;

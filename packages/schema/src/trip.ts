@@ -1,18 +1,17 @@
 import { z } from "zod";
 
-export const DisplayCurrencyModeSchema = z.enum([
-  "DestinationOnly",
-  "OriginOnly",
-  "Both",
-]);
-
-export type DisplayCurrencyMode = z.infer<typeof DisplayCurrencyModeSchema>;
-
 export const CurrencyCodeSchema = z
   .string()
   .min(3)
   .max(3)
   .regex(/^[A-Z]{3}$/);
+
+export const DestinationSchema = z.object({
+  country: z.string().min(1).max(100),
+  cities: z.array(z.string().min(1).max(100)),
+});
+
+export type Destination = z.infer<typeof DestinationSchema>;
 
 export const TripIdParamSchema = z.object({
   tripId: z.string().uuid(),
@@ -20,7 +19,7 @@ export const TripIdParamSchema = z.object({
 
 export const CreateTripRequestSchema = z.object({
   title: z.string().min(1).max(120),
-  destination: z.string().max(120).optional(),
+  destinations: z.array(DestinationSchema).min(1).optional(),
 
   startDate: z.string().datetime(),
   endDate: z.string().datetime(),
@@ -28,9 +27,6 @@ export const CreateTripRequestSchema = z.object({
   destinationCurrency: CurrencyCodeSchema.default("CNY"),
   originCurrency: CurrencyCodeSchema.default("SGD"),
 
-  displayCurrencyMode: DisplayCurrencyModeSchema.default("Both"),
-
-  defaultExchangeRate: z.number().positive().optional(),
   notes: z.string().max(2000).optional(),
 });
 
@@ -46,16 +42,14 @@ export type UpdateTripRequest = z.infer<typeof UpdateTripRequestSchema>;
 export const TripResponseSchema = z.object({
   id: z.string().uuid(),
   title: z.string(),
-  destination: z.string().nullable(),
+  destinations: z.array(DestinationSchema).nullable(),
 
   startDate: z.string().datetime(),
   endDate: z.string().datetime(),
 
   destinationCurrency: CurrencyCodeSchema,
   originCurrency: CurrencyCodeSchema,
-  displayCurrencyMode: DisplayCurrencyModeSchema,
 
-  defaultExchangeRate: z.number().nullable(),
   notes: z.string().nullable(),
 
   createdAt: z.string().datetime(),
