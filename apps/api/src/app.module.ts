@@ -5,6 +5,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { HealthController } from './health.controller';
 import { TripsModule } from './modules/trips/trips.module';
 import { LocationsModule } from './modules/locations/locations.module';
+import { ItineraryModule } from './modules/itinerary/itinerary.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { LocationsModule } from './modules/locations/locations.module';
     PrismaModule,
     TripsModule,
     LocationsModule,
+    ItineraryModule,
   ],
   controllers: [HealthController],
 })
