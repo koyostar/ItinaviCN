@@ -14,6 +14,7 @@ import {
 } from "@/lib/constants";
 import { COMMON_TIMEZONES } from "@/lib/utils/timezone";
 import { utcToDateTimeLocal, dateTimeLocalToUTC } from "@/lib/dateUtils";
+import { AmapPlaceAutocomplete } from "./AmapPlaceAutocomplete";
 import {
   Box,
   Button,
@@ -29,8 +30,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-
-
 
 interface ItineraryFormProps {
   initialData?: ItineraryItemResponse;
@@ -93,8 +92,8 @@ export function ItineraryForm({
   });
 
   const [accommodationDetails, setAccommodationDetails] = useState({
-    checkInDateTime: (initialData?.details as any)?.checkInDateTime || "",
-    checkOutDateTime: (initialData?.details as any)?.checkOutDateTime || "",
+    hotelName: initialData?.type === "Accommodation" ? initialData.title : "",
+    address: (initialData?.details as any)?.address || "",
     guests: (initialData?.details as any)?.guests?.toString() || "",
   });
 
@@ -123,17 +122,36 @@ export function ItineraryForm({
     e.preventDefault();
 
     let details: unknown = null;
+    let title = formData.title;
+    let startDateTime: string;
+    let endDateTime: string | undefined;
 
     if (type === "Flight") {
       details = Object.fromEntries(
         Object.entries(flightDetails).filter(([, v]) => v !== ""),
       );
+      // For flights, combine departure and arrival cities into title
+      title = `${departureCity} - ${arrivalCity}`;
+      startDateTime = dateTimeLocalToUTC(formData.startDateTime);
+      endDateTime = formData.endDateTime
+        ? dateTimeLocalToUTC(formData.endDateTime)
+        : undefined;
     } else if (type === "Transport") {
       details = { mode: transportDetails.mode };
+      startDateTime = dateTimeLocalToUTC(formData.startDateTime);
+      endDateTime = formData.endDateTime
+        ? dateTimeLocalToUTC(formData.endDateTime)
+        : undefined;
     } else if (type === "Accommodation") {
+      // For accommodation: hotelName -> title, formData dates -> start/endDateTime, address -> details
+      title = accommodationDetails.hotelName;
+      startDateTime = dateTimeLocalToUTC(formData.startDateTime);
+      endDateTime = formData.endDateTime
+        ? dateTimeLocalToUTC(formData.endDateTime)
+        : undefined;
       details = Object.fromEntries(
         Object.entries({
-          ...accommodationDetails,
+          address: accommodationDetails.address,
           guests: accommodationDetails.guests
             ? parseInt(accommodationDetails.guests)
             : undefined,
@@ -143,21 +161,25 @@ export function ItineraryForm({
       details = Object.fromEntries(
         Object.entries(placeVisitDetails).filter(([, v]) => v !== ""),
       );
+      startDateTime = dateTimeLocalToUTC(formData.startDateTime);
+      endDateTime = formData.endDateTime
+        ? dateTimeLocalToUTC(formData.endDateTime)
+        : undefined;
     } else if (type === "Food") {
       details = Object.fromEntries(
         Object.entries(foodDetails).filter(([, v]) => v !== ""),
       );
+      startDateTime = dateTimeLocalToUTC(formData.startDateTime);
+      endDateTime = formData.endDateTime
+        ? dateTimeLocalToUTC(formData.endDateTime)
+        : undefined;
+    } else {
+      // Default fallback
+      startDateTime = dateTimeLocalToUTC(formData.startDateTime);
+      endDateTime = formData.endDateTime
+        ? dateTimeLocalToUTC(formData.endDateTime)
+        : undefined;
     }
-
-    // Convert datetime-local to UTC ISO string
-    const startDateTime = dateTimeLocalToUTC(formData.startDateTime);
-    const endDateTime = formData.endDateTime
-      ? dateTimeLocalToUTC(formData.endDateTime)
-      : undefined;
-
-    // For flights, combine departure and arrival cities into title
-    const title =
-      type === "Flight" ? `${departureCity} - ${arrivalCity}` : formData.title;
 
     const payload: CreateItineraryItemRequest = {
       type,
@@ -246,6 +268,34 @@ export function ItineraryForm({
               />
             </Stack>
           </>
+        ) : type === "Accommodation" ? (
+          <>
+            <AmapPlaceAutocomplete
+              label="Hotel Name"
+              value={accommodationDetails.hotelName}
+              onPlaceSelect={(place) =>
+                setAccommodationDetails({
+                  ...accommodationDetails,
+                  hotelName: place.name,
+                  address: place.address,
+                })
+              }
+              placeholder="Search for hotel..."
+              required
+            />
+            <TextField
+              label="Address"
+              fullWidth
+              value={accommodationDetails.address}
+              onChange={(e) =>
+                setAccommodationDetails({
+                  ...accommodationDetails,
+                  address: e.target.value,
+                })
+              }
+              placeholder="Address will be filled automatically from search"
+            />
+          </>
         ) : (
           <TextField
             label="Title"
@@ -261,10 +311,10 @@ export function ItineraryForm({
 
         <Stack direction="row" spacing={2}>
           <FormControl sx={{ flex: 1 }}>
-            <InputLabel>Start Timezone</InputLabel>
+            <InputLabel>Timezone</InputLabel>
             <Select
               value={formData.startTimezone}
-              label="Start Timezone"
+              label="Timezone"
               onChange={(e) =>
                 setFormData({ ...formData, startTimezone: e.target.value })
               }
@@ -278,7 +328,7 @@ export function ItineraryForm({
           </FormControl>
 
           <TextField
-            label="Start Date & Time"
+            label={type === "Accommodation" ? "Check-In" : "Start Date & Time"}
             type="datetime-local"
             required
             sx={{ flex: 3 }}
@@ -292,10 +342,10 @@ export function ItineraryForm({
 
         <Stack direction="row" spacing={2}>
           <FormControl sx={{ flex: 1 }}>
-            <InputLabel>End Timezone</InputLabel>
+            <InputLabel>Timezone</InputLabel>
             <Select
               value={formData.endTimezone}
-              label="End Timezone"
+              label="Timezone"
               onChange={(e) =>
                 setFormData({ ...formData, endTimezone: e.target.value })
               }
@@ -309,7 +359,7 @@ export function ItineraryForm({
           </FormControl>
 
           <TextField
-            label="End Date & Time"
+            label={type === "Accommodation" ? "Check-Out" : "End Date & Time"}
             type="datetime-local"
             sx={{ flex: 3 }}
             value={formData.endDateTime}
@@ -379,34 +429,6 @@ export function ItineraryForm({
             <Typography variant="subtitle2" color="primary">
               Accommodation Details
             </Typography>
-            <Stack direction="row" spacing={2}>
-              <TextField
-                label="Check-in"
-                type="datetime-local"
-                fullWidth
-                value={accommodationDetails.checkInDateTime}
-                onChange={(e) =>
-                  setAccommodationDetails({
-                    ...accommodationDetails,
-                    checkInDateTime: e.target.value,
-                  })
-                }
-                InputLabelProps={{ shrink: true }}
-              />
-              <TextField
-                label="Check-out"
-                type="datetime-local"
-                fullWidth
-                value={accommodationDetails.checkOutDateTime}
-                onChange={(e) =>
-                  setAccommodationDetails({
-                    ...accommodationDetails,
-                    checkOutDateTime: e.target.value,
-                  })
-                }
-                InputLabelProps={{ shrink: true }}
-              />
-            </Stack>
             <TextField
               label="Number of Guests"
               type="number"
@@ -518,7 +540,10 @@ export function ItineraryForm({
             row
             value={formData.status}
             onChange={(e) =>
-              setFormData({ ...formData, status: e.target.value as typeof ITINERARY_STATUSES[number] })
+              setFormData({
+                ...formData,
+                status: e.target.value as (typeof ITINERARY_STATUSES)[number],
+              })
             }
           >
             {ITINERARY_STATUSES.map((s) => (
