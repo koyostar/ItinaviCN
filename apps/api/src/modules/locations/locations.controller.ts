@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import type { Decimal } from '@prisma/client/runtime/library';
 import {
   CreateLocationRequestSchema,
   ListLocationsResponseSchema,
@@ -17,8 +16,8 @@ function toLocationResponse(location: {
   name: string;
   category: string;
   address: string | null;
-  latitude: Decimal | null;
-  longitude: Decimal | null;
+  latitude: { toNumber(): number } | null;
+  longitude: { toNumber(): number } | null;
   baiduPlaceId: string | null;
   notes: string | null;
   createdAt: Date;
@@ -30,8 +29,8 @@ function toLocationResponse(location: {
     name: location.name,
     category: location.category,
     address: location.address,
-    latitude: location.latitude === null ? null : Number(location.latitude),
-    longitude: location.longitude === null ? null : Number(location.longitude),
+    latitude: location.latitude === null ? null : location.latitude.toNumber(),
+    longitude: location.longitude === null ? null : location.longitude.toNumber(),
     baiduPlaceId: location.baiduPlaceId,
     notes: location.notes,
     createdAt: location.createdAt.toISOString(),
