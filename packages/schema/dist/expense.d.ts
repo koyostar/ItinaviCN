@@ -9,23 +9,23 @@ export declare const ExpenseSchema: z.ZodObject<{
     description: z.ZodOptional<z.ZodString>;
     notes: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    id: string;
     tripId: string;
+    id: string;
     date: string;
     amount: number;
     currency: string;
     category: "Food" | "Transport" | "Accommodation" | "Shopping" | "Entertainment" | "Other";
-    description?: string | undefined;
     notes?: string | undefined;
+    description?: string | undefined;
 }, {
-    id: string;
     tripId: string;
+    id: string;
     date: string;
     amount: number;
     currency: string;
+    notes?: string | undefined;
     category?: "Food" | "Transport" | "Accommodation" | "Shopping" | "Entertainment" | "Other" | undefined;
     description?: string | undefined;
-    notes?: string | undefined;
 }>;
 export type Expense = z.infer<typeof ExpenseSchema>;
 export declare const CreateExpenseInputSchema: z.ZodObject<Omit<{
@@ -43,15 +43,15 @@ export declare const CreateExpenseInputSchema: z.ZodObject<Omit<{
     amount: number;
     currency: string;
     category: "Food" | "Transport" | "Accommodation" | "Shopping" | "Entertainment" | "Other";
-    description?: string | undefined;
     notes?: string | undefined;
+    description?: string | undefined;
 }, {
     tripId: string;
     date: string;
     amount: number;
     currency: string;
+    notes?: string | undefined;
     category?: "Food" | "Transport" | "Accommodation" | "Shopping" | "Entertainment" | "Other" | undefined;
     description?: string | undefined;
-    notes?: string | undefined;
 }>;
 export type CreateExpenseInput = z.infer<typeof CreateExpenseInputSchema>;

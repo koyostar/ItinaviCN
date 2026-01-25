@@ -8,4 +8,6 @@ export const ExchangeRateSchema = z.object({
     rate: z.number().positive(),
     date: z.string(), // ISO date when the rate was recorded
 });
-export const CreateExchangeRateInputSchema = ExchangeRateSchema.omit({ id: true });
+export const CreateExchangeRateInputSchema = ExchangeRateSchema.omit({
+    id: true,
+});

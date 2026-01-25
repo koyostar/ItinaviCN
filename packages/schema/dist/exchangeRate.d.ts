@@ -7,19 +7,19 @@ export declare const ExchangeRateSchema: z.ZodObject<{
     rate: z.ZodNumber;
     date: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    id: string;
     tripId: string;
+    id: string;
+    date: string;
     fromCurrency: string;
     toCurrency: string;
     rate: number;
-    date: string;
 }, {
-    id: string;
     tripId: string;
+    id: string;
+    date: string;
     fromCurrency: string;
     toCurrency: string;
     rate: number;
-    date: string;
 }>;
 export type ExchangeRate = z.infer<typeof ExchangeRateSchema>;
 export declare const CreateExchangeRateInputSchema: z.ZodObject<Omit<{
@@ -31,15 +31,15 @@ export declare const CreateExchangeRateInputSchema: z.ZodObject<Omit<{
     date: z.ZodString;
 }, "id">, "strip", z.ZodTypeAny, {
     tripId: string;
+    date: string;
     fromCurrency: string;
     toCurrency: string;
     rate: number;
-    date: string;
 }, {
     tripId: string;
+    date: string;
     fromCurrency: string;
     toCurrency: string;
     rate: number;
-    date: string;
 }>;
 export type CreateExchangeRateInput = z.infer<typeof CreateExchangeRateInputSchema>;

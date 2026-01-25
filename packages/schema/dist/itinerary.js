@@ -7,7 +7,11 @@ export const ItineraryItemSchema = z.object({
     title: z.string().min(1),
     description: z.string().optional(),
     location: z.string().optional(),
-    category: z.enum(["Activity", "Transport", "Accommodation", "Food", "Other"]).default("Other"),
+    category: z
+        .enum(["Activity", "Transport", "Accommodation", "Food", "Other"])
+        .default("Other"),
     order: z.number().int().nonnegative().default(0),
 });
-export const CreateItineraryItemInputSchema = ItineraryItemSchema.omit({ id: true });
+export const CreateItineraryItemInputSchema = ItineraryItemSchema.omit({
+    id: true,
+});

@@ -8,16 +8,16 @@ export declare const LocationSchema: z.ZodObject<{
     longitude: z.ZodOptional<z.ZodNumber>;
     notes: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    id: string;
     tripId: string;
+    id: string;
     name: string;
     notes?: string | undefined;
     address?: string | undefined;
     latitude?: number | undefined;
     longitude?: number | undefined;
 }, {
-    id: string;
     tripId: string;
+    id: string;
     name: string;
     notes?: string | undefined;
     address?: string | undefined;

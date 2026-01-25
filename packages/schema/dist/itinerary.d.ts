@@ -10,9 +10,9 @@ export declare const ItineraryItemSchema: z.ZodObject<{
     category: z.ZodDefault<z.ZodEnum<["Activity", "Transport", "Accommodation", "Food", "Other"]>>;
     order: z.ZodDefault<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
-    id: string;
-    title: string;
     tripId: string;
+    title: string;
+    id: string;
     date: string;
     category: "Food" | "Transport" | "Accommodation" | "Other" | "Activity";
     order: number;
@@ -20,9 +20,9 @@ export declare const ItineraryItemSchema: z.ZodObject<{
     time?: string | undefined;
     location?: string | undefined;
 }, {
-    id: string;
-    title: string;
     tripId: string;
+    title: string;
+    id: string;
     date: string;
     category?: "Food" | "Transport" | "Accommodation" | "Other" | "Activity" | undefined;
     description?: string | undefined;
@@ -42,8 +42,8 @@ export declare const CreateItineraryItemInputSchema: z.ZodObject<Omit<{
     category: z.ZodDefault<z.ZodEnum<["Activity", "Transport", "Accommodation", "Food", "Other"]>>;
     order: z.ZodDefault<z.ZodNumber>;
 }, "id">, "strip", z.ZodTypeAny, {
-    title: string;
     tripId: string;
+    title: string;
     date: string;
     category: "Food" | "Transport" | "Accommodation" | "Other" | "Activity";
     order: number;
@@ -51,8 +51,8 @@ export declare const CreateItineraryItemInputSchema: z.ZodObject<Omit<{
     time?: string | undefined;
     location?: string | undefined;
 }, {
-    title: string;
     tripId: string;
+    title: string;
     date: string;
     category?: "Food" | "Transport" | "Accommodation" | "Other" | "Activity" | undefined;
     description?: string | undefined;

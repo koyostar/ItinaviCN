@@ -6,7 +6,16 @@ export const ExpenseSchema = z.object({
     date: z.string(), // ISO date
     amount: z.number().positive(),
     currency: CurrencyCodeSchema,
-    category: z.enum(["Food", "Transport", "Accommodation", "Shopping", "Entertainment", "Other"]).default("Other"),
+    category: z
+        .enum([
+        "Food",
+        "Transport",
+        "Accommodation",
+        "Shopping",
+        "Entertainment",
+        "Other",
+    ])
+        .default("Other"),
     description: z.string().optional(),
     notes: z.string().optional(),
 });
