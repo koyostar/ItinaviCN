@@ -1,23 +1,41 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { TripResponse } from '@itinavi/schema';
+import type { TripResponse, CreateTripRequest } from '@itinavi/schema';
 import {
   Box,
   Button,
   Card,
   CardContent,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
   Stack,
   Typography,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { api } from '@/lib/api';
+import { COUNTRIES, CITIES, getDisplayName } from '@/lib/locations';
+import { useUserPreferences } from '@/contexts/UserPreferencesContext';
+import { TripForm } from '@/components/TripForm';
 
 export default function TripsPage() {
+  const { language } = useUserPreferences();
   const [trips, setTrips] = useState<TripResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [tripToDelete, setTripToDelete] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [tripToEdit, setTripToEdit] = useState<TripResponse | null>(null);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     loadTrips();
@@ -34,6 +52,58 @@ export default function TripsPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleEditClick(trip: TripResponse) {
+    setTripToEdit(trip);
+    setEditDialogOpen(true);
+  }
+
+  async function handleEditSubmit(payload: Partial<CreateTripRequest>) {
+    if (!tripToEdit) return;
+
+    try {
+      setUpdating(true);
+      await api.trips.update(tripToEdit.id, payload);
+      setEditDialogOpen(false);
+      setTripToEdit(null);
+      loadTrips();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to update trip');
+    } finally {
+      setUpdating(false);
+    }
+  }
+
+  function handleCancelEdit() {
+    setEditDialogOpen(false);
+    setTripToEdit(null);
+  }
+
+  function handleDeleteClick(tripId: string) {
+    setTripToDelete(tripId);
+    setDeleteDialogOpen(true);
+  }
+
+  async function handleConfirmDelete() {
+    if (!tripToDelete) return;
+
+    try {
+      setDeleting(true);
+      await api.trips.delete(tripToDelete);
+      setDeleteDialogOpen(false);
+      setTripToDelete(null);
+      loadTrips();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete trip');
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  function handleCancelDelete() {
+    setDeleteDialogOpen(false);
+    setTripToDelete(null);
   }
 
   if (loading) {
@@ -96,17 +166,45 @@ export default function TripsPage() {
             <Card key={trip.id}>
               <CardContent>
                 <Stack spacing={2}>
-                  <Box>
-                    <Typography variant="h6">{trip.title}</Typography>
-                    {trip.destination && (
+                  <Stack direction="row" justifyContent="space-between" alignItems="start">
+                    <Box flex={1}>
+                      <Typography variant="h6">{trip.title}</Typography>
+                      {trip.destinations && trip.destinations.length > 0 && (
+                        <Typography variant="body2" color="text.secondary">
+                          📍 {trip.destinations.map(d => {
+                            const countryData = COUNTRIES[d.country];
+                            const countryName = countryData ? getDisplayName(countryData, language) : d.country;
+                            const cityNames = d.cities.map(city => {
+                              const cityData = CITIES[d.country]?.[city];
+                              return cityData ? getDisplayName(cityData, language) : city;
+                            }).join(', ');
+                            return `${countryName} (${cityNames})`;
+                          }).join(' • ')}
+                        </Typography>
+                      )}
                       <Typography variant="body2" color="text.secondary">
-                        📍 {trip.destination}
+                        {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}
                       </Typography>
-                    )}
-                    <Typography variant="body2" color="text.secondary">
-                      {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}
-                    </Typography>
-                  </Box>
+                    </Box>
+                    <Stack direction="row" spacing={1}>
+                      <IconButton
+                        size="small"
+                        color="primary"
+                        onClick={() => handleEditClick(trip)}
+                        title="Edit trip"
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        color="error"
+                        onClick={() => handleDeleteClick(trip.id)}
+                        title="Delete trip"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Stack>
+                  </Stack>
                   
                   <Stack direction="row" spacing={1}>
                     <Button
@@ -137,6 +235,63 @@ export default function TripsPage() {
           ))}
         </Stack>
       )}
+
+      <Dialog
+        open={editDialogOpen}
+        onClose={handleCancelEdit}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Edit Trip</DialogTitle>
+        <DialogContent>
+          {tripToEdit && (
+            <Box sx={{ pt: 1 }}>
+              <TripForm
+                initialData={{
+                  title: tripToEdit.title,
+                  destinations: tripToEdit.destinations || [],
+                  startDate: tripToEdit.startDate,
+                  endDate: tripToEdit.endDate,
+                  destinationCurrency: tripToEdit.destinationCurrency,
+                  originCurrency: tripToEdit.originCurrency,
+                  notes: tripToEdit.notes,
+                }}
+                onSubmit={handleEditSubmit}
+                onCancel={handleCancelEdit}
+                submitLabel="Update Trip"
+                loading={updating}
+              />
+            </Box>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleCancelDelete}
+        aria-labelledby="delete-dialog-title"
+      >
+        <DialogTitle id="delete-dialog-title">Delete Trip</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this trip? This action cannot be undone.
+            All locations and itinerary items associated with this trip will also be deleted.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} disabled={deleting}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmDelete}
+            color="error"
+            variant="contained"
+            disabled={deleting}
+          >
+            {deleting ? 'Deleting...' : 'Delete'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

@@ -52,6 +52,10 @@ export const api = {
         method: 'PATCH',
         body: JSON.stringify(data),
       }),
+    delete: (tripId: string) =>
+      fetchApi(`/api/trips/${tripId}`, {
+        method: 'DELETE',
+      }),
   },
 
   // Locations
