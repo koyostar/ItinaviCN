@@ -3,6 +3,8 @@ import { getUTCOffset } from '@/lib/utils/timezone';
 import { formatUTCDateTime } from '@/lib/dateUtils';
 
 interface AccommodationDetails {
+  hotelName?: string;
+  address?: string;
   checkInDateTime?: string;
   checkOutDateTime?: string;
   guests?: number;
@@ -32,10 +34,16 @@ export function AccommodationCard({
   return (
     <Box>
       <Stack direction="row" spacing={1} alignItems="center" mb={1}>
-        <Typography variant="h6">{title}</Typography>
+        <Typography variant="h6">{details?.hotelName || title}</Typography>
         <Chip label="Accommodation" size="small" color={typeColor} />
         <Chip label={status} size="small" color={statusColor} variant="outlined" />
       </Stack>
+
+      {details?.address && (
+        <Typography variant="body2" color="text.secondary" mb={1}>
+          📍 {details.address}
+        </Typography>
+      )}
 
       <Stack direction="row" spacing={3} mt={1}>
         <Box>
