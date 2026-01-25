@@ -29,10 +29,10 @@ exports.TransportModeSchema = zod_1.z.enum([
 exports.FlightDetailsSchema = zod_1.z.object({
     airline: zod_1.z.string().optional(),
     flightNo: zod_1.z.string().optional(),
-    departAirport: zod_1.z.string().optional(),
-    arriveAirport: zod_1.z.string().optional(),
-    terminal: zod_1.z.string().optional(),
-    seat: zod_1.z.string().optional(),
+    departureAirport: zod_1.z.string().optional(),
+    arrivalAirport: zod_1.z.string().optional(),
+    departureAirportAddress: zod_1.z.string().optional(),
+    arrivalAirportAddress: zod_1.z.string().optional(),
 });
 exports.TransportDetailsSchema = zod_1.z.object({
     mode: exports.TransportModeSchema,
@@ -96,10 +96,14 @@ exports.CreateItineraryItemRequestSchema = zod_1.z.discriminatedUnion("type", [
     exports.CreatePlaceVisitRequestSchema,
     exports.CreateFoodRequestSchema,
 ]);
-exports.UpdateItineraryItemRequestSchema = BaseItineraryItemSchema.partial().extend({
+exports.UpdateItineraryItemRequestSchema = BaseItineraryItemSchema.partial()
+    .extend({
     type: exports.ItineraryItemTypeSchema.optional(),
     details: zod_1.z.record(zod_1.z.unknown()).optional(),
-}).refine((v) => Object.keys(v).length > 0, { message: "At least one field is required" });
+})
+    .refine((v) => Object.keys(v).length > 0, {
+    message: "At least one field is required",
+});
 // Response schemas
 const BaseItineraryItemResponseSchema = zod_1.z.object({
     id: zod_1.z.string().uuid(),

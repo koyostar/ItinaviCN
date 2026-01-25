@@ -8,24 +8,24 @@ export type TransportMode = z.infer<typeof TransportModeSchema>;
 export declare const FlightDetailsSchema: z.ZodObject<{
     airline: z.ZodOptional<z.ZodString>;
     flightNo: z.ZodOptional<z.ZodString>;
-    departAirport: z.ZodOptional<z.ZodString>;
-    arriveAirport: z.ZodOptional<z.ZodString>;
-    terminal: z.ZodOptional<z.ZodString>;
-    seat: z.ZodOptional<z.ZodString>;
+    departureAirport: z.ZodOptional<z.ZodString>;
+    arrivalAirport: z.ZodOptional<z.ZodString>;
+    departureAirportAddress: z.ZodOptional<z.ZodString>;
+    arrivalAirportAddress: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
     airline?: string | undefined;
     flightNo?: string | undefined;
-    departAirport?: string | undefined;
-    arriveAirport?: string | undefined;
-    terminal?: string | undefined;
-    seat?: string | undefined;
+    departureAirport?: string | undefined;
+    arrivalAirport?: string | undefined;
+    departureAirportAddress?: string | undefined;
+    arrivalAirportAddress?: string | undefined;
 }, {
     airline?: string | undefined;
     flightNo?: string | undefined;
-    departAirport?: string | undefined;
-    arriveAirport?: string | undefined;
-    terminal?: string | undefined;
-    seat?: string | undefined;
+    departureAirport?: string | undefined;
+    arrivalAirport?: string | undefined;
+    departureAirportAddress?: string | undefined;
+    arrivalAirportAddress?: string | undefined;
 }>;
 export type FlightDetails = z.infer<typeof FlightDetailsSchema>;
 export declare const TransportDetailsSchema: z.ZodObject<{
@@ -101,24 +101,24 @@ export declare const CreateFlightRequestSchema: z.ZodObject<{
     details: z.ZodOptional<z.ZodObject<{
         airline: z.ZodOptional<z.ZodString>;
         flightNo: z.ZodOptional<z.ZodString>;
-        departAirport: z.ZodOptional<z.ZodString>;
-        arriveAirport: z.ZodOptional<z.ZodString>;
-        terminal: z.ZodOptional<z.ZodString>;
-        seat: z.ZodOptional<z.ZodString>;
+        departureAirport: z.ZodOptional<z.ZodString>;
+        arrivalAirport: z.ZodOptional<z.ZodString>;
+        departureAirportAddress: z.ZodOptional<z.ZodString>;
+        arrivalAirportAddress: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     }, {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -136,10 +136,10 @@ export declare const CreateFlightRequestSchema: z.ZodObject<{
     details?: {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     } | undefined;
 }, {
     type: "Flight";
@@ -157,10 +157,10 @@ export declare const CreateFlightRequestSchema: z.ZodObject<{
     details?: {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     } | undefined;
 }>;
 export declare const CreateTransportRequestSchema: z.ZodObject<{
@@ -436,24 +436,24 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     details: z.ZodOptional<z.ZodObject<{
         airline: z.ZodOptional<z.ZodString>;
         flightNo: z.ZodOptional<z.ZodString>;
-        departAirport: z.ZodOptional<z.ZodString>;
-        arriveAirport: z.ZodOptional<z.ZodString>;
-        terminal: z.ZodOptional<z.ZodString>;
-        seat: z.ZodOptional<z.ZodString>;
+        departureAirport: z.ZodOptional<z.ZodString>;
+        arrivalAirport: z.ZodOptional<z.ZodString>;
+        departureAirportAddress: z.ZodOptional<z.ZodString>;
+        arrivalAirportAddress: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     }, {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -471,10 +471,10 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     details?: {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     } | undefined;
 }, {
     type: "Flight";
@@ -492,10 +492,10 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     details?: {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     } | undefined;
 }>, z.ZodObject<{
     title: z.ZodString;
@@ -845,24 +845,24 @@ export declare const FlightResponseSchema: z.ZodObject<{
     details: z.ZodNullable<z.ZodObject<{
         airline: z.ZodOptional<z.ZodString>;
         flightNo: z.ZodOptional<z.ZodString>;
-        departAirport: z.ZodOptional<z.ZodString>;
-        arriveAirport: z.ZodOptional<z.ZodString>;
-        terminal: z.ZodOptional<z.ZodString>;
-        seat: z.ZodOptional<z.ZodString>;
+        departureAirport: z.ZodOptional<z.ZodString>;
+        arrivalAirport: z.ZodOptional<z.ZodString>;
+        departureAirportAddress: z.ZodOptional<z.ZodString>;
+        arrivalAirportAddress: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     }, {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -884,10 +884,10 @@ export declare const FlightResponseSchema: z.ZodObject<{
     details: {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     } | null;
 }, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -909,10 +909,10 @@ export declare const FlightResponseSchema: z.ZodObject<{
     details: {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     } | null;
 }>;
 export declare const TransportResponseSchema: z.ZodObject<{
@@ -1240,24 +1240,24 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     details: z.ZodNullable<z.ZodObject<{
         airline: z.ZodOptional<z.ZodString>;
         flightNo: z.ZodOptional<z.ZodString>;
-        departAirport: z.ZodOptional<z.ZodString>;
-        arriveAirport: z.ZodOptional<z.ZodString>;
-        terminal: z.ZodOptional<z.ZodString>;
-        seat: z.ZodOptional<z.ZodString>;
+        departureAirport: z.ZodOptional<z.ZodString>;
+        arrivalAirport: z.ZodOptional<z.ZodString>;
+        departureAirportAddress: z.ZodOptional<z.ZodString>;
+        arrivalAirportAddress: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     }, {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -1279,10 +1279,10 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     details: {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     } | null;
 }, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -1304,10 +1304,10 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     details: {
         airline?: string | undefined;
         flightNo?: string | undefined;
-        departAirport?: string | undefined;
-        arriveAirport?: string | undefined;
-        terminal?: string | undefined;
-        seat?: string | undefined;
+        departureAirport?: string | undefined;
+        arrivalAirport?: string | undefined;
+        departureAirportAddress?: string | undefined;
+        arrivalAirportAddress?: string | undefined;
     } | null;
 }>, z.ZodObject<{
     id: z.ZodString;
@@ -1633,24 +1633,24 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         details: z.ZodNullable<z.ZodObject<{
             airline: z.ZodOptional<z.ZodString>;
             flightNo: z.ZodOptional<z.ZodString>;
-            departAirport: z.ZodOptional<z.ZodString>;
-            arriveAirport: z.ZodOptional<z.ZodString>;
-            terminal: z.ZodOptional<z.ZodString>;
-            seat: z.ZodOptional<z.ZodString>;
+            departureAirport: z.ZodOptional<z.ZodString>;
+            arrivalAirport: z.ZodOptional<z.ZodString>;
+            departureAirportAddress: z.ZodOptional<z.ZodString>;
+            arrivalAirportAddress: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
             airline?: string | undefined;
             flightNo?: string | undefined;
-            departAirport?: string | undefined;
-            arriveAirport?: string | undefined;
-            terminal?: string | undefined;
-            seat?: string | undefined;
+            departureAirport?: string | undefined;
+            arrivalAirport?: string | undefined;
+            departureAirportAddress?: string | undefined;
+            arrivalAirportAddress?: string | undefined;
         }, {
             airline?: string | undefined;
             flightNo?: string | undefined;
-            departAirport?: string | undefined;
-            arriveAirport?: string | undefined;
-            terminal?: string | undefined;
-            seat?: string | undefined;
+            departureAirport?: string | undefined;
+            arrivalAirport?: string | undefined;
+            departureAirportAddress?: string | undefined;
+            arrivalAirportAddress?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
         status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -1672,10 +1672,10 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         details: {
             airline?: string | undefined;
             flightNo?: string | undefined;
-            departAirport?: string | undefined;
-            arriveAirport?: string | undefined;
-            terminal?: string | undefined;
-            seat?: string | undefined;
+            departureAirport?: string | undefined;
+            arrivalAirport?: string | undefined;
+            departureAirportAddress?: string | undefined;
+            arrivalAirportAddress?: string | undefined;
         } | null;
     }, {
         status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -1697,10 +1697,10 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         details: {
             airline?: string | undefined;
             flightNo?: string | undefined;
-            departAirport?: string | undefined;
-            arriveAirport?: string | undefined;
-            terminal?: string | undefined;
-            seat?: string | undefined;
+            departureAirport?: string | undefined;
+            arrivalAirport?: string | undefined;
+            departureAirportAddress?: string | undefined;
+            arrivalAirportAddress?: string | undefined;
         } | null;
     }>, z.ZodObject<{
         id: z.ZodString;
@@ -2024,10 +2024,10 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         details: {
             airline?: string | undefined;
             flightNo?: string | undefined;
-            departAirport?: string | undefined;
-            arriveAirport?: string | undefined;
-            terminal?: string | undefined;
-            seat?: string | undefined;
+            departureAirport?: string | undefined;
+            arrivalAirport?: string | undefined;
+            departureAirportAddress?: string | undefined;
+            arrivalAirportAddress?: string | undefined;
         } | null;
     } | {
         status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -2139,10 +2139,10 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         details: {
             airline?: string | undefined;
             flightNo?: string | undefined;
-            departAirport?: string | undefined;
-            arriveAirport?: string | undefined;
-            terminal?: string | undefined;
-            seat?: string | undefined;
+            departureAirport?: string | undefined;
+            arrivalAirport?: string | undefined;
+            departureAirportAddress?: string | undefined;
+            arrivalAirportAddress?: string | undefined;
         } | null;
     } | {
         status: "Planned" | "Booked" | "Done" | "Skipped";

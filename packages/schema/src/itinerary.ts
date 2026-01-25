@@ -36,10 +36,10 @@ export type TransportMode = z.infer<typeof TransportModeSchema>;
 export const FlightDetailsSchema = z.object({
   airline: z.string().optional(),
   flightNo: z.string().optional(),
-  departAirport: z.string().optional(),
-  arriveAirport: z.string().optional(),
-  terminal: z.string().optional(),
-  seat: z.string().optional(),
+  departureAirport: z.string().optional(),
+  arrivalAirport: z.string().optional(),
+  departureAirportAddress: z.string().optional(),
+  arrivalAirportAddress: z.string().optional(),
 });
 
 export type FlightDetails = z.infer<typeof FlightDetailsSchema>;
@@ -125,17 +125,23 @@ export const CreateItineraryItemRequestSchema = z.discriminatedUnion("type", [
   CreateFoodRequestSchema,
 ]);
 
-export type CreateItineraryItemRequest = z.infer<typeof CreateItineraryItemRequestSchema>;
+export type CreateItineraryItemRequest = z.infer<
+  typeof CreateItineraryItemRequestSchema
+>;
 
-export const UpdateItineraryItemRequestSchema = BaseItineraryItemSchema.partial().extend({
-  type: ItineraryItemTypeSchema.optional(),
-  details: z.record(z.unknown()).optional(),
-}).refine(
-  (v) => Object.keys(v).length > 0,
-  { message: "At least one field is required" },
-);
+export const UpdateItineraryItemRequestSchema =
+  BaseItineraryItemSchema.partial()
+    .extend({
+      type: ItineraryItemTypeSchema.optional(),
+      details: z.record(z.unknown()).optional(),
+    })
+    .refine((v) => Object.keys(v).length > 0, {
+      message: "At least one field is required",
+    });
 
-export type UpdateItineraryItemRequest = z.infer<typeof UpdateItineraryItemRequestSchema>;
+export type UpdateItineraryItemRequest = z.infer<
+  typeof UpdateItineraryItemRequestSchema
+>;
 
 // Response schemas
 const BaseItineraryItemResponseSchema = z.object({
@@ -166,10 +172,11 @@ export const TransportResponseSchema = BaseItineraryItemResponseSchema.extend({
   details: TransportDetailsSchema.nullable(),
 });
 
-export const AccommodationResponseSchema = BaseItineraryItemResponseSchema.extend({
-  type: z.literal("Accommodation"),
-  details: AccommodationDetailsSchema.nullable(),
-});
+export const AccommodationResponseSchema =
+  BaseItineraryItemResponseSchema.extend({
+    type: z.literal("Accommodation"),
+    details: AccommodationDetailsSchema.nullable(),
+  });
 
 export const PlaceVisitResponseSchema = BaseItineraryItemResponseSchema.extend({
   type: z.literal("PlaceVisit"),
@@ -195,7 +202,9 @@ export const ListItineraryItemsResponseSchema = z.object({
   items: z.array(ItineraryItemResponseSchema),
 });
 
-export type ListItineraryItemsResponse = z.infer<typeof ListItineraryItemsResponseSchema>;
+export type ListItineraryItemsResponse = z.infer<
+  typeof ListItineraryItemsResponseSchema
+>;
 
 export const ItineraryItemIdParamSchema = z.object({
   itemId: z.string().uuid(),
