@@ -1,11 +1,38 @@
 import { z } from "zod";
-export const LocationSchema = z.object({
+export const LocationCategorySchema = z.enum([
+    "Place",
+    "Restaurant",
+    "Accommodation",
+    "TransportNode",
+    "Shop",
+    "Other",
+]);
+export const LocationIdParamSchema = z.object({
+    locationId: z.string().uuid(),
+});
+export const CreateLocationRequestSchema = z.object({
+    name: z.string().min(1).max(200),
+    category: LocationCategorySchema,
+    address: z.string().max(500).optional(),
+    latitude: z.number().min(-90).max(90).optional(),
+    longitude: z.number().min(-180).max(180).optional(),
+    baiduPlaceId: z.string().max(100).optional(),
+    notes: z.string().max(2000).optional(),
+});
+export const UpdateLocationRequestSchema = CreateLocationRequestSchema.partial().refine((v) => Object.keys(v).length > 0, { message: "At least one field is required" });
+export const LocationResponseSchema = z.object({
     id: z.string().uuid(),
     tripId: z.string().uuid(),
-    name: z.string().min(1),
-    address: z.string().optional(),
-    latitude: z.number().optional(),
-    longitude: z.number().optional(),
-    notes: z.string().optional(),
+    name: z.string(),
+    category: LocationCategorySchema,
+    address: z.string().nullable(),
+    latitude: z.number().nullable(),
+    longitude: z.number().nullable(),
+    baiduPlaceId: z.string().nullable(),
+    notes: z.string().nullable(),
+    createdAt: z.string().datetime(),
+    updatedAt: z.string().datetime(),
 });
-export const CreateLocationInputSchema = LocationSchema.omit({ id: true });
+export const ListLocationsResponseSchema = z.object({
+    items: z.array(LocationResponseSchema),
+});
