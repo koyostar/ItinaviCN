@@ -9,10 +9,8 @@ import {
   CardContent,
   Container,
   Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
   DialogTitle,
+  DialogContent,
   IconButton,
   Stack,
   Typography,
@@ -24,6 +22,8 @@ import { api } from '@/lib/api';
 import { COUNTRIES, CITIES, getDisplayName } from '@/lib/locations';
 import { useUserPreferences } from '@/contexts/UserPreferencesContext';
 import { TripForm } from '@/components/TripForm';
+import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { formatUTCDate } from '@/lib/dateUtils';
 
 export default function TripsPage() {
   const { language } = useUserPreferences();
@@ -183,7 +183,7 @@ export default function TripsPage() {
                         </Typography>
                       )}
                       <Typography variant="body2" color="text.secondary">
-                        {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}
+                        {formatUTCDate(trip.startDate, 'en-US', { month: 'short', day: 'numeric' })} - {formatUTCDate(trip.endDate, 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                       </Typography>
                     </Box>
                     <Stack direction="row" spacing={1}>
@@ -254,7 +254,7 @@ export default function TripsPage() {
                   endDate: tripToEdit.endDate,
                   destinationCurrency: tripToEdit.destinationCurrency,
                   originCurrency: tripToEdit.originCurrency,
-                  notes: tripToEdit.notes,
+                  notes: tripToEdit.notes || undefined,
                 }}
                 onSubmit={handleEditSubmit}
                 onCancel={handleCancelEdit}
@@ -266,32 +266,16 @@ export default function TripsPage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog
+      <ConfirmDialog
         open={deleteDialogOpen}
-        onClose={handleCancelDelete}
-        aria-labelledby="delete-dialog-title"
-      >
-        <DialogTitle id="delete-dialog-title">Delete Trip</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this trip? This action cannot be undone.
-            All locations and itinerary items associated with this trip will also be deleted.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelDelete} disabled={deleting}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleConfirmDelete}
-            color="error"
-            variant="contained"
-            disabled={deleting}
-          >
-            {deleting ? 'Deleting...' : 'Delete'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        title="Delete Trip"
+        message="Are you sure you want to delete this trip? This action cannot be undone. All locations and itinerary items associated with this trip will also be deleted."
+        confirmLabel="Delete"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        loading={deleting}
+        confirmColor="error"
+      />
     </Container>
   );
 }

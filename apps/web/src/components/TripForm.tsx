@@ -20,6 +20,7 @@ import {
   findLocationKey,
 } from '@/lib/locations';
 import { useUserPreferences } from '@/contexts/UserPreferencesContext';
+import { localDateToUTC, utcToLocalDate } from '@/lib/dateUtils';
 
 interface DestinationInput {
   country: string;
@@ -50,14 +51,15 @@ export function TripForm({
   loading = false,
 }: TripFormProps) {
   const { language } = useUserPreferences();
+
   const [destinations, setDestinations] = useState<DestinationInput[]>(
     initialData?.destinations || [{ country: '', cities: [''] }]
   );
   const [startDate, setStartDate] = useState<string>(
-    initialData?.startDate ? initialData.startDate.split('T')[0] : ''
+    initialData?.startDate ? utcToLocalDate(initialData.startDate) : ''
   );
   const [endDate, setEndDate] = useState<string>(
-    initialData?.endDate ? initialData.endDate.split('T')[0] : ''
+    initialData?.endDate ? utcToLocalDate(initialData.endDate) : ''
   );
   const [formData, setFormData] = useState<Partial<CreateTripRequest>>({
     title: initialData?.title || '',
@@ -77,8 +79,8 @@ export function TripForm({
       if (initialData.destinations) {
         setDestinations(initialData.destinations);
       }
-      setStartDate(initialData.startDate.split('T')[0]);
-      setEndDate(initialData.endDate.split('T')[0]);
+      setStartDate(utcToLocalDate(initialData.startDate));
+      setEndDate(utcToLocalDate(initialData.endDate));
     }
   }, [initialData]);
 
@@ -135,11 +137,11 @@ export function TripForm({
       }));
 
     const payload: Partial<CreateTripRequest> = {
-      title: formData.title!,
-      startDate: startDate + 'T00:00:00Z',
-      endDate: endDate + 'T23:59:59Z',
-      destinationCurrency: formData.destinationCurrency!,
-      originCurrency: formData.originCurrency!,
+      ...(formData.title && { title: formData.title }),
+      ...(startDate && { startDate: localDateToUTC(startDate, false) }),
+      ...(endDate && { endDate: localDateToUTC(endDate, true) }),
+      ...(formData.destinationCurrency && { destinationCurrency: formData.destinationCurrency }),
+      ...(formData.originCurrency && { originCurrency: formData.originCurrency }),
       ...(validDestinations.length > 0 && {
         destinations: validDestinations,
       }),
