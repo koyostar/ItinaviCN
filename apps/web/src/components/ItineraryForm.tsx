@@ -7,14 +7,14 @@ import type {
   TransportMode,
   ItineraryItemResponse,
 } from "@itinavi/schema";
-import {
-  ITINERARY_TYPES,
-  TRANSPORT_MODES,
-  ITINERARY_STATUSES,
-} from "@/lib/constants";
-import { COMMON_TIMEZONES } from "@/lib/utils/timezone";
+import { ITINERARY_TYPES, ITINERARY_STATUSES } from "@/lib/constants";
 import { utcToDateTimeLocal, dateTimeLocalToUTC } from "@/lib/dateUtils";
-import { AmapPlaceAutocomplete } from "./AmapPlaceAutocomplete";
+import { FlightFields } from "./itinerary-form/FlightFields";
+import { AccommodationFields } from "./itinerary-form/AccommodationFields";
+import { TransportFields } from "./itinerary-form/TransportFields";
+import { PlaceVisitFields } from "./itinerary-form/PlaceVisitFields";
+import { FoodFields } from "./itinerary-form/FoodFields";
+import { DateTimeFields } from "./itinerary-form/DateTimeFields";
 import {
   Box,
   Button,
@@ -28,7 +28,6 @@ import {
   Select,
   Stack,
   TextField,
-  Typography,
 } from "@mui/material";
 
 interface ItineraryFormProps {
@@ -55,10 +54,6 @@ export function ItineraryForm({
     initialData?.type === "Flight" && initialData?.title
       ? initialData.title.split(" - ")
       : ["", ""];
-  const [departureCity, setDepartureCity] = useState(
-    parsedFlightTitle[0] || "",
-  );
-  const [arrivalCity, setArrivalCity] = useState(parsedFlightTitle[1] || "");
 
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
@@ -79,6 +74,8 @@ export function ItineraryForm({
 
   // Type-specific details
   const [flightDetails, setFlightDetails] = useState({
+    departureCity: parsedFlightTitle[0] || "",
+    arrivalCity: parsedFlightTitle[1] || "",
     airline: (initialData?.details as any)?.airline || "",
     flightNo: (initialData?.details as any)?.flightNo || "",
     departAirport: (initialData?.details as any)?.departAirport || "",
@@ -88,6 +85,7 @@ export function ItineraryForm({
   });
 
   const [transportDetails, setTransportDetails] = useState({
+    title: initialData?.type === "Transport" ? initialData.title : "",
     mode: ((initialData?.details as any)?.mode || "Metro") as TransportMode,
   });
 
@@ -98,11 +96,13 @@ export function ItineraryForm({
   });
 
   const [placeVisitDetails, setPlaceVisitDetails] = useState({
+    title: initialData?.type === "PlaceVisit" ? initialData.title : "",
     ticketInfo: (initialData?.details as any)?.ticketInfo || "",
     openingHours: (initialData?.details as any)?.openingHours || "",
   });
 
   const [foodDetails, setFoodDetails] = useState({
+    title: initialData?.type === "Food" ? initialData.title : "",
     cuisine: (initialData?.details as any)?.cuisine || "",
     reservationInfo: (initialData?.details as any)?.reservationInfo || "",
   });
@@ -131,13 +131,14 @@ export function ItineraryForm({
         Object.entries(flightDetails).filter(([, v]) => v !== ""),
       );
       // For flights, combine departure and arrival cities into title
-      title = `${departureCity} - ${arrivalCity}`;
+      title = `${flightDetails.departureCity} - ${flightDetails.arrivalCity}`;
       startDateTime = dateTimeLocalToUTC(formData.startDateTime);
       endDateTime = formData.endDateTime
         ? dateTimeLocalToUTC(formData.endDateTime)
         : undefined;
     } else if (type === "Transport") {
       details = { mode: transportDetails.mode };
+      title = transportDetails.title;
       startDateTime = dateTimeLocalToUTC(formData.startDateTime);
       endDateTime = formData.endDateTime
         ? dateTimeLocalToUTC(formData.endDateTime)
@@ -158,6 +159,7 @@ export function ItineraryForm({
         }).filter(([, v]) => v !== undefined && v !== ""),
       );
     } else if (type === "PlaceVisit") {
+      title = placeVisitDetails.title;
       details = Object.fromEntries(
         Object.entries(placeVisitDetails).filter(([, v]) => v !== ""),
       );
@@ -166,6 +168,7 @@ export function ItineraryForm({
         ? dateTimeLocalToUTC(formData.endDateTime)
         : undefined;
     } else if (type === "Food") {
+      title = foodDetails.title;
       details = Object.fromEntries(
         Object.entries(foodDetails).filter(([, v]) => v !== ""),
       );
@@ -222,290 +225,56 @@ export function ItineraryForm({
         </FormControl>
 
         {type === "Flight" ? (
-          <>
-            <Stack direction="row" spacing={2}>
-              <TextField
-                label="Departure City"
-                required
-                fullWidth
-                value={departureCity}
-                onChange={(e) => setDepartureCity(e.target.value)}
-                placeholder="e.g., Singapore"
-              />
-              <TextField
-                label="Arrival City"
-                required
-                fullWidth
-                value={arrivalCity}
-                onChange={(e) => setArrivalCity(e.target.value)}
-                placeholder="e.g., Chongqing"
-              />
-            </Stack>
-            <Stack direction="row" spacing={2}>
-              <TextField
-                label="Departure Airport"
-                fullWidth
-                value={flightDetails.departAirport}
-                onChange={(e) =>
-                  setFlightDetails({
-                    ...flightDetails,
-                    departAirport: e.target.value,
-                  })
-                }
-                placeholder="e.g., SIN"
-              />
-              <TextField
-                label="Arrival Airport"
-                fullWidth
-                value={flightDetails.arriveAirport}
-                onChange={(e) =>
-                  setFlightDetails({
-                    ...flightDetails,
-                    arriveAirport: e.target.value,
-                  })
-                }
-                placeholder="e.g., CKG"
-              />
-            </Stack>
-          </>
+          <FlightFields
+            flightDetails={flightDetails}
+            onFlightDetailsChange={setFlightDetails}
+          />
         ) : type === "Accommodation" ? (
-          <>
-            <AmapPlaceAutocomplete
-              label="Hotel Name"
-              value={accommodationDetails.hotelName}
-              onPlaceSelect={(place) =>
-                setAccommodationDetails({
-                  ...accommodationDetails,
-                  hotelName: place.name,
-                  address: place.address,
-                })
-              }
-              placeholder="Search for hotel..."
-              required
-            />
-            <TextField
-              label="Address"
-              fullWidth
-              value={accommodationDetails.address}
-              onChange={(e) =>
-                setAccommodationDetails({
-                  ...accommodationDetails,
-                  address: e.target.value,
-                })
-              }
-              placeholder="Address will be filled automatically from search"
-            />
-          </>
-        ) : (
-          <TextField
-            label="Title"
-            required
-            fullWidth
-            value={formData.title}
-            onChange={(e) =>
-              setFormData({ ...formData, title: e.target.value })
-            }
-            placeholder={`e.g., ${type === "Food" ? "Dinner at Dadong" : "Visit Forbidden City"}`}
+          <AccommodationFields
+            accommodationDetails={accommodationDetails}
+            onAccommodationDetailsChange={setAccommodationDetails}
           />
-        )}
-
-        <Stack direction="row" spacing={2}>
-          <FormControl sx={{ flex: 1 }}>
-            <InputLabel>Timezone</InputLabel>
-            <Select
-              value={formData.startTimezone}
-              label="Timezone"
-              onChange={(e) =>
-                setFormData({ ...formData, startTimezone: e.target.value })
-              }
-            >
-              {COMMON_TIMEZONES.map((tz) => (
-                <MenuItem key={tz.value} value={tz.value}>
-                  {tz.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <TextField
-            label={type === "Accommodation" ? "Check-In" : "Start Date & Time"}
-            type="datetime-local"
-            required
-            sx={{ flex: 3 }}
-            value={formData.startDateTime}
-            onChange={(e) =>
-              setFormData({ ...formData, startDateTime: e.target.value })
-            }
-            InputLabelProps={{ shrink: true }}
+        ) : type === "Transport" ? (
+          <TransportFields
+            transportDetails={transportDetails}
+            onTransportDetailsChange={setTransportDetails}
           />
-        </Stack>
-
-        <Stack direction="row" spacing={2}>
-          <FormControl sx={{ flex: 1 }}>
-            <InputLabel>Timezone</InputLabel>
-            <Select
-              value={formData.endTimezone}
-              label="Timezone"
-              onChange={(e) =>
-                setFormData({ ...formData, endTimezone: e.target.value })
-              }
-            >
-              {COMMON_TIMEZONES.map((tz) => (
-                <MenuItem key={tz.value} value={tz.value}>
-                  {tz.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <TextField
-            label={type === "Accommodation" ? "Check-Out" : "End Date & Time"}
-            type="datetime-local"
-            sx={{ flex: 3 }}
-            value={formData.endDateTime}
-            onChange={(e) =>
-              setFormData({ ...formData, endDateTime: e.target.value })
-            }
-            InputLabelProps={{ shrink: true }}
+        ) : type === "PlaceVisit" ? (
+          <PlaceVisitFields
+            placeVisitDetails={placeVisitDetails}
+            onPlaceVisitDetailsChange={setPlaceVisitDetails}
           />
-        </Stack>
+        ) : type === "Food" ? (
+          <FoodFields
+            foodDetails={foodDetails}
+            onFoodDetailsChange={setFoodDetails}
+          />
+        ) : null}
 
-        {/* Flight-specific fields */}
-        {type === "Flight" && (
-          <Stack spacing={2}>
-            <Typography variant="subtitle2" color="primary">
-              Flight Details
-            </Typography>
-            <Stack direction="row" spacing={2}>
-              <TextField
-                label="Airline"
-                fullWidth
-                value={flightDetails.airline}
-                onChange={(e) =>
-                  setFlightDetails({
-                    ...flightDetails,
-                    airline: e.target.value,
-                  })
-                }
-              />
-              <TextField
-                label="Flight No"
-                fullWidth
-                value={flightDetails.flightNo}
-                onChange={(e) =>
-                  setFlightDetails({
-                    ...flightDetails,
-                    flightNo: e.target.value,
-                  })
-                }
-              />
-            </Stack>
-          </Stack>
-        )}
+        <DateTimeFields
+          label={type === "Accommodation" ? "Check-In" : "Start Date & Time"}
+          timezone={formData.startTimezone}
+          dateTime={formData.startDateTime}
+          required
+          onTimezoneChange={(tz) =>
+            setFormData({ ...formData, startTimezone: tz })
+          }
+          onDateTimeChange={(dt) =>
+            setFormData({ ...formData, startDateTime: dt })
+          }
+        />
 
-        {/* Transport-specific fields */}
-        {type === "Transport" && (
-          <FormControl fullWidth>
-            <InputLabel>Transport Mode</InputLabel>
-            <Select
-              value={transportDetails.mode}
-              label="Transport Mode"
-              onChange={(e) =>
-                setTransportDetails({ mode: e.target.value as TransportMode })
-              }
-            >
-              {TRANSPORT_MODES.map((mode) => (
-                <MenuItem key={mode} value={mode}>
-                  {mode}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
-
-        {/* Accommodation-specific fields */}
-        {type === "Accommodation" && (
-          <Stack spacing={2}>
-            <Typography variant="subtitle2" color="primary">
-              Accommodation Details
-            </Typography>
-            <TextField
-              label="Number of Guests"
-              type="number"
-              fullWidth
-              value={accommodationDetails.guests}
-              onChange={(e) =>
-                setAccommodationDetails({
-                  ...accommodationDetails,
-                  guests: e.target.value,
-                })
-              }
-            />
-          </Stack>
-        )}
-
-        {/* PlaceVisit-specific fields */}
-        {type === "PlaceVisit" && (
-          <Stack spacing={2}>
-            <Typography variant="subtitle2" color="primary">
-              Place Visit Details
-            </Typography>
-            <TextField
-              label="Ticket Info"
-              fullWidth
-              value={placeVisitDetails.ticketInfo}
-              onChange={(e) =>
-                setPlaceVisitDetails({
-                  ...placeVisitDetails,
-                  ticketInfo: e.target.value,
-                })
-              }
-              placeholder="e.g., ¥60, book online"
-            />
-            <TextField
-              label="Opening Hours"
-              fullWidth
-              value={placeVisitDetails.openingHours}
-              onChange={(e) =>
-                setPlaceVisitDetails({
-                  ...placeVisitDetails,
-                  openingHours: e.target.value,
-                })
-              }
-              placeholder="e.g., 9:00 AM - 5:00 PM"
-            />
-          </Stack>
-        )}
-
-        {/* Food-specific fields */}
-        {type === "Food" && (
-          <Stack spacing={2}>
-            <Typography variant="subtitle2" color="primary">
-              Food Details
-            </Typography>
-            <TextField
-              label="Cuisine"
-              fullWidth
-              value={foodDetails.cuisine}
-              onChange={(e) =>
-                setFoodDetails({ ...foodDetails, cuisine: e.target.value })
-              }
-              placeholder="e.g., Peking Duck, Sichuan"
-            />
-            <TextField
-              label="Reservation Info"
-              fullWidth
-              value={foodDetails.reservationInfo}
-              onChange={(e) =>
-                setFoodDetails({
-                  ...foodDetails,
-                  reservationInfo: e.target.value,
-                })
-              }
-              placeholder="e.g., Reserved for 7 PM, Table 12"
-            />
-          </Stack>
-        )}
+        <DateTimeFields
+          label={type === "Accommodation" ? "Check-Out" : "End Date & Time"}
+          timezone={formData.endTimezone}
+          dateTime={formData.endDateTime}
+          onTimezoneChange={(tz) =>
+            setFormData({ ...formData, endTimezone: tz })
+          }
+          onDateTimeChange={(dt) =>
+            setFormData({ ...formData, endDateTime: dt })
+          }
+        />
 
         <TextField
           label="Notes"
