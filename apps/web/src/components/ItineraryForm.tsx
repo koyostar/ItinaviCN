@@ -8,6 +8,13 @@ import type {
   ItineraryItemResponse,
 } from "@itinavi/schema";
 import {
+  ITINERARY_TYPES,
+  TRANSPORT_MODES,
+  ITINERARY_STATUSES,
+} from "@/lib/constants";
+import { COMMON_TIMEZONES } from "@/lib/utils/timezone";
+import { utcToDateTimeLocal, dateTimeLocalToUTC } from "@/lib/dateUtils";
+import {
   Box,
   Button,
   FormControl,
@@ -23,37 +30,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const TYPES: ItineraryItemType[] = [
-  "Flight",
-  "Transport",
-  "Accommodation",
-  "PlaceVisit",
-  "Food",
-];
-const TRANSPORT_MODES: TransportMode[] = [
-  "Metro",
-  "Bus",
-  "Taxi",
-  "Didi",
-  "Train",
-  "Walk",
-  "Other",
-];
-const STATUSES = ["Planned", "Booked", "Done", "Skipped"] as const;
 
-const COMMON_TIMEZONES = [
-  { value: "Asia/Shanghai", label: "(UTC+8) China" },
-  { value: "Asia/Singapore", label: "(UTC+8) Singapore" },
-  { value: "Asia/Tokyo", label: "(UTC+9) Japan" },
-  { value: "Asia/Hong_Kong", label: "(UTC+8) Hong Kong" },
-  { value: "Asia/Seoul", label: "(UTC+9) South Korea" },
-  { value: "Asia/Bangkok", label: "(UTC+7) Thailand" },
-  { value: "Europe/London", label: "(UTC+0) UK" },
-  { value: "Europe/Paris", label: "(UTC+1) France" },
-  { value: "America/New_York", label: "(UTC-5) US East" },
-  { value: "America/Los_Angeles", label: "(UTC-8) US West" },
-  { value: "Australia/Sydney", label: "(UTC+11) Australia" },
-];
 
 interface ItineraryFormProps {
   initialData?: ItineraryItemResponse;
@@ -87,10 +64,10 @@ export function ItineraryForm({
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
     startDateTime: initialData?.startDateTime
-      ? new Date(initialData.startDateTime).toISOString().slice(0, 16)
+      ? utcToDateTimeLocal(initialData.startDateTime)
       : "",
     endDateTime: initialData?.endDateTime
-      ? new Date(initialData.endDateTime).toISOString().slice(0, 16)
+      ? utcToDateTimeLocal(initialData.endDateTime)
       : "",
     status: initialData?.status || "Planned",
     timezone: initialData?.timezone || defaultTimezone,
@@ -173,9 +150,9 @@ export function ItineraryForm({
     }
 
     // Convert datetime-local to UTC ISO string
-    const startDateTime = new Date(formData.startDateTime).toISOString();
+    const startDateTime = dateTimeLocalToUTC(formData.startDateTime);
     const endDateTime = formData.endDateTime
-      ? new Date(formData.endDateTime).toISOString()
+      ? dateTimeLocalToUTC(formData.endDateTime)
       : undefined;
 
     // For flights, combine departure and arrival cities into title
@@ -214,7 +191,7 @@ export function ItineraryForm({
             label="Type"
             onChange={(e) => setType(e.target.value as ItineraryItemType)}
           >
-            {TYPES.map((t) => (
+            {ITINERARY_TYPES.map((t) => (
               <MenuItem key={t} value={t}>
                 {t}
               </MenuItem>
@@ -541,10 +518,10 @@ export function ItineraryForm({
             row
             value={formData.status}
             onChange={(e) =>
-              setFormData({ ...formData, status: e.target.value })
+              setFormData({ ...formData, status: e.target.value as typeof ITINERARY_STATUSES[number] })
             }
           >
-            {STATUSES.map((s) => (
+            {ITINERARY_STATUSES.map((s) => (
               <FormControlLabel
                 key={s}
                 value={s}

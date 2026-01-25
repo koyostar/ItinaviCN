@@ -18,15 +18,7 @@ import {
   Typography,
 } from '@mui/material';
 import { api } from '@/lib/api';
-
-const CATEGORIES: LocationCategory[] = [
-  'Place',
-  'Restaurant',
-  'Accommodation',
-  'TransportNode',
-  'Shop',
-  'Other',
-];
+import { LOCATION_CATEGORIES } from '@/lib/constants';
 
 export default function NewLocationPage({ params }: { params: Promise<{ tripId: string }> }) {
   const { tripId } = use(params);
@@ -93,7 +85,7 @@ export default function NewLocationPage({ params }: { params: Promise<{ tripId: 
                     setFormData({ ...formData, category: e.target.value as LocationCategory })
                   }
                 >
-                  {CATEGORIES.map((cat) => (
+                  {LOCATION_CATEGORIES.map((cat) => (
                     <MenuItem key={cat} value={cat}>
                       {cat}
                     </MenuItem>

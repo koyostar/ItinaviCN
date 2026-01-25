@@ -25,15 +25,15 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import FlightIcon from '@mui/icons-material/Flight';
-import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
-import HotelIcon from '@mui/icons-material/Hotel';
-import PlaceIcon from '@mui/icons-material/Place';
-import RestaurantIcon from '@mui/icons-material/Restaurant';
 import { api } from '@/lib/api';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { ItineraryForm } from '@/components/ItineraryForm';
 import { formatUTCDate } from '@/lib/dateUtils';
+import {
+  ITINERARY_TYPE_ICONS,
+  ITINERARY_TYPE_COLORS,
+  ITINERARY_STATUS_COLORS,
+} from '@/lib/constants';
 import {
   FlightCard,
   AccommodationCard,
@@ -41,29 +41,6 @@ import {
   PlaceVisitCard,
   FoodCard,
 } from '@/components/itinerary-cards';
-
-const typeIcons = {
-  Flight: FlightIcon,
-  Transport: DirectionsBusIcon,
-  Accommodation: HotelIcon,
-  PlaceVisit: PlaceIcon,
-  Food: RestaurantIcon,
-};
-
-const typeColors: Record<string, 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info'> = {
-  Flight: 'primary',
-  Transport: 'info',
-  Accommodation: 'success',
-  PlaceVisit: 'warning',
-  Food: 'error',
-};
-
-const statusColors: Record<string, 'default' | 'primary' | 'success' | 'error'> = {
-  Planned: 'default',
-  Booked: 'primary',
-  Done: 'success',
-  Skipped: 'error',
-};
 
 export default function ItineraryPage({ params }: { params: Promise<{ tripId: string }> }) {
   const { tripId } = use(params);
@@ -249,7 +226,10 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
           <Card>
             <CardContent>
               <Stack alignItems="center" spacing={2} py={4}>
-                <FlightIcon sx={{ fontSize: 64, color: 'text.secondary' }} />
+                {(() => {
+                  const FlightIcon = ITINERARY_TYPE_ICONS.Flight;
+                  return <FlightIcon sx={{ fontSize: 64, color: 'text.secondary' }} />;
+                })()}
                 <Typography variant="h6" color="text.secondary">
                   No itinerary items yet
                 </Typography>
@@ -275,7 +255,7 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
                 </Typography>
                 <Stack spacing={0}>
                   {dayItems.map((item, index) => {
-                    const Icon = typeIcons[item.type];
+                    const Icon = ITINERARY_TYPE_ICONS[item.type];
                     const isLast = index === dayItems.length - 1;
                     return (
                       <Box key={item.id} sx={{ position: 'relative', pl: 6 }}>
@@ -327,8 +307,8 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
                                     endTimezone={item.endTimezone}
                                     status={item.status}
                                     details={item.details as any}
-                                    statusColor={statusColors[item.status]}
-                                    typeColor={typeColors[item.type]}
+                                    statusColor={ITINERARY_STATUS_COLORS[item.status]}
+                                    typeColor={ITINERARY_TYPE_COLORS[item.type]}
                                   />
                                 ) : item.type === 'Accommodation' ? (
                                   <AccommodationCard
@@ -338,8 +318,8 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
                                     startTimezone={item.startTimezone}
                                     status={item.status}
                                     details={item.details as any}
-                                    statusColor={statusColors[item.status]}
-                                    typeColor={typeColors[item.type]}
+                                    statusColor={ITINERARY_STATUS_COLORS[item.status]}
+                                    typeColor={ITINERARY_TYPE_COLORS[item.type]}
                                   />
                                 ) : item.type === 'Transport' ? (
                                   <TransportCard
@@ -349,8 +329,8 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
                                     startTimezone={item.startTimezone}
                                     status={item.status}
                                     details={item.details as any}
-                                    statusColor={statusColors[item.status]}
-                                    typeColor={typeColors[item.type]}
+                                    statusColor={ITINERARY_STATUS_COLORS[item.status]}
+                                    typeColor={ITINERARY_TYPE_COLORS[item.type]}
                                   />
                                 ) : item.type === 'PlaceVisit' ? (
                                   <PlaceVisitCard
@@ -360,8 +340,8 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
                                     startTimezone={item.startTimezone}
                                     status={item.status}
                                     details={item.details as any}
-                                    statusColor={statusColors[item.status]}
-                                    typeColor={typeColors[item.type]}
+                                    statusColor={ITINERARY_STATUS_COLORS[item.status]}
+                                    typeColor={ITINERARY_TYPE_COLORS[item.type]}
                                   />
                                 ) : item.type === 'Food' ? (
                                   <FoodCard
@@ -370,8 +350,8 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
                                     startTimezone={item.startTimezone}
                                     status={item.status}
                                     details={item.details as any}
-                                    statusColor={statusColors[item.status]}
-                                    typeColor={typeColors[item.type]}
+                                    statusColor={ITINERARY_STATUS_COLORS[item.status]}
+                                    typeColor={ITINERARY_TYPE_COLORS[item.type]}
                                   />
                                 ) : null}
                                 

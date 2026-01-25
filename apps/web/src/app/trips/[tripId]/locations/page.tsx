@@ -21,15 +21,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PlaceIcon from '@mui/icons-material/Place';
 import { api } from '@/lib/api';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
-
-const categoryColors: Record<string, 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info'> = {
-  Place: 'primary',
-  Restaurant: 'error',
-  Accommodation: 'success',
-  TransportNode: 'info',
-  Shop: 'warning',
-  Other: 'secondary',
-};
+import { LOCATION_CATEGORY_COLORS } from '@/lib/constants';
 
 export default function LocationsPage({ params }: { params: Promise<{ tripId: string }> }) {
   const { tripId } = use(params);
@@ -149,7 +141,7 @@ export default function LocationsPage({ params }: { params: Promise<{ tripId: st
                         <Chip
                           label={location.category}
                           size="small"
-                          color={categoryColors[location.category]}
+                          color={LOCATION_CATEGORY_COLORS[location.category]}
                         />
                       </Stack>
                       

@@ -29,7 +29,7 @@ import { COUNTRIES, CITIES, getDisplayName } from '@/lib/locations';
 import { useUserPreferences } from '@/contexts/UserPreferencesContext';
 import { TripForm } from '@/components/TripForm';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { formatUTCDate } from '@/lib/dateUtils';
+import { formatUTCDate, calculateDays } from '@/lib/dateUtils';
 
 export default function TripDetailPage({ params }: { params: Promise<{ tripId: string }> }) {
   const { tripId } = use(params);
@@ -120,10 +120,7 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
     );
   }
 
-  const duration = Math.ceil(
-    (new Date(trip.endDate).getTime() - new Date(trip.startDate).getTime()) /
-      (1000 * 60 * 60 * 24)
-  ) + 1;
+  const duration = calculateDays(trip.startDate, trip.endDate);
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
