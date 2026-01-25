@@ -77,11 +77,11 @@ export class ItineraryController {
       endDateTime: input.endDateTime ? new Date(input.endDateTime) : null,
       timezone: input.timezone,
       status: input.status,
-      locationId: input.locationId ?? null,
+      ...(input.locationId ? { location: { connect: { id: input.locationId } } } : {}),
       bookingRef: input.bookingRef ?? null,
       url: input.url ?? null,
       notes: input.notes ?? null,
-      details: input.details ?? null,
+      details: input.details ? (input.details as object) : undefined,
     });
 
     return toItineraryItemResponse(item);
@@ -104,14 +104,16 @@ export class ItineraryController {
       ...(input.timezone !== undefined ? { timezone: input.timezone } : {}),
       ...(input.status !== undefined ? { status: input.status } : {}),
       ...(input.locationId !== undefined
-        ? { locationId: input.locationId ?? null }
+        ? input.locationId
+          ? { location: { connect: { id: input.locationId } } }
+          : { location: { disconnect: true } }
         : {}),
       ...(input.bookingRef !== undefined
         ? { bookingRef: input.bookingRef ?? null }
         : {}),
       ...(input.url !== undefined ? { url: input.url ?? null } : {}),
       ...(input.notes !== undefined ? { notes: input.notes ?? null } : {}),
-      ...(input.details !== undefined ? { details: input.details ?? null } : {}),
+      ...(input.details !== undefined ? { details: input.details as object } : {}),
     });
 
     return toItineraryItemResponse(item);

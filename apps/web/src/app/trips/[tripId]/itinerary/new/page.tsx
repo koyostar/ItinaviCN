@@ -105,7 +105,7 @@ export default function NewItineraryItemPage({ params }: { params: { tripId: str
         ...(formData.notes && { notes: formData.notes }),
         ...(formData.bookingRef && { bookingRef: formData.bookingRef }),
         ...(formData.url && { url: formData.url }),
-        ...(details && Object.keys(details).length > 0 && { details }),
+        ...(details && typeof details === 'object' && Object.keys(details).length > 0 ? { details } : {}),
       } as CreateItineraryItemRequest;
 
       await api.itinerary.create(params.tripId, payload);
