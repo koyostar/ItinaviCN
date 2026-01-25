@@ -10,15 +10,15 @@
  */
 export function localDateToUTC(dateString: string, endOfDay = false): string {
   // Parse as local date
-  const [year, month, day] = dateString.split('-').map(Number);
+  const [year, month, day] = dateString.split("-").map(Number);
   const date = new Date(year, month - 1, day);
-  
+
   if (endOfDay) {
     date.setHours(23, 59, 59, 999);
   } else {
     date.setHours(0, 0, 0, 0);
   }
-  
+
   return date.toISOString();
 }
 
@@ -30,8 +30,8 @@ export function localDateToUTC(dateString: string, endOfDay = false): string {
 export function utcToLocalDate(utcDatetime: string): string {
   const date = new Date(utcDatetime);
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
@@ -44,13 +44,13 @@ export function utcToLocalDate(utcDatetime: string): string {
  */
 export function formatUTCDate(
   utcDatetime: string,
-  locale = 'en-US',
+  locale = "en-US",
   options: Intl.DateTimeFormatOptions = {
-    weekday: 'short',
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  }
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  },
 ): string {
   const date = new Date(utcDatetime);
   return date.toLocaleDateString(locale, options);
@@ -65,11 +65,11 @@ export function formatUTCDate(
  */
 export function formatUTCTime(
   utcDatetime: string,
-  locale = 'en-US',
+  locale = "en-US",
   options: Intl.DateTimeFormatOptions = {
-    hour: '2-digit',
-    minute: '2-digit',
-  }
+    hour: "2-digit",
+    minute: "2-digit",
+  },
 ): string {
   const date = new Date(utcDatetime);
   return date.toLocaleTimeString(locale, options);
@@ -84,13 +84,13 @@ export function formatUTCTime(
  */
 export function formatUTCDateTime(
   utcDatetime: string,
-  locale = 'en-US',
+  locale = "en-US",
   options: Intl.DateTimeFormatOptions = {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  },
 ): string {
   const date = new Date(utcDatetime);
   return date.toLocaleString(locale, options);
@@ -106,7 +106,47 @@ export function utcToDateTimeLocal(utcDatetime: string): string {
 }
 
 /**
+ * Converts a UTC datetime to datetime-local input format in a specific timezone
+ * @param utcDatetime - ISO 8601 UTC datetime string
+ * @param timezone - IANA timezone name (e.g., 'Asia/Shanghai')
+ * @returns Datetime string in format YYYY-MM-DDTHH:mm for datetime-local inputs
+ */
+export function utcToDateTimeLocalInTimezone(
+  utcDatetime: string,
+  timezone: string,
+): string {
+  const date = new Date(utcDatetime);
+
+  // Get the date parts in the target timezone
+  const year = date.toLocaleString("en-US", {
+    timeZone: timezone,
+    year: "numeric",
+  });
+  const month = date.toLocaleString("en-US", {
+    timeZone: timezone,
+    month: "2-digit",
+  });
+  const day = date.toLocaleString("en-US", {
+    timeZone: timezone,
+    day: "2-digit",
+  });
+  const hour = date.toLocaleString("en-US", {
+    timeZone: timezone,
+    hour: "2-digit",
+    hour12: false,
+  });
+  const minute = date.toLocaleString("en-US", {
+    timeZone: timezone,
+    minute: "2-digit",
+  });
+
+  // Format as YYYY-MM-DDTHH:mm
+  return `${year}-${month}-${day}T${hour.padStart(2, "0")}:${minute}`;
+}
+
+/**
  * Converts a datetime-local input value to UTC ISO string
+ * Assumes the input is in browser's local timezone
  * @param datetimeLocal - Datetime string in format YYYY-MM-DDTHH:mm
  * @returns ISO 8601 UTC datetime string
  */
@@ -120,15 +160,18 @@ export function dateTimeLocalToUTC(datetimeLocal: string): string {
  * @param endDateTime - ISO 8601 datetime string
  * @returns Duration in format "Xh Ym" or empty string if endDateTime is null
  */
-export function calculateDuration(startDateTime: string, endDateTime: string | null): string {
-  if (!endDateTime) return '';
-  
+export function calculateDuration(
+  startDateTime: string,
+  endDateTime: string | null,
+): string {
+  if (!endDateTime) return "";
+
   const start = new Date(startDateTime);
   const end = new Date(endDateTime);
   const diffMs = end.getTime() - start.getTime();
   const hours = Math.floor(diffMs / (1000 * 60 * 60));
   const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-  
+
   return `${hours}h ${minutes}m`;
 }
 
@@ -143,6 +186,6 @@ export function calculateDays(startDate: string, endDate: string): number {
   const end = new Date(endDate);
   const diffMs = end.getTime() - start.getTime();
   const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-  
+
   return days + 1; // +1 to make it inclusive
 }

@@ -4,8 +4,10 @@ import { formatUTCTime, calculateDuration } from "@/lib/dateUtils";
 
 interface FlightDetails {
   flightNo?: string;
-  departAirport?: string;
-  arriveAirport?: string;
+  departureAirport?: string;
+  arrivalAirport?: string;
+  departureAirportAddress?: string;
+  arrivalAirportAddress?: string;
   terminal?: string;
   airline?: string;
   seat?: string;
@@ -57,7 +59,7 @@ export function FlightCard({
             {departureCity}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {details?.departAirport || ""}
+            {details?.departureAirport || ""}
           </Typography>
           {startTimezone && (
             <Typography variant="caption" color="text.secondary">
@@ -77,10 +79,15 @@ export function FlightCard({
             ————→
           </Typography>
           {endDateTime && (
-            <Typography variant="caption" color="text.secondary" display="block">
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              display="block"
+            >
               {calculateDuration(startDateTime, endDateTime)}
             </Typography>
-          )}        </Box>
+          )}{" "}
+        </Box>
 
         {/* Arrival */}
         <Box sx={{ flex: 1 }}>
@@ -88,21 +95,16 @@ export function FlightCard({
             {arrivalCity}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {details?.arriveAirport || ""}
+            {details?.arrivalAirport || ""}
           </Typography>
           {endTimezone && (
             <Typography variant="caption" color="text.secondary">
-              {endDateTime ? formatUTCTime(endDateTime) : "TBD"} ({getUTCOffset(endTimezone)})
+              {endDateTime ? formatUTCTime(endDateTime) : "TBD"} (
+              {getUTCOffset(endTimezone)})
             </Typography>
           )}
         </Box>
       </Box>
-
-      {details?.terminal && (
-        <Typography variant="body2" color="text.secondary" mt={1}>
-          Terminal {details.terminal}
-        </Typography>
-      )}
     </Box>
   );
 }

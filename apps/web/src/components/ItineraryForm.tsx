@@ -8,7 +8,7 @@ import type {
   ItineraryItemResponse,
 } from "@itinavi/schema";
 import { ITINERARY_TYPES, ITINERARY_STATUSES } from "@/lib/constants";
-import { utcToDateTimeLocal, dateTimeLocalToUTC } from "@/lib/dateUtils";
+import { utcToDateTimeLocal, dateTimeLocalToUTC, utcToDateTimeLocalInTimezone } from "@/lib/dateUtils";
 import { FlightFields } from "./itinerary-form/FlightFields";
 import { AccommodationFields } from "./itinerary-form/AccommodationFields";
 import { TransportFields } from "./itinerary-form/TransportFields";
@@ -77,17 +77,19 @@ export function ItineraryForm({
     arrivalCity: parsedFlightTitle[1] || "",
     airline: (initialData?.details as any)?.airline || "",
     flightNo: (initialData?.details as any)?.flightNo || "",
-    departAirport: (initialData?.details as any)?.departAirport || "",
-    arriveAirport: (initialData?.details as any)?.arriveAirport || "",
-    terminal: (initialData?.details as any)?.terminal || "",
-    seat: (initialData?.details as any)?.seat || "",
+    departureAirport: (initialData?.details as any)?.departureAirport || "",
+    arrivalAirport: (initialData?.details as any)?.arrivalAirport || "",
+    departureAirportAddress:
+      (initialData?.details as any)?.departureAirportAddress || "",
+    arrivalAirportAddress:
+      (initialData?.details as any)?.arrivalAirportAddress || "",
     startTimezone: initialData?.startTimezone || defaultTimezone,
-    startDateTime: initialData?.startDateTime
-      ? utcToDateTimeLocal(initialData.startDateTime)
+    startDateTime: initialData?.startDateTime && initialData?.startTimezone
+      ? utcToDateTimeLocalInTimezone(initialData.startDateTime, initialData.startTimezone)
       : "",
     endTimezone: initialData?.endTimezone || defaultTimezone,
-    endDateTime: initialData?.endDateTime
-      ? utcToDateTimeLocal(initialData.endDateTime)
+    endDateTime: initialData?.endDateTime && initialData?.endTimezone
+      ? utcToDateTimeLocalInTimezone(initialData.endDateTime, initialData.endTimezone)
       : "",
   });
 
@@ -95,12 +97,12 @@ export function ItineraryForm({
     title: initialData?.type === "Transport" ? initialData.title : "",
     mode: ((initialData?.details as any)?.mode || "Metro") as TransportMode,
     startTimezone: initialData?.startTimezone || defaultTimezone,
-    startDateTime: initialData?.startDateTime
-      ? utcToDateTimeLocal(initialData.startDateTime)
+    startDateTime: initialData?.startDateTime && initialData?.startTimezone
+      ? utcToDateTimeLocalInTimezone(initialData.startDateTime, initialData.startTimezone)
       : "",
     endTimezone: initialData?.endTimezone || defaultTimezone,
-    endDateTime: initialData?.endDateTime
-      ? utcToDateTimeLocal(initialData.endDateTime)
+    endDateTime: initialData?.endDateTime && initialData?.endTimezone
+      ? utcToDateTimeLocalInTimezone(initialData.endDateTime, initialData.endTimezone)
       : "",
   });
 
@@ -109,12 +111,12 @@ export function ItineraryForm({
     address: (initialData?.details as any)?.address || "",
     guests: (initialData?.details as any)?.guests?.toString() || "",
     startTimezone: initialData?.startTimezone || defaultTimezone,
-    startDateTime: initialData?.startDateTime
-      ? utcToDateTimeLocal(initialData.startDateTime)
+    startDateTime: initialData?.startDateTime && initialData?.startTimezone
+      ? utcToDateTimeLocalInTimezone(initialData.startDateTime, initialData.startTimezone)
       : "",
     endTimezone: initialData?.endTimezone || defaultTimezone,
-    endDateTime: initialData?.endDateTime
-      ? utcToDateTimeLocal(initialData.endDateTime)
+    endDateTime: initialData?.endDateTime && initialData?.endTimezone
+      ? utcToDateTimeLocalInTimezone(initialData.endDateTime, initialData.endTimezone)
       : "",
   });
 
@@ -123,12 +125,12 @@ export function ItineraryForm({
     ticketInfo: (initialData?.details as any)?.ticketInfo || "",
     openingHours: (initialData?.details as any)?.openingHours || "",
     startTimezone: initialData?.startTimezone || defaultTimezone,
-    startDateTime: initialData?.startDateTime
-      ? utcToDateTimeLocal(initialData.startDateTime)
+    startDateTime: initialData?.startDateTime && initialData?.startTimezone
+      ? utcToDateTimeLocalInTimezone(initialData.startDateTime, initialData.startTimezone)
       : "",
     endTimezone: initialData?.endTimezone || defaultTimezone,
-    endDateTime: initialData?.endDateTime
-      ? utcToDateTimeLocal(initialData.endDateTime)
+    endDateTime: initialData?.endDateTime && initialData?.endTimezone
+      ? utcToDateTimeLocalInTimezone(initialData.endDateTime, initialData.endTimezone)
       : "",
   });
 
@@ -137,12 +139,12 @@ export function ItineraryForm({
     cuisine: (initialData?.details as any)?.cuisine || "",
     reservationInfo: (initialData?.details as any)?.reservationInfo || "",
     startTimezone: initialData?.startTimezone || defaultTimezone,
-    startDateTime: initialData?.startDateTime
-      ? utcToDateTimeLocal(initialData.startDateTime)
+    startDateTime: initialData?.startDateTime && initialData?.startTimezone
+      ? utcToDateTimeLocalInTimezone(initialData.startDateTime, initialData.startTimezone)
       : "",
     endTimezone: initialData?.endTimezone || defaultTimezone,
-    endDateTime: initialData?.endDateTime
-      ? utcToDateTimeLocal(initialData.endDateTime)
+    endDateTime: initialData?.endDateTime && initialData?.endTimezone
+      ? utcToDateTimeLocalInTimezone(initialData.endDateTime, initialData.endTimezone)
       : "",
   });
 
@@ -154,11 +156,31 @@ export function ItineraryForm({
         startTimezone: defaultTimezone,
         endTimezone: defaultTimezone,
       }));
-      setFlightDetails((prev) => ({ ...prev, startTimezone: defaultTimezone, endTimezone: defaultTimezone }));
-      setTransportDetails((prev) => ({ ...prev, startTimezone: defaultTimezone, endTimezone: defaultTimezone }));
-      setAccommodationDetails((prev) => ({ ...prev, startTimezone: defaultTimezone, endTimezone: defaultTimezone }));
-      setPlaceVisitDetails((prev) => ({ ...prev, startTimezone: defaultTimezone, endTimezone: defaultTimezone }));
-      setFoodDetails((prev) => ({ ...prev, startTimezone: defaultTimezone, endTimezone: defaultTimezone }));
+      setFlightDetails((prev) => ({
+        ...prev,
+        startTimezone: defaultTimezone,
+        endTimezone: defaultTimezone,
+      }));
+      setTransportDetails((prev) => ({
+        ...prev,
+        startTimezone: defaultTimezone,
+        endTimezone: defaultTimezone,
+      }));
+      setAccommodationDetails((prev) => ({
+        ...prev,
+        startTimezone: defaultTimezone,
+        endTimezone: defaultTimezone,
+      }));
+      setPlaceVisitDetails((prev) => ({
+        ...prev,
+        startTimezone: defaultTimezone,
+        endTimezone: defaultTimezone,
+      }));
+      setFoodDetails((prev) => ({
+        ...prev,
+        startTimezone: defaultTimezone,
+        endTimezone: defaultTimezone,
+      }));
     }
   }, [defaultTimezone, initialData]);
 
@@ -171,7 +193,15 @@ export function ItineraryForm({
     let endDateTime: string | undefined;
 
     if (type === "Flight") {
-      const { startTimezone: st, startDateTime: sdt, endTimezone: et, endDateTime: edt, ...flightData } = flightDetails;
+      const {
+        departureCity,
+        arrivalCity,
+        startTimezone: st,
+        startDateTime: sdt,
+        endTimezone: et,
+        endDateTime: edt,
+        ...flightData
+      } = flightDetails;
       details = Object.fromEntries(
         Object.entries(flightData).filter(([, v]) => v !== ""),
       );
@@ -205,7 +235,14 @@ export function ItineraryForm({
       );
     } else if (type === "PlaceVisit") {
       title = placeVisitDetails.title;
-      const { startTimezone: st, startDateTime: sdt, endTimezone: et, endDateTime: edt, title: t, ...placeData } = placeVisitDetails;
+      const {
+        startTimezone: st,
+        startDateTime: sdt,
+        endTimezone: et,
+        endDateTime: edt,
+        title: t,
+        ...placeData
+      } = placeVisitDetails;
       details = Object.fromEntries(
         Object.entries(placeData).filter(([, v]) => v !== ""),
       );
@@ -215,7 +252,14 @@ export function ItineraryForm({
         : undefined;
     } else if (type === "Food") {
       title = foodDetails.title;
-      const { startTimezone: st, startDateTime: sdt, endTimezone: et, endDateTime: edt, title: t, ...foodData } = foodDetails;
+      const {
+        startTimezone: st,
+        startDateTime: sdt,
+        endTimezone: et,
+        endDateTime: edt,
+        title: t,
+        ...foodData
+      } = foodDetails;
       details = Object.fromEntries(
         Object.entries(foodData).filter(([, v]) => v !== ""),
       );
