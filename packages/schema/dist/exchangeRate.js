@@ -1,13 +1,16 @@
-import { z } from "zod";
-import { CurrencyCodeSchema } from "./trip";
-export const ExchangeRateSchema = z.object({
-    id: z.string().uuid(),
-    tripId: z.string().uuid(),
-    fromCurrency: CurrencyCodeSchema,
-    toCurrency: CurrencyCodeSchema,
-    rate: z.number().positive(),
-    date: z.string(), // ISO date when the rate was recorded
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CreateExchangeRateInputSchema = exports.ExchangeRateSchema = void 0;
+const zod_1 = require("zod");
+const trip_1 = require("./trip");
+exports.ExchangeRateSchema = zod_1.z.object({
+    id: zod_1.z.string().uuid(),
+    tripId: zod_1.z.string().uuid(),
+    fromCurrency: trip_1.CurrencyCodeSchema,
+    toCurrency: trip_1.CurrencyCodeSchema,
+    rate: zod_1.z.number().positive(),
+    date: zod_1.z.string(), // ISO date when the rate was recorded
 });
-export const CreateExchangeRateInputSchema = ExchangeRateSchema.omit({
+exports.CreateExchangeRateInputSchema = exports.ExchangeRateSchema.omit({
     id: true,
 });

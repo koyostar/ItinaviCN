@@ -1,12 +1,15 @@
-import { z } from "zod";
-import { CurrencyCodeSchema } from "./trip";
-export const ExpenseSchema = z.object({
-    id: z.string().uuid(),
-    tripId: z.string().uuid(),
-    date: z.string(), // ISO date
-    amount: z.number().positive(),
-    currency: CurrencyCodeSchema,
-    category: z
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CreateExpenseInputSchema = exports.ExpenseSchema = void 0;
+const zod_1 = require("zod");
+const trip_1 = require("./trip");
+exports.ExpenseSchema = zod_1.z.object({
+    id: zod_1.z.string().uuid(),
+    tripId: zod_1.z.string().uuid(),
+    date: zod_1.z.string(), // ISO date
+    amount: zod_1.z.number().positive(),
+    currency: trip_1.CurrencyCodeSchema,
+    category: zod_1.z
         .enum([
         "Food",
         "Transport",
@@ -16,7 +19,7 @@ export const ExpenseSchema = z.object({
         "Other",
     ])
         .default("Other"),
-    description: z.string().optional(),
-    notes: z.string().optional(),
+    description: zod_1.z.string().optional(),
+    notes: zod_1.z.string().optional(),
 });
-export const CreateExpenseInputSchema = ExpenseSchema.omit({ id: true });
+exports.CreateExpenseInputSchema = exports.ExpenseSchema.omit({ id: true });

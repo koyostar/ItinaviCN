@@ -1,5 +1,8 @@
-import { z } from "zod";
-export const LocationCategorySchema = z.enum([
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ListLocationsResponseSchema = exports.LocationResponseSchema = exports.UpdateLocationRequestSchema = exports.CreateLocationRequestSchema = exports.LocationIdParamSchema = exports.LocationCategorySchema = void 0;
+const zod_1 = require("zod");
+exports.LocationCategorySchema = zod_1.z.enum([
     "Place",
     "Restaurant",
     "Accommodation",
@@ -7,32 +10,32 @@ export const LocationCategorySchema = z.enum([
     "Shop",
     "Other",
 ]);
-export const LocationIdParamSchema = z.object({
-    locationId: z.string().uuid(),
+exports.LocationIdParamSchema = zod_1.z.object({
+    locationId: zod_1.z.string().uuid(),
 });
-export const CreateLocationRequestSchema = z.object({
-    name: z.string().min(1).max(200),
-    category: LocationCategorySchema,
-    address: z.string().max(500).optional(),
-    latitude: z.number().min(-90).max(90).optional(),
-    longitude: z.number().min(-180).max(180).optional(),
-    baiduPlaceId: z.string().max(100).optional(),
-    notes: z.string().max(2000).optional(),
+exports.CreateLocationRequestSchema = zod_1.z.object({
+    name: zod_1.z.string().min(1).max(200),
+    category: exports.LocationCategorySchema,
+    address: zod_1.z.string().max(500).optional(),
+    latitude: zod_1.z.number().min(-90).max(90).optional(),
+    longitude: zod_1.z.number().min(-180).max(180).optional(),
+    baiduPlaceId: zod_1.z.string().max(100).optional(),
+    notes: zod_1.z.string().max(2000).optional(),
 });
-export const UpdateLocationRequestSchema = CreateLocationRequestSchema.partial().refine((v) => Object.keys(v).length > 0, { message: "At least one field is required" });
-export const LocationResponseSchema = z.object({
-    id: z.string().uuid(),
-    tripId: z.string().uuid(),
-    name: z.string(),
-    category: LocationCategorySchema,
-    address: z.string().nullable(),
-    latitude: z.number().nullable(),
-    longitude: z.number().nullable(),
-    baiduPlaceId: z.string().nullable(),
-    notes: z.string().nullable(),
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
+exports.UpdateLocationRequestSchema = exports.CreateLocationRequestSchema.partial().refine((v) => Object.keys(v).length > 0, { message: "At least one field is required" });
+exports.LocationResponseSchema = zod_1.z.object({
+    id: zod_1.z.string().uuid(),
+    tripId: zod_1.z.string().uuid(),
+    name: zod_1.z.string(),
+    category: exports.LocationCategorySchema,
+    address: zod_1.z.string().nullable(),
+    latitude: zod_1.z.number().nullable(),
+    longitude: zod_1.z.number().nullable(),
+    baiduPlaceId: zod_1.z.string().nullable(),
+    notes: zod_1.z.string().nullable(),
+    createdAt: zod_1.z.string().datetime(),
+    updatedAt: zod_1.z.string().datetime(),
 });
-export const ListLocationsResponseSchema = z.object({
-    items: z.array(LocationResponseSchema),
+exports.ListLocationsResponseSchema = zod_1.z.object({
+    items: zod_1.z.array(exports.LocationResponseSchema),
 });
