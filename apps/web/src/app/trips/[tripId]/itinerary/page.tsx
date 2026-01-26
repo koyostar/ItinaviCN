@@ -94,17 +94,62 @@ export default function ItineraryPage({
     return true;
   });
 
-  // Group by day
+  // Group by day - items spanning multiple days appear in each day
   const groupedByDay = filteredItems.reduce(
     (acc, item) => {
-      const day = formatUTCDate(item.startDateTime, "en-US", {
+      const startDay = formatUTCDate(item.startDateTime, "en-US", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
       });
-      if (!acc[day]) acc[day] = [];
-      acc[day].push(item);
+      
+      // Add to start day
+      if (!acc[startDay]) acc[startDay] = [];
+      acc[startDay].push(item);
+      
+      // If item has end date on different day, add to all days in between
+      if (item.endDateTime) {
+        const startDate = new Date(item.startDateTime);
+        const endDate = new Date(item.endDateTime);
+        
+        // Check if they're on different calendar days
+        const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+        const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+        
+        if (startDateOnly.getTime() !== endDateOnly.getTime()) {
+          // Add to end day
+          const endDay = formatUTCDate(item.endDateTime, "en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+          if (!acc[endDay]) acc[endDay] = [];
+          if (!acc[endDay].find(i => i.id === item.id)) {
+            acc[endDay].push(item);
+          }
+          
+          // Add to intermediate days
+          const currentDate = new Date(startDateOnly);
+          currentDate.setDate(currentDate.getDate() + 1);
+          
+          while (currentDate < endDateOnly) {
+            const intermediateDay = formatUTCDate(currentDate.toISOString(), "en-US", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            });
+            if (!acc[intermediateDay]) acc[intermediateDay] = [];
+            if (!acc[intermediateDay].find(i => i.id === item.id)) {
+              acc[intermediateDay].push(item);
+            }
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+        }
+      }
+      
       return acc;
     },
     {} as Record<string, ItineraryItemResponse[]>,
