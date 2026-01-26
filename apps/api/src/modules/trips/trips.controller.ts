@@ -9,6 +9,13 @@ import {
 import { validate } from '../../common/validate';
 import { TripsService } from './trips.service';
 
+/**
+ * Transforms a database trip record to API response format.
+ * Converts Date objects to ISO strings and validates response schema.
+ * 
+ * @param trip - Raw trip data from database
+ * @returns Validated trip response conforming to TripResponseSchema
+ */
 function toTripResponse(trip: {
   id: string;
   title: string;
@@ -39,10 +46,22 @@ function toTripResponse(trip: {
   });
 }
 
+/**
+ * REST controller for trip management endpoints.
+ * Handles HTTP requests for CRUD operations on trips.
+ * 
+ * Base path: /api/trips
+ */
 @Controller('api/trips')
 export class TripsController {
   constructor(private readonly trips: TripsService) {}
 
+  /**
+   * GET /api/trips
+   * Retrieves all trips sorted by start date.
+   * 
+   * @returns List of trips with their details
+   */
   @Get()
   async list() {
     const rows = await this.trips.listTrips();
@@ -50,6 +69,15 @@ export class TripsController {
     return ListTripsResponseSchema.parse(payload);
   }
 
+  /**
+   * GET /api/trips/:tripId
+   * Retrieves a single trip by ID.
+   * 
+   * @param params - Route parameters containing tripId
+   * @returns Trip details
+   * @throws {NotFoundException} If trip is not found
+   * @throws {BadRequestException} If tripId is invalid
+   */
   @Get(':tripId')
   async get(@Param() params: unknown) {
     const { tripId } = validate(TripIdParamSchema, params);
@@ -57,6 +85,14 @@ export class TripsController {
     return toTripResponse(trip);
   }
 
+  /**
+   * POST /api/trips
+   * Creates a new trip.
+   * 
+   * @param body - Trip creation data
+   * @returns The newly created trip
+   * @throws {BadRequestException} If request body is invalid
+   */
   @Post()
   async create(@Body() body: unknown) {
     const input = validate(CreateTripRequestSchema, body);
@@ -74,6 +110,16 @@ export class TripsController {
     return toTripResponse(trip);
   }
 
+  /**
+   * PATCH /api/trips/:tripId
+   * Updates an existing trip with partial data.
+   * 
+   * @param params - Route parameters containing tripId
+   * @param body - Trip update data (partial)
+   * @returns The updated trip
+   * @throws {NotFoundException} If trip is not found
+   * @throws {BadRequestException} If request is invalid
+   */
   @Patch(':tripId')
   async update(@Param() params: unknown, @Body() body: unknown) {
     const { tripId } = validate(TripIdParamSchema, params);
@@ -102,6 +148,15 @@ export class TripsController {
     return toTripResponse(trip);
   }
 
+  /**
+   * DELETE /api/trips/:tripId
+   * Deletes a trip by ID.
+   * 
+   * @param params - Route parameters containing tripId
+   * @returns Success confirmation
+   * @throws {NotFoundException} If trip is not found
+   * @throws {BadRequestException} If tripId is invalid
+   */
   @Delete(':tripId')
   async delete(@Param() params: unknown) {
     const { tripId } = validate(TripIdParamSchema, params);

@@ -10,6 +10,13 @@ import {
 import { validate } from '../../common/validate';
 import { ItineraryService } from './itinerary.service';
 
+/**
+ * Transforms a database itinerary item record to API response format.
+ * Converts Date objects to ISO strings and validates response schema.
+ * 
+ * @param item - Raw itinerary item data from database
+ * @returns Validated itinerary item response conforming to schema
+ */
 function toItineraryItemResponse(item: {
   id: string;
   tripId: string;
@@ -50,10 +57,25 @@ function toItineraryItemResponse(item: {
   });
 }
 
+/**
+ * REST controller for itinerary item management.
+ * Handles HTTP requests for CRUD operations on itinerary items
+ * (flights, accommodations, transport, place visits, food).
+ * 
+ * Base path: /api/trips/:tripId/itinerary
+ */
 @Controller('api/trips/:tripId/itinerary')
 export class ItineraryController {
   constructor(private readonly itinerary: ItineraryService) {}
 
+  /**
+   * GET /api/trips/:tripId/itinerary
+   * Retrieves all itinerary items for a trip, sorted chronologically.
+   * 
+   * @param params - Route parameters containing tripId
+   * @returns List of itinerary items for the trip
+   * @throws {BadRequestException} If tripId is invalid
+   */
   @Get()
   async list(@Param() params: unknown) {
     const { tripId } = validate(TripIdParamSchema, params);
@@ -62,6 +84,15 @@ export class ItineraryController {
     return ListItineraryItemsResponseSchema.parse(payload);
   }
 
+  /**
+   * GET /api/trips/:tripId/itinerary/:itemId
+   * Retrieves a single itinerary item by ID.
+   * 
+   * @param params - Route parameters containing itemId
+   * @returns Itinerary item details
+   * @throws {NotFoundException} If item is not found
+   * @throws {BadRequestException} If itemId is invalid
+   */
   @Get(':itemId')
   async get(@Param() params: unknown) {
     const { itemId } = validate(ItineraryItemIdParamSchema, params);
@@ -69,6 +100,15 @@ export class ItineraryController {
     return toItineraryItemResponse(item);
   }
 
+  /**
+   * POST /api/trips/:tripId/itinerary
+   * Creates a new itinerary item for a trip.
+   * 
+   * @param params - Route parameters containing tripId
+   * @param body - Itinerary item creation data
+   * @returns The newly created itinerary item
+   * @throws {BadRequestException} If request is invalid
+   */
   @Post()
   async create(@Param() params: unknown, @Body() body: unknown) {
     const { tripId } = validate(TripIdParamSchema, params);
@@ -93,6 +133,16 @@ export class ItineraryController {
     return toItineraryItemResponse(item);
   }
 
+  /**
+   * PATCH /api/trips/:tripId/itinerary/:itemId
+   * Updates an existing itinerary item with partial data.
+   * 
+   * @param params - Route parameters containing itemId
+   * @param body - Itinerary item update data (partial)
+   * @returns The updated itinerary item
+   * @throws {NotFoundException} If item is not found
+   * @throws {BadRequestException} If request is invalid
+   */
   @Patch(':itemId')
   async update(@Param() params: unknown, @Body() body: unknown) {
     const { itemId } = validate(ItineraryItemIdParamSchema, params);
@@ -127,6 +177,15 @@ export class ItineraryController {
     return toItineraryItemResponse(item);
   }
 
+  /**
+   * DELETE /api/trips/:tripId/itinerary/:itemId
+   * Deletes an itinerary item by ID.
+   * 
+   * @param params - Route parameters containing itemId
+   * @returns Success confirmation
+   * @throws {NotFoundException} If item is not found
+   * @throws {BadRequestException} If itemId is invalid
+   */
   @Delete(':itemId')
   async delete(@Param() params: unknown) {
     const { itemId } = validate(ItineraryItemIdParamSchema, params);

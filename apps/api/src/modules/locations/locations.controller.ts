@@ -10,6 +10,13 @@ import {
 import { validate } from '../../common/validate';
 import { LocationsService } from './locations.service';
 
+/**
+ * Transforms a Prisma location object into a validated API response.
+ * Converts Prisma Decimal latitude/longitude to numbers and Date objects to ISO strings.
+ *
+ * @param location - The location object from Prisma database
+ * @returns Validated LocationResponse object
+ */
 function toLocationResponse(location: {
   id: string;
   tripId: string;
@@ -38,10 +45,26 @@ function toLocationResponse(location: {
   });
 }
 
+/**
+ * REST controller for location management.
+ * Handles HTTP requests for CRUD operations on locations associated with trips.
+ * Supports categories like airports, attractions, restaurants, and accommodations
+ * with optional geolocation data (latitude/longitude) and Baidu Maps integration.
+ *
+ * Base path: /api/trips/:tripId/locations
+ */
 @Controller('api/trips/:tripId/locations')
 export class LocationsController {
   constructor(private readonly locations: LocationsService) {}
 
+  /**
+   * GET /api/trips/:tripId/locations
+   * Retrieves all locations for a specific trip.
+   *
+   * @param params - Route parameters containing tripId
+   * @returns List of locations with their details
+   * @throws {BadRequestException} If tripId is invalid
+   */
   @Get()
   async list(@Param() params: unknown) {
     const { tripId } = validate(TripIdParamSchema, params);
@@ -50,6 +73,15 @@ export class LocationsController {
     return ListLocationsResponseSchema.parse(payload);
   }
 
+  /**
+   * GET /api/trips/:tripId/locations/:locationId
+   * Retrieves a single location by ID.
+   *
+   * @param params - Route parameters containing locationId
+   * @returns Location details
+   * @throws {BadRequestException} If locationId is invalid
+   * @throws {NotFoundException} If location does not exist
+   */
   @Get(':locationId')
   async get(@Param() params: unknown) {
     const { locationId } = validate(LocationIdParamSchema, params);
@@ -57,6 +89,16 @@ export class LocationsController {
     return toLocationResponse(location);
   }
 
+  /**
+   * POST /api/trips/:tripId/locations
+   * Creates a new location for a trip.
+   *
+   * @param params - Route parameters containing tripId
+   * @param body - Request body with location details (name, category, optional address/coordinates)
+   * @returns Newly created location
+   * @throws {BadRequestException} If tripId or request body is invalid
+   * @throws {NotFoundException} If trip does not exist
+   */
   @Post()
   async create(@Param() params: unknown, @Body() body: unknown) {
     const { tripId } = validate(TripIdParamSchema, params);
@@ -75,6 +117,17 @@ export class LocationsController {
     return toLocationResponse(location);
   }
 
+  /**
+   * PATCH /api/trips/:tripId/locations/:locationId
+   * Updates an existing location with partial data.
+   * Only provided fields will be updated.
+   *
+   * @param params - Route parameters containing locationId
+   * @param body - Request body with partial location updates
+   * @returns Updated location
+   * @throws {BadRequestException} If locationId or request body is invalid
+   * @throws {NotFoundException} If location does not exist
+   */
   @Patch(':locationId')
   async update(@Param() params: unknown, @Body() body: unknown) {
     const { locationId } = validate(LocationIdParamSchema, params);
@@ -93,6 +146,15 @@ export class LocationsController {
     return toLocationResponse(location);
   }
 
+  /**
+   * DELETE /api/trips/:tripId/locations/:locationId
+   * Deletes a location by ID.
+   *
+   * @param params - Route parameters containing locationId
+   * @returns Success confirmation object
+   * @throws {BadRequestException} If locationId is invalid
+   * @throws {NotFoundException} If location does not exist
+   */
   @Delete(':locationId')
   async delete(@Param() params: unknown) {
     const { locationId } = validate(LocationIdParamSchema, params);
