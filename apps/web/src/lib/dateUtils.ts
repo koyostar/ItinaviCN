@@ -141,7 +141,7 @@ export function utcToDateTimeLocalInTimezone(
   });
 
   // Format as YYYY-MM-DDTHH:mm
-  return `${year}-${month}-${day}T${hour.padStart(2, "0")}:${minute}`;
+  return `${year}-${month}-${day}T${hour.padStart(2, "0")}:${minute.padStart(2, "0")}`;
 }
 
 /**

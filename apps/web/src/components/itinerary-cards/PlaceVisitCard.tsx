@@ -1,6 +1,6 @@
-import { Box, Chip, Stack, Typography } from '@mui/material';
-import { getUTCOffset } from '@/lib/utils/timezone';
-import { formatUTCTime } from '@/lib/dateUtils';
+import { Box, Stack, Typography } from "@mui/material";
+import { getUTCOffset } from "@/lib/utils/timezone";
+import { formatUTCTime } from "@/lib/dateUtils";
 
 interface PlaceVisitDetails {
   ticketInfo?: string;
@@ -14,8 +14,8 @@ interface PlaceVisitCardProps {
   startTimezone?: string | null;
   status: string;
   details: PlaceVisitDetails | null;
-  statusColor: 'default' | 'primary' | 'success' | 'error';
-  typeColor: 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info';
+  statusColor: "default" | "primary" | "success" | "error";
+  typeColor: "primary" | "secondary" | "success" | "error" | "warning" | "info";
 }
 
 export function PlaceVisitCard({
@@ -30,11 +30,9 @@ export function PlaceVisitCard({
 }: PlaceVisitCardProps) {
   return (
     <Box>
-      <Stack direction="row" spacing={1} alignItems="center" mb={1}>
-        <Typography variant="h6">{title}</Typography>
-        <Chip label="PlaceVisit" size="small" color={typeColor} />
-        <Chip label={status} size="small" color={statusColor} variant="outlined" />
-      </Stack>
+      <Typography variant="h6" mb={1}>
+        {title}
+      </Typography>
 
       <Typography variant="body2" color="text.secondary">
         🕐 {formatUTCTime(startDateTime)}

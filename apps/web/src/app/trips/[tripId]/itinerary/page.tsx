@@ -1,8 +1,12 @@
-'use client';
+"use client";
 
-import { use, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import type { ItineraryItemResponse, UpdateItineraryItemRequest, TripResponse } from '@itinavi/schema';
+import { use, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import type {
+  ItineraryItemResponse,
+  UpdateItineraryItemRequest,
+  TripResponse,
+} from "@itinavi/schema";
 import {
   Box,
   Button,
@@ -20,43 +24,49 @@ import {
   Select,
   FormControl,
   InputLabel,
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { api } from '@/lib/api';
-import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { ItineraryForm } from '@/components/ItineraryForm';
-import { formatUTCDate } from '@/lib/dateUtils';
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { api } from "@/lib/api";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { ItineraryForm } from "@/components/ItineraryForm";
+import { formatUTCDate } from "@/lib/dateUtils";
 import {
   ITINERARY_TYPE_ICONS,
   ITINERARY_TYPE_COLORS,
   ITINERARY_STATUS_COLORS,
-} from '@/lib/constants';
+} from "@/lib/constants";
 import {
   FlightCard,
   AccommodationCard,
   TransportCard,
   PlaceVisitCard,
   FoodCard,
-} from '@/components/itinerary-cards';
+} from "@/components/itinerary-cards";
 
-export default function ItineraryPage({ params }: { params: Promise<{ tripId: string }> }) {
+export default function ItineraryPage({
+  params,
+}: {
+  params: Promise<{ tripId: string }>;
+}) {
   const { tripId } = use(params);
   const router = useRouter();
   const [items, setItems] = useState<ItineraryItemResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filterType, setFilterType] = useState<string>('all');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [filterType, setFilterType] = useState<string>("all");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [itemToEdit, setItemToEdit] = useState<ItineraryItemResponse | null>(null);
+  const [itemToEdit, setItemToEdit] = useState<ItineraryItemResponse | null>(
+    null,
+  );
   const [updating, setUpdating] = useState(false);
-  const [defaultTimezone, setDefaultTimezone] = useState('Asia/Shanghai');
+  const [defaultTimezone, setDefaultTimezone] = useState("Asia/Shanghai");
 
   useEffect(() => {
     loadItems();
@@ -71,18 +81,18 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
         api.trips.get(tripId) as Promise<TripResponse>,
       ]);
       setItems((itemsResponse as { items: ItineraryItemResponse[] }).items);
-      
+
       // Set default timezone from trip destination
       const country = tripData.destinations?.[0]?.country;
-      let timezone = 'Asia/Shanghai';
-      if (country === 'Singapore') timezone = 'Asia/Singapore';
-      else if (country === 'Japan') timezone = 'Asia/Tokyo';
-      else if (country === 'Hong Kong') timezone = 'Asia/Hong_Kong';
-      else if (country === 'South Korea') timezone = 'Asia/Seoul';
-      else if (country === 'Thailand') timezone = 'Asia/Bangkok';
+      let timezone = "Asia/Shanghai";
+      if (country === "Singapore") timezone = "Asia/Singapore";
+      else if (country === "Japan") timezone = "Asia/Tokyo";
+      else if (country === "Hong Kong") timezone = "Asia/Hong_Kong";
+      else if (country === "South Korea") timezone = "Asia/Seoul";
+      else if (country === "Thailand") timezone = "Asia/Bangkok";
       setDefaultTimezone(timezone);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load itinerary');
+      setError(err instanceof Error ? err.message : "Failed to load itinerary");
     } finally {
       setLoading(false);
     }
@@ -103,7 +113,7 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
       setDeleteDialogOpen(false);
       setItemToDelete(null);
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to delete item');
+      alert(err instanceof Error ? err.message : "Failed to delete item");
     } finally {
       setDeleting(false);
     }
@@ -119,34 +129,41 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
     setUpdating(true);
     try {
       const updated = await api.itinerary.update(tripId, itemToEdit.id, data);
-      setItems(items.map((item) => (item.id === itemToEdit.id ? updated as ItineraryItemResponse : item)));
+      setItems(
+        items.map((item) =>
+          item.id === itemToEdit.id ? (updated as ItineraryItemResponse) : item,
+        ),
+      );
       setEditDialogOpen(false);
       setItemToEdit(null);
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to update item');
+      alert(err instanceof Error ? err.message : "Failed to update item");
     } finally {
       setUpdating(false);
     }
   }
 
   const filteredItems = items.filter((item) => {
-    if (filterType !== 'all' && item.type !== filterType) return false;
-    if (filterStatus !== 'all' && item.status !== filterStatus) return false;
+    if (filterType !== "all" && item.type !== filterType) return false;
+    if (filterStatus !== "all" && item.status !== filterStatus) return false;
     return true;
   });
 
   // Group by day
-  const groupedByDay = filteredItems.reduce((acc, item) => {
-    const day = formatUTCDate(item.startDateTime, 'en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-    if (!acc[day]) acc[day] = [];
-    acc[day].push(item);
-    return acc;
-  }, {} as Record<string, ItineraryItemResponse[]>);
+  const groupedByDay = filteredItems.reduce(
+    (acc, item) => {
+      const day = formatUTCDate(item.startDateTime, "en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+      if (!acc[day]) acc[day] = [];
+      acc[day].push(item);
+      return acc;
+    },
+    {} as Record<string, ItineraryItemResponse[]>,
+  );
 
   if (loading) {
     return (
@@ -170,7 +187,11 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Stack spacing={3}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Stack direction="row" spacing={2} alignItems="center">
             <IconButton onClick={() => router.push(`/trips/${tripId}`)}>
               <ArrowBackIcon />
@@ -184,7 +205,7 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
             startIcon={<AddIcon />}
             href={`/trips/${tripId}/itinerary/new`}
           >
-            Add Item
+            Add
           </Button>
         </Stack>
 
@@ -228,7 +249,11 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
               <Stack alignItems="center" spacing={2} py={4}>
                 {(() => {
                   const FlightIcon = ITINERARY_TYPE_ICONS.Flight;
-                  return <FlightIcon sx={{ fontSize: 64, color: 'text.secondary' }} />;
+                  return (
+                    <FlightIcon
+                      sx={{ fontSize: 64, color: "text.secondary" }}
+                    />
+                  );
                 })()}
                 <Typography variant="h6" color="text.secondary">
                   No itinerary items yet
@@ -241,7 +266,7 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
                   startIcon={<AddIcon />}
                   href={`/trips/${tripId}/itinerary/new`}
                 >
-                  Add Item
+                  Add
                 </Button>
               </Stack>
             </CardContent>
@@ -258,36 +283,36 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
                     const Icon = ITINERARY_TYPE_ICONS[item.type];
                     const isLast = index === dayItems.length - 1;
                     return (
-                      <Box key={item.id} sx={{ position: 'relative', pl: 6 }}>
+                      <Box key={item.id} sx={{ position: "relative", pl: 6 }}>
                         {/* Timeline connector line */}
                         {!isLast && (
                           <Box
                             sx={{
-                              position: 'absolute',
+                              position: "absolute",
                               left: 14,
                               top: 48,
                               bottom: -16,
                               width: 2,
-                              bgcolor: 'divider',
+                              bgcolor: "divider",
                             }}
                           />
                         )}
-                        
+
                         {/* Timeline dot with icon */}
                         <Box
                           sx={{
-                            position: 'absolute',
+                            position: "absolute",
                             left: 0,
                             top: 16,
                             width: 32,
                             height: 32,
-                            borderRadius: '50%',
-                            bgcolor: 'background.paper',
+                            borderRadius: "50%",
+                            bgcolor: "background.paper",
                             border: 2,
-                            borderColor: 'primary.main',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
+                            borderColor: "primary.main",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
                             zIndex: 1,
                           }}
                         >
@@ -296,9 +321,45 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
 
                         <Card sx={{ mb: 2 }}>
                           <CardContent>
-                            <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-                              <Box flex={1}>
-                                {item.type === 'Flight' ? (
+                            <Stack spacing={2}>
+                              <Stack
+                                direction="row"
+                                justifyContent="space-between"
+                                alignItems="center"
+                                width="100%"
+                              >
+                                <Stack direction="row" spacing={1}>
+                                  <Chip
+                                    label={item.type}
+                                    size="small"
+                                    color={ITINERARY_TYPE_COLORS[item.type]}
+                                  />
+                                  <Chip
+                                    label={item.status}
+                                    size="small"
+                                    color={ITINERARY_STATUS_COLORS[item.status]}
+                                    variant="outlined"
+                                  />
+                                </Stack>
+                                <Stack direction="row" spacing={1}>
+                                  <IconButton
+                                    size="small"
+                                    color="primary"
+                                    onClick={() => handleEdit(item)}
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                  <IconButton
+                                    size="small"
+                                    color="error"
+                                    onClick={() => handleDelete(item.id)}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </Stack>
+                              </Stack>
+                              <Box>
+                                {item.type === "Flight" ? (
                                   <FlightCard
                                     title={item.title}
                                     startDateTime={item.startDateTime}
@@ -307,10 +368,12 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
                                     endTimezone={item.endTimezone}
                                     status={item.status}
                                     details={item.details as any}
-                                    statusColor={ITINERARY_STATUS_COLORS[item.status]}
+                                    statusColor={
+                                      ITINERARY_STATUS_COLORS[item.status]
+                                    }
                                     typeColor={ITINERARY_TYPE_COLORS[item.type]}
                                   />
-                                ) : item.type === 'Accommodation' ? (
+                                ) : item.type === "Accommodation" ? (
                                   <AccommodationCard
                                     title={item.title}
                                     startDateTime={item.startDateTime}
@@ -318,10 +381,12 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
                                     startTimezone={item.startTimezone}
                                     status={item.status}
                                     details={item.details as any}
-                                    statusColor={ITINERARY_STATUS_COLORS[item.status]}
+                                    statusColor={
+                                      ITINERARY_STATUS_COLORS[item.status]
+                                    }
                                     typeColor={ITINERARY_TYPE_COLORS[item.type]}
                                   />
-                                ) : item.type === 'Transport' ? (
+                                ) : item.type === "Transport" ? (
                                   <TransportCard
                                     title={item.title}
                                     startDateTime={item.startDateTime}
@@ -329,10 +394,12 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
                                     startTimezone={item.startTimezone}
                                     status={item.status}
                                     details={item.details as any}
-                                    statusColor={ITINERARY_STATUS_COLORS[item.status]}
+                                    statusColor={
+                                      ITINERARY_STATUS_COLORS[item.status]
+                                    }
                                     typeColor={ITINERARY_TYPE_COLORS[item.type]}
                                   />
-                                ) : item.type === 'PlaceVisit' ? (
+                                ) : item.type === "PlaceVisit" ? (
                                   <PlaceVisitCard
                                     title={item.title}
                                     startDateTime={item.startDateTime}
@@ -340,44 +407,35 @@ export default function ItineraryPage({ params }: { params: Promise<{ tripId: st
                                     startTimezone={item.startTimezone}
                                     status={item.status}
                                     details={item.details as any}
-                                    statusColor={ITINERARY_STATUS_COLORS[item.status]}
+                                    statusColor={
+                                      ITINERARY_STATUS_COLORS[item.status]
+                                    }
                                     typeColor={ITINERARY_TYPE_COLORS[item.type]}
                                   />
-                                ) : item.type === 'Food' ? (
+                                ) : item.type === "Food" ? (
                                   <FoodCard
                                     title={item.title}
                                     startDateTime={item.startDateTime}
                                     startTimezone={item.startTimezone}
                                     status={item.status}
                                     details={item.details as any}
-                                    statusColor={ITINERARY_STATUS_COLORS[item.status]}
+                                    statusColor={
+                                      ITINERARY_STATUS_COLORS[item.status]
+                                    }
                                     typeColor={ITINERARY_TYPE_COLORS[item.type]}
                                   />
                                 ) : null}
-                                
+
                                 {item.notes && (
-                                  <Typography variant="body2" color="text.secondary" mt={1}>
+                                  <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                    mt={1}
+                                  >
                                     {item.notes}
                                   </Typography>
                                 )}
                               </Box>
-                              
-                              <Stack direction="row" spacing={1}>
-                                <IconButton
-                                  size="small"
-                                  color="primary"
-                                  onClick={() => handleEdit(item)}
-                                >
-                                  <EditIcon />
-                                </IconButton>
-                                <IconButton
-                                  size="small"
-                                  color="error"
-                                  onClick={() => handleDelete(item.id)}
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              </Stack>
                             </Stack>
                           </CardContent>
                         </Card>

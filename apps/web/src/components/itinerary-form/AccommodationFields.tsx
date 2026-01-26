@@ -30,7 +30,6 @@ export function AccommodationFields({
         value={accommodationDetails.hotelName}
         onPlaceSelect={(place) =>
           onAccommodationDetailsChange({
-            ...accommodationDetails,
             hotelName: place.name,
             address: place.address,
           })
@@ -44,7 +43,6 @@ export function AccommodationFields({
         value={accommodationDetails.address}
         onChange={(e) =>
           onAccommodationDetailsChange({
-            ...accommodationDetails,
             address: e.target.value,
           })
         }
@@ -61,7 +59,6 @@ export function AccommodationFields({
           value={accommodationDetails.guests}
           onChange={(e) =>
             onAccommodationDetailsChange({
-              ...accommodationDetails,
               guests: e.target.value,
             })
           }

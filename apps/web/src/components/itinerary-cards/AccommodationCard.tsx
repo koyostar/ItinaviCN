@@ -1,6 +1,6 @@
-import { Box, Chip, Stack, Typography } from '@mui/material';
-import { getUTCOffset } from '@/lib/utils/timezone';
-import { formatUTCDateTime } from '@/lib/dateUtils';
+import { Box, Stack, Typography } from "@mui/material";
+import { getUTCOffset } from "@/lib/utils/timezone";
+import { formatUTCDateTime } from "@/lib/dateUtils";
 
 interface AccommodationDetails {
   hotelName?: string;
@@ -17,8 +17,8 @@ interface AccommodationCardProps {
   startTimezone?: string | null;
   status: string;
   details: AccommodationDetails | null;
-  statusColor: 'default' | 'primary' | 'success' | 'error';
-  typeColor: 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info';
+  statusColor: "default" | "primary" | "success" | "error";
+  typeColor: "primary" | "secondary" | "success" | "error" | "warning" | "info";
 }
 
 export function AccommodationCard({
@@ -33,11 +33,9 @@ export function AccommodationCard({
 }: AccommodationCardProps) {
   return (
     <Box>
-      <Stack direction="row" spacing={1} alignItems="center" mb={1}>
-        <Typography variant="h6">{details?.hotelName || title}</Typography>
-        <Chip label="Accommodation" size="small" color={typeColor} />
-        <Chip label={status} size="small" color={statusColor} variant="outlined" />
-      </Stack>
+      <Typography variant="h6" mb={1}>
+        {details?.hotelName || title}
+      </Typography>
 
       {details?.address && (
         <Typography variant="body2" color="text.secondary" mb={1}>
@@ -45,7 +43,11 @@ export function AccommodationCard({
         </Typography>
       )}
 
-      <Stack direction="row" spacing={3} mt={1}>
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        spacing={{ xs: 2, md: 3 }}
+        mt={1}
+      >
         <Box>
           <Typography variant="caption" color="text.secondary">
             Check-in
@@ -54,7 +56,12 @@ export function AccommodationCard({
             {formatUTCDateTime(startDateTime)}
           </Typography>
         </Box>
-        <Typography variant="body2" color="text.secondary" alignSelf="center">
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          alignSelf={{ xs: "flex-start", md: "center" }}
+          sx={{ display: { xs: "none", md: "block" } }}
+        >
           →
         </Typography>
         <Box>
@@ -62,7 +69,7 @@ export function AccommodationCard({
             Check-out
           </Typography>
           <Typography variant="body2">
-            {endDateTime ? formatUTCDateTime(endDateTime) : 'TBD'}
+            {endDateTime ? formatUTCDateTime(endDateTime) : "TBD"}
           </Typography>
         </Box>
         {details?.guests && (
@@ -74,11 +81,6 @@ export function AccommodationCard({
           </Box>
         )}
       </Stack>
-      {startTimezone && (
-        <Typography variant="caption" color="text.secondary" display="block" mt={1}>
-          ({getUTCOffset(startTimezone)})
-        </Typography>
-      )}
     </Box>
   );
 }

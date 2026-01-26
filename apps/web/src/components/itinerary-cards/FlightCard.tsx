@@ -1,4 +1,4 @@
-import { Box, Chip, Divider, Stack, Typography } from "@mui/material";
+import { Box, Divider, Stack, Typography } from "@mui/material";
 import { getUTCOffset } from "@/lib/utils/timezone";
 import { formatUTCTime, calculateDuration } from "@/lib/dateUtils";
 
@@ -41,72 +41,61 @@ export function FlightCard({
   const arrivalCity = cities[1] || "Arrival";
 
   return (
-    <Box>
-      <Stack direction="row" spacing={1} alignItems="center" mb={1}>
-        <Chip label="Flight" size="small" color={typeColor} />
-        <Chip
-          label={status}
-          size="small"
-          color={statusColor}
-          variant="outlined"
-        />
-      </Stack>
-      <Stack
-        direction={{ xs: "column", md: "row" }}
-        spacing={1}
-        alignItems="center"
-        mb={1}
-      >
+    <Stack
+      direction={{ xs: "column", md: "row" }}
+      spacing={{ xs: 2, md: 3 }}
+      alignItems={{ xs: "flex-start", md: "center" }}
+    >
         {/* Departure */}
-        <Box sx={{ flex: 1 }}>
-          <Typography variant="subtitle1" fontWeight="600">
-            {departureCity}
+        <Box sx={{ textAlign: "left" }}>
+        <Typography variant="subtitle1" fontWeight="600">
+          {departureCity}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {details?.departureAirport || ""}
+        </Typography>
+        {startTimezone && (
+          <Typography variant="caption" color="text.secondary">
+            {formatUTCTime(startDateTime)} ({getUTCOffset(startTimezone)})
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {details?.departureAirport || ""}
-          </Typography>
-          {startTimezone && (
-            <Typography variant="caption" color="text.secondary">
-              {formatUTCTime(startDateTime)} ({getUTCOffset(startTimezone)})
-            </Typography>
-          )}
-        </Box>
+        )}
+      </Box>
 
-        {/* Arrow with flight number */}
-        <Box sx={{ textAlign: "center", minWidth: 100 }}>
-          {details?.flightNo && (
-            <Typography variant="caption" color="primary" fontWeight="600">
-              ✈️ {details.flightNo}
-            </Typography>
-          )}
-          <Divider variant="middle" flexItem sx={{ my: 1 }} />
-          {endDateTime && (
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              display="block"
-            >
-              {calculateDuration(startDateTime, endDateTime)}
-            </Typography>
-          )}{" "}
-        </Box>
+      {/* Arrow with flight number */}
+      <Box sx={{ 
+        textAlign: "center", 
+        minWidth: 100,
+        alignSelf: { xs: "center", md: "auto" },
+        mx: { xs: 0, md: 2 }
+      }}>
+        {details?.flightNo && (
+          <Typography variant="caption" color="primary" fontWeight="600">
+            ✈️ {details.flightNo}
+          </Typography>
+        )}
+        <Divider variant="middle" flexItem sx={{ my: 1 }} />
+        {endDateTime && (
+          <Typography variant="caption" color="text.secondary" display="block">
+            {calculateDuration(startDateTime, endDateTime)}
+          </Typography>
+        )}{" "}
+      </Box>
 
-        {/* Arrival */}
-        <Box sx={{ flex: 1 }}>
-          <Typography variant="subtitle1" fontWeight="600">
-            {arrivalCity}
+      {/* Arrival */}
+      <Box sx={{ textAlign: "left" }}>
+        <Typography variant="subtitle1" fontWeight="600">
+          {arrivalCity}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {details?.arrivalAirport || ""}
+        </Typography>
+        {endTimezone && (
+          <Typography variant="caption" color="text.secondary">
+            {endDateTime ? formatUTCTime(endDateTime) : "TBD"} (
+            {getUTCOffset(endTimezone)})
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {details?.arrivalAirport || ""}
-          </Typography>
-          {endTimezone && (
-            <Typography variant="caption" color="text.secondary">
-              {endDateTime ? formatUTCTime(endDateTime) : "TBD"} (
-              {getUTCOffset(endTimezone)})
-            </Typography>
-          )}
-        </Box>
-      </Stack>
-    </Box>
+        )}
+      </Box>
+    </Stack>
   );
 }
