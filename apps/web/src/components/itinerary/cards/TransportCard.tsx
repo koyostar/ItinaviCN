@@ -30,7 +30,14 @@ export function TransportCard({
   typeColor,
 }: TransportCardProps) {
   return (
-    <Box>
+    <Box
+      sx={{
+        transition: "opacity 0.2s",
+        "&:hover": {
+          opacity: 0.8,
+        },
+      }}
+    >
       <Typography variant="h6" mb={1}>
         {title}
       </Typography>

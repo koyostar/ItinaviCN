@@ -7,8 +7,10 @@ import {
 } from "@/lib/dateUtils";
 
 interface PlaceDetails {
+  address?: string;
   ticketInfo?: string;
-  openingHours?: string;
+  openingTime?: string;
+  closingTime?: string;
 }
 
 interface PlaceDetailsProps {
@@ -39,6 +41,11 @@ export function PlaceDetailsComponent({
         <Typography variant="h5" gutterBottom>
           {title}
         </Typography>
+        {details?.address && (
+          <Typography variant="body1" color="text.secondary">
+            📍 {details.address}
+          </Typography>
+        )}
       </Box>
 
       <Divider />
@@ -76,14 +83,16 @@ export function PlaceDetailsComponent({
       </Stack>
 
       {/* Opening Hours */}
-      {details?.openingHours && (
+      {details?.openingTime && details?.closingTime && (
         <>
           <Divider />
           <Stack spacing={1}>
             <Typography variant="overline" color="text.secondary">
               Opening Hours
             </Typography>
-            <Typography variant="body1">🕒 {details.openingHours}</Typography>
+            <Typography variant="body1">
+              🕒 {details.openingTime} - {details.closingTime}
+            </Typography>
           </Stack>
         </>
       )}

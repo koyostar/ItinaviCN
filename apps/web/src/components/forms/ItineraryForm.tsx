@@ -150,8 +150,10 @@ export function ItineraryForm({
 
   const [placeDetails, setPlaceDetails] = useState({
     title: initialData?.type === "Place" ? initialData.title : "",
+    address: (initialData?.details as any)?.address || "",
     ticketInfo: (initialData?.details as any)?.ticketInfo || "",
-    openingHours: (initialData?.details as any)?.openingHours || "",
+    openingTime: (initialData?.details as any)?.openingTime || "",
+    closingTime: (initialData?.details as any)?.closingTime || "",
     startTimezone: initialData?.startTimezone || defaultTimezone,
     startDateTime:
       initialData?.startDateTime && initialData?.startTimezone
@@ -172,7 +174,10 @@ export function ItineraryForm({
 
   const [foodDetails, setFoodDetails] = useState({
     title: initialData?.type === "Food" ? initialData.title : "",
+    address: (initialData?.details as any)?.address || "",
     cuisine: (initialData?.details as any)?.cuisine || "",
+    openingTime: (initialData?.details as any)?.openingTime || "",
+    closingTime: (initialData?.details as any)?.closingTime || "",
     reservationInfo: (initialData?.details as any)?.reservationInfo || "",
     startTimezone: initialData?.startTimezone || defaultTimezone,
     startDateTime:

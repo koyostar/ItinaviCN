@@ -63,14 +63,19 @@ export const AccommodationDetailsSchema = z.object({
 export type AccommodationDetails = z.infer<typeof AccommodationDetailsSchema>;
 
 export const PlaceDetailsSchema = z.object({
+  address: z.string().optional(),
   ticketInfo: z.string().optional(),
-  openingHours: z.string().optional(),
+  openingTime: z.string().optional(),
+  closingTime: z.string().optional(),
 });
 
 export type PlaceDetails = z.infer<typeof PlaceDetailsSchema>;
 
 export const FoodDetailsSchema = z.object({
+  address: z.string().optional(),
   cuisine: z.string().optional(),
+  openingTime: z.string().optional(),
+  closingTime: z.string().optional(),
   reservationInfo: z.string().optional(),
 });
 

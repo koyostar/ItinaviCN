@@ -3,8 +3,10 @@ import { getUTCOffset } from "@/lib/utils/timezone";
 import { formatUTCTime } from "@/lib/dateUtils";
 
 interface PlaceDetails {
+  address?: string;
   ticketInfo?: string;
-  openingHours?: string;
+  openingTime?: string;
+  closingTime?: string;
 }
 
 interface PlaceCardProps {
@@ -29,10 +31,23 @@ export function PlaceCard({
   typeColor,
 }: PlaceCardProps) {
   return (
-    <Box>
+    <Box
+      sx={{
+        transition: "opacity 0.2s",
+        "&:hover": {
+          opacity: 0.8,
+        },
+      }}
+    >
       <Typography variant="h6" mb={1}>
         {title}
       </Typography>
+
+      {details?.address && (
+        <Typography variant="body2" color="text.secondary" mb={1}>
+          📍 {details.address}
+        </Typography>
+      )}
 
       <Typography variant="body2" color="text.secondary">
         🕐 {formatUTCTime(startDateTime)}
@@ -40,13 +55,8 @@ export function PlaceCard({
         {startTimezone && ` (${getUTCOffset(startTimezone)})`}
       </Typography>
 
-      {(details?.openingHours || details?.ticketInfo) && (
+      {details?.ticketInfo && (
         <Stack direction="row" spacing={2} mt={1}>
-          {details?.openingHours && (
-            <Typography variant="body2" color="text.secondary">
-              🕒 {details.openingHours}
-            </Typography>
-          )}
           {details?.ticketInfo && (
             <Typography variant="body2" color="text.secondary">
               🎫 {details.ticketInfo}

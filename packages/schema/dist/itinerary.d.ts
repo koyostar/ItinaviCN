@@ -63,23 +63,38 @@ export declare const AccommodationDetailsSchema: z.ZodObject<{
 }>;
 export type AccommodationDetails = z.infer<typeof AccommodationDetailsSchema>;
 export declare const PlaceDetailsSchema: z.ZodObject<{
+    address: z.ZodOptional<z.ZodString>;
     ticketInfo: z.ZodOptional<z.ZodString>;
-    openingHours: z.ZodOptional<z.ZodString>;
+    openingTime: z.ZodOptional<z.ZodString>;
+    closingTime: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    address?: string | undefined;
     ticketInfo?: string | undefined;
-    openingHours?: string | undefined;
+    openingTime?: string | undefined;
+    closingTime?: string | undefined;
 }, {
+    address?: string | undefined;
     ticketInfo?: string | undefined;
-    openingHours?: string | undefined;
+    openingTime?: string | undefined;
+    closingTime?: string | undefined;
 }>;
 export type PlaceDetails = z.infer<typeof PlaceDetailsSchema>;
 export declare const FoodDetailsSchema: z.ZodObject<{
+    address: z.ZodOptional<z.ZodString>;
     cuisine: z.ZodOptional<z.ZodString>;
+    openingTime: z.ZodOptional<z.ZodString>;
+    closingTime: z.ZodOptional<z.ZodString>;
     reservationInfo: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    address?: string | undefined;
+    openingTime?: string | undefined;
+    closingTime?: string | undefined;
     cuisine?: string | undefined;
     reservationInfo?: string | undefined;
 }, {
+    address?: string | undefined;
+    openingTime?: string | undefined;
+    closingTime?: string | undefined;
     cuisine?: string | undefined;
     reservationInfo?: string | undefined;
 }>;
@@ -316,14 +331,20 @@ export declare const CreatePlaceRequestSchema: z.ZodObject<{
 } & {
     type: z.ZodLiteral<"Place">;
     details: z.ZodOptional<z.ZodObject<{
+        address: z.ZodOptional<z.ZodString>;
         ticketInfo: z.ZodOptional<z.ZodString>;
-        openingHours: z.ZodOptional<z.ZodString>;
+        openingTime: z.ZodOptional<z.ZodString>;
+        closingTime: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     }, {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -339,8 +360,10 @@ export declare const CreatePlaceRequestSchema: z.ZodObject<{
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     } | undefined;
 }, {
     type: "Place";
@@ -356,8 +379,10 @@ export declare const CreatePlaceRequestSchema: z.ZodObject<{
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     } | undefined;
 }>;
 export declare const CreateFoodRequestSchema: z.ZodObject<{
@@ -375,12 +400,21 @@ export declare const CreateFoodRequestSchema: z.ZodObject<{
 } & {
     type: z.ZodLiteral<"Food">;
     details: z.ZodOptional<z.ZodObject<{
+        address: z.ZodOptional<z.ZodString>;
         cuisine: z.ZodOptional<z.ZodString>;
+        openingTime: z.ZodOptional<z.ZodString>;
+        closingTime: z.ZodOptional<z.ZodString>;
         reservationInfo: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     }, {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     }>>;
@@ -398,6 +432,9 @@ export declare const CreateFoodRequestSchema: z.ZodObject<{
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     } | undefined;
@@ -415,6 +452,9 @@ export declare const CreateFoodRequestSchema: z.ZodObject<{
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     } | undefined;
@@ -648,14 +688,20 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
 } & {
     type: z.ZodLiteral<"Place">;
     details: z.ZodOptional<z.ZodObject<{
+        address: z.ZodOptional<z.ZodString>;
         ticketInfo: z.ZodOptional<z.ZodString>;
-        openingHours: z.ZodOptional<z.ZodString>;
+        openingTime: z.ZodOptional<z.ZodString>;
+        closingTime: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     }, {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -671,8 +717,10 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     } | undefined;
 }, {
     type: "Place";
@@ -688,8 +736,10 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     } | undefined;
 }>, z.ZodObject<{
     title: z.ZodString;
@@ -706,12 +756,21 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
 } & {
     type: z.ZodLiteral<"Food">;
     details: z.ZodOptional<z.ZodObject<{
+        address: z.ZodOptional<z.ZodString>;
         cuisine: z.ZodOptional<z.ZodString>;
+        openingTime: z.ZodOptional<z.ZodString>;
+        closingTime: z.ZodOptional<z.ZodString>;
         reservationInfo: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     }, {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     }>>;
@@ -729,6 +788,9 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     } | undefined;
@@ -746,6 +808,9 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     } | undefined;
@@ -1096,14 +1161,20 @@ export declare const PlaceResponseSchema: z.ZodObject<{
 } & {
     type: z.ZodLiteral<"Place">;
     details: z.ZodNullable<z.ZodObject<{
+        address: z.ZodOptional<z.ZodString>;
         ticketInfo: z.ZodOptional<z.ZodString>;
-        openingHours: z.ZodOptional<z.ZodString>;
+        openingTime: z.ZodOptional<z.ZodString>;
+        closingTime: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     }, {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -1123,8 +1194,10 @@ export declare const PlaceResponseSchema: z.ZodObject<{
     bookingRef: string | null;
     url: string | null;
     details: {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     } | null;
 }, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -1144,8 +1217,10 @@ export declare const PlaceResponseSchema: z.ZodObject<{
     bookingRef: string | null;
     url: string | null;
     details: {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     } | null;
 }>;
 export declare const FoodResponseSchema: z.ZodObject<{
@@ -1167,12 +1242,21 @@ export declare const FoodResponseSchema: z.ZodObject<{
 } & {
     type: z.ZodLiteral<"Food">;
     details: z.ZodNullable<z.ZodObject<{
+        address: z.ZodOptional<z.ZodString>;
         cuisine: z.ZodOptional<z.ZodString>;
+        openingTime: z.ZodOptional<z.ZodString>;
+        closingTime: z.ZodOptional<z.ZodString>;
         reservationInfo: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     }, {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     }>>;
@@ -1194,6 +1278,9 @@ export declare const FoodResponseSchema: z.ZodObject<{
     bookingRef: string | null;
     url: string | null;
     details: {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     } | null;
@@ -1215,6 +1302,9 @@ export declare const FoodResponseSchema: z.ZodObject<{
     bookingRef: string | null;
     url: string | null;
     details: {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     } | null;
@@ -1488,14 +1578,20 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
 } & {
     type: z.ZodLiteral<"Place">;
     details: z.ZodNullable<z.ZodObject<{
+        address: z.ZodOptional<z.ZodString>;
         ticketInfo: z.ZodOptional<z.ZodString>;
-        openingHours: z.ZodOptional<z.ZodString>;
+        openingTime: z.ZodOptional<z.ZodString>;
+        closingTime: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     }, {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -1515,8 +1611,10 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     bookingRef: string | null;
     url: string | null;
     details: {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     } | null;
 }, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -1536,8 +1634,10 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     bookingRef: string | null;
     url: string | null;
     details: {
+        address?: string | undefined;
         ticketInfo?: string | undefined;
-        openingHours?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
     } | null;
 }>, z.ZodObject<{
     id: z.ZodString;
@@ -1558,12 +1658,21 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
 } & {
     type: z.ZodLiteral<"Food">;
     details: z.ZodNullable<z.ZodObject<{
+        address: z.ZodOptional<z.ZodString>;
         cuisine: z.ZodOptional<z.ZodString>;
+        openingTime: z.ZodOptional<z.ZodString>;
+        closingTime: z.ZodOptional<z.ZodString>;
         reservationInfo: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     }, {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     }>>;
@@ -1585,6 +1694,9 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     bookingRef: string | null;
     url: string | null;
     details: {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     } | null;
@@ -1606,6 +1718,9 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     bookingRef: string | null;
     url: string | null;
     details: {
+        address?: string | undefined;
+        openingTime?: string | undefined;
+        closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     } | null;
@@ -1881,14 +1996,20 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
     } & {
         type: z.ZodLiteral<"Place">;
         details: z.ZodNullable<z.ZodObject<{
+            address: z.ZodOptional<z.ZodString>;
             ticketInfo: z.ZodOptional<z.ZodString>;
-            openingHours: z.ZodOptional<z.ZodString>;
+            openingTime: z.ZodOptional<z.ZodString>;
+            closingTime: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            address?: string | undefined;
             ticketInfo?: string | undefined;
-            openingHours?: string | undefined;
+            openingTime?: string | undefined;
+            closingTime?: string | undefined;
         }, {
+            address?: string | undefined;
             ticketInfo?: string | undefined;
-            openingHours?: string | undefined;
+            openingTime?: string | undefined;
+            closingTime?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
         status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -1908,8 +2029,10 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            address?: string | undefined;
             ticketInfo?: string | undefined;
-            openingHours?: string | undefined;
+            openingTime?: string | undefined;
+            closingTime?: string | undefined;
         } | null;
     }, {
         status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -1929,8 +2052,10 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            address?: string | undefined;
             ticketInfo?: string | undefined;
-            openingHours?: string | undefined;
+            openingTime?: string | undefined;
+            closingTime?: string | undefined;
         } | null;
     }>, z.ZodObject<{
         id: z.ZodString;
@@ -1951,12 +2076,21 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
     } & {
         type: z.ZodLiteral<"Food">;
         details: z.ZodNullable<z.ZodObject<{
+            address: z.ZodOptional<z.ZodString>;
             cuisine: z.ZodOptional<z.ZodString>;
+            openingTime: z.ZodOptional<z.ZodString>;
+            closingTime: z.ZodOptional<z.ZodString>;
             reservationInfo: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            address?: string | undefined;
+            openingTime?: string | undefined;
+            closingTime?: string | undefined;
             cuisine?: string | undefined;
             reservationInfo?: string | undefined;
         }, {
+            address?: string | undefined;
+            openingTime?: string | undefined;
+            closingTime?: string | undefined;
             cuisine?: string | undefined;
             reservationInfo?: string | undefined;
         }>>;
@@ -1978,6 +2112,9 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            address?: string | undefined;
+            openingTime?: string | undefined;
+            closingTime?: string | undefined;
             cuisine?: string | undefined;
             reservationInfo?: string | undefined;
         } | null;
@@ -1999,6 +2136,9 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            address?: string | undefined;
+            openingTime?: string | undefined;
+            closingTime?: string | undefined;
             cuisine?: string | undefined;
             reservationInfo?: string | undefined;
         } | null;
@@ -2093,8 +2233,10 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            address?: string | undefined;
             ticketInfo?: string | undefined;
-            openingHours?: string | undefined;
+            openingTime?: string | undefined;
+            closingTime?: string | undefined;
         } | null;
     } | {
         status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -2114,6 +2256,9 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            address?: string | undefined;
+            openingTime?: string | undefined;
+            closingTime?: string | undefined;
             cuisine?: string | undefined;
             reservationInfo?: string | undefined;
         } | null;
@@ -2208,8 +2353,10 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            address?: string | undefined;
             ticketInfo?: string | undefined;
-            openingHours?: string | undefined;
+            openingTime?: string | undefined;
+            closingTime?: string | undefined;
         } | null;
     } | {
         status: "Planned" | "Booked" | "Done" | "Skipped";
@@ -2229,6 +2376,9 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            address?: string | undefined;
+            openingTime?: string | undefined;
+            closingTime?: string | undefined;
             cuisine?: string | undefined;
             reservationInfo?: string | undefined;
         } | null;

@@ -47,11 +47,16 @@ exports.AccommodationDetailsSchema = zod_1.z.object({
     guests: zod_1.z.number().int().positive().optional(),
 });
 exports.PlaceDetailsSchema = zod_1.z.object({
+    address: zod_1.z.string().optional(),
     ticketInfo: zod_1.z.string().optional(),
-    openingHours: zod_1.z.string().optional(),
+    openingTime: zod_1.z.string().optional(),
+    closingTime: zod_1.z.string().optional(),
 });
 exports.FoodDetailsSchema = zod_1.z.object({
+    address: zod_1.z.string().optional(),
     cuisine: zod_1.z.string().optional(),
+    openingTime: zod_1.z.string().optional(),
+    closingTime: zod_1.z.string().optional(),
     reservationInfo: zod_1.z.string().optional(),
 });
 // Common base schema

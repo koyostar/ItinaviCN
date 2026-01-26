@@ -45,6 +45,12 @@ export function FlightCard({
       direction={{ xs: "column", md: "row" }}
       spacing={{ xs: 2, md: 3 }}
       alignItems={{ xs: "flex-start", md: "center" }}
+      sx={{
+        transition: "opacity 0.2s",
+        "&:hover": {
+          opacity: 0.8,
+        },
+      }}
     >
       {/* Departure */}
       <Box sx={{ textAlign: "left" }}>

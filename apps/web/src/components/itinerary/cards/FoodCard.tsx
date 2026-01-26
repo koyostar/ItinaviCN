@@ -3,7 +3,10 @@ import { getUTCOffset } from "@/lib/utils/timezone";
 import { formatUTCTime } from "@/lib/dateUtils";
 
 interface FoodDetails {
+  address?: string;
   cuisine?: string;
+  openingTime?: string;
+  closingTime?: string;
   reservationInfo?: string;
 }
 
@@ -27,21 +30,50 @@ export function FoodCard({
   typeColor,
 }: FoodCardProps) {
   return (
-    <Box>
+    <Box
+      sx={{
+        transition: "opacity 0.2s",
+        "&:hover": {
+          opacity: 0.8,
+        },
+      }}
+    >
       <Typography variant="h6" mb={1}>
         {title}
       </Typography>
+
+      {details?.cuisine && (
+        <Typography variant="body2" color="text.secondary" mb={0.5}>
+          🍽️ {details.cuisine}
+        </Typography>
+      )}
+
+      {details?.address && (
+        <Typography variant="body2" color="text.secondary" mb={1}>
+          📍 {details.address}
+        </Typography>
+      )}
 
       <Typography variant="body2" color="text.secondary">
         🕐 {formatUTCTime(startDateTime)}
         {startTimezone && ` (${getUTCOffset(startTimezone)})`}
       </Typography>
 
-      {details?.reservationInfo && (
-        <Typography variant="body2" color="text.secondary" mt={1}>
-          📝 {details.reservationInfo}
-        </Typography>
-      )}
+      {(details?.openingTime && details?.closingTime) ||
+      details?.reservationInfo ? (
+        <Stack direction="row" spacing={2} mt={1} flexWrap="wrap">
+          {details?.openingTime && details?.closingTime && (
+            <Typography variant="body2" color="text.secondary">
+              🕒 {details.openingTime} - {details.closingTime}
+            </Typography>
+          )}
+          {details?.reservationInfo && (
+            <Typography variant="body2" color="text.secondary">
+              📝 {details.reservationInfo}
+            </Typography>
+          )}
+        </Stack>
+      ) : null}
     </Box>
   );
 }

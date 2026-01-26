@@ -30,8 +30,21 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { api } from "@/lib/api";
-import { ConfirmDialog, PageLoadingState, PageErrorState, EmptyState, PageHeader, FormDialog } from "@/components/ui";
-import { useDeleteConfirmation, useEditDialog, useDetailsDialog, useTripTimezone, useItineraryItems } from "@/hooks";
+import {
+  ConfirmDialog,
+  PageLoadingState,
+  PageErrorState,
+  EmptyState,
+  PageHeader,
+  FormDialog,
+} from "@/components/ui";
+import {
+  useDeleteConfirmation,
+  useEditDialog,
+  useDetailsDialog,
+  useTripTimezone,
+  useItineraryItems,
+} from "@/hooks";
 import { getTimezoneForCountry } from "@/lib/utils/timezone";
 import { ItineraryForm } from "@/components/forms";
 import { formatUTCDate } from "@/lib/dateUtils";
@@ -67,12 +80,9 @@ export default function ItineraryPage({
 
   const { items, loading, error, refetch } = useItineraryItems(tripId);
 
-  const deleteConfirmation = useDeleteConfirmation(
-    async (id) => {
-      await api.itinerary.delete(tripId, id);
-    },
-    refetch,
-  );
+  const deleteConfirmation = useDeleteConfirmation(async (id) => {
+    await api.itinerary.delete(tripId, id);
+  }, refetch);
 
   const editDialog = useEditDialog<ItineraryItemResponse>();
   const detailsDialog = useDetailsDialog<ItineraryItemResponse>();
@@ -222,14 +232,17 @@ export default function ItineraryPage({
                             borderRadius: "50%",
                             bgcolor: "background.paper",
                             border: 2,
-                            borderColor: "primary.main",
+                            borderColor: `${ITINERARY_TYPE_COLORS[item.type]}.main`,
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             zIndex: 1,
                           }}
                         >
-                          <Icon sx={{ fontSize: 18 }} color="primary" />
+                          <Icon
+                            sx={{ fontSize: 18 }}
+                            color={ITINERARY_TYPE_COLORS[item.type]}
+                          />
                         </Box>
 
                         <Card sx={{ mb: 2 }}>
@@ -266,8 +279,8 @@ export default function ItineraryPage({
                                     size="small"
                                     color="error"
                                     onClick={() =>
-                                    deleteConfirmation.handleDelete(item.id)
-                                  }
+                                      deleteConfirmation.handleDelete(item.id)
+                                    }
                                   >
                                     <DeleteIcon />
                                   </IconButton>
@@ -393,11 +406,7 @@ export default function ItineraryPage({
               defaultTimezone={defaultTimezone}
               onSubmit={(data) =>
                 editDialog.handleSubmit(async (item) => {
-                  await api.itinerary.update(
-                    tripId,
-                    item.id,
-                    data,
-                  );
+                  await api.itinerary.update(tripId, item.id, data);
                   refetch();
                 })
               }

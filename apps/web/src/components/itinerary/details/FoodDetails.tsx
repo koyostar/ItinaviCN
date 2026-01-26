@@ -3,7 +3,10 @@ import { getUTCOffset } from "@/lib/utils/timezone";
 import { formatUTCTime, formatUTCDate } from "@/lib/dateUtils";
 
 interface FoodDetails {
+  address?: string;
   cuisine?: string;
+  openingTime?: string;
+  closingTime?: string;
   reservationInfo?: string;
 }
 
@@ -38,6 +41,11 @@ export function FoodDetailsComponent({
             {details.cuisine}
           </Typography>
         )}
+        {details?.address && (
+          <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>
+            📍 {details.address}
+          </Typography>
+        )}
       </Box>
 
       <Divider />
@@ -55,6 +63,21 @@ export function FoodDetailsComponent({
           {startTimezone && ` (${getUTCOffset(startTimezone)})`}
         </Typography>
       </Stack>
+
+      {/* Opening Hours */}
+      {details?.openingTime && details?.closingTime && (
+        <>
+          <Divider />
+          <Stack spacing={1}>
+            <Typography variant="overline" color="text.secondary">
+              Opening Hours
+            </Typography>
+            <Typography variant="body1">
+              🕒 {details.openingTime} - {details.closingTime}
+            </Typography>
+          </Stack>
+        </>
+      )}
 
       {/* Reservation Info */}
       {details?.reservationInfo && (

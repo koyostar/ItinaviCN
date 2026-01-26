@@ -1,9 +1,13 @@
 import { Stack, TextField, Typography } from "@mui/material";
+import { AmapPlaceAutocomplete } from "../../AmapPlaceAutocomplete";
 import { DateTimeFields } from "./DateTimeFields";
 
 interface FoodDetails {
   title: string;
+  address: string;
   cuisine: string;
+  openingTime: string;
+  closingTime: string;
   reservationInfo: string;
   startTimezone: string;
   startDateTime: string;
@@ -22,18 +26,28 @@ export function FoodFields({
 }: FoodFieldsProps) {
   return (
     <>
-      <TextField
-        label="Title"
-        required
-        fullWidth
+      <AmapPlaceAutocomplete
+        label="Restaurant Name"
         value={foodDetails.title}
-        onChange={(e) =>
+        onPlaceSelect={(place) =>
           onFoodDetailsChange({
-            ...foodDetails,
-            title: e.target.value,
+            title: place.name,
+            address: place.address,
           })
         }
-        placeholder="e.g., Dinner at Dadong"
+        placeholder="Search for restaurant..."
+        required
+      />
+      <TextField
+        label="Address"
+        fullWidth
+        value={foodDetails.address}
+        onChange={(e) =>
+          onFoodDetailsChange({
+            address: e.target.value,
+          })
+        }
+        placeholder="Address will be filled automatically from search"
       />
       <Stack spacing={2}>
         <Typography variant="subtitle2" color="primary">
