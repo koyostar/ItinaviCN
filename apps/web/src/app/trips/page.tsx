@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import type { TripResponse, CreateTripRequest } from '@itinavi/schema';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import type { TripResponse, CreateTripRequest } from "@itinavi/schema";
 import {
   Box,
   Button,
@@ -14,18 +15,19 @@ import {
   IconButton,
   Stack,
   Typography,
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { api } from '@/lib/api';
-import { COUNTRIES, CITIES, getDisplayName } from '@/lib/locations';
-import { useUserPreferences } from '@/contexts/UserPreferencesContext';
-import { TripForm } from '@/components/TripForm';
-import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { formatUTCDate } from '@/lib/dateUtils';
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { api } from "@/lib/api";
+import { COUNTRIES, CITIES, getDisplayName } from "@/lib/locations";
+import { useUserPreferences } from "@/contexts/UserPreferencesContext";
+import { TripForm } from "@/components/TripForm";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { formatUTCDate } from "@/lib/dateUtils";
 
 export default function TripsPage() {
+  const router = useRouter();
   const { language } = useUserPreferences();
   const [trips, setTrips] = useState<TripResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,7 +50,7 @@ export default function TripsPage() {
       const response = await api.trips.list();
       setTrips((response as { items: TripResponse[] }).items);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load trips');
+      setError(err instanceof Error ? err.message : "Failed to load trips");
     } finally {
       setLoading(false);
     }
@@ -69,7 +71,7 @@ export default function TripsPage() {
       setTripToEdit(null);
       loadTrips();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to update trip');
+      alert(err instanceof Error ? err.message : "Failed to update trip");
     } finally {
       setUpdating(false);
     }
@@ -95,7 +97,7 @@ export default function TripsPage() {
       setTripToDelete(null);
       loadTrips();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to delete trip');
+      alert(err instanceof Error ? err.message : "Failed to delete trip");
     } finally {
       setDeleting(false);
     }
@@ -127,15 +129,16 @@ export default function TripsPage() {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <Typography variant="h4" component="h1">
           My Trips
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          href="/trips/new"
-        >
+        <Button variant="contained" startIcon={<AddIcon />} href="/trips/new">
           Create Trip
         </Button>
       </Stack>
@@ -163,34 +166,68 @@ export default function TripsPage() {
       ) : (
         <Stack spacing={2}>
           {trips.map((trip) => (
-            <Card key={trip.id}>
+            <Card
+              key={trip.id}
+              sx={{
+                cursor: "pointer",
+                "&:hover": {
+                  boxShadow: 3,
+                },
+              }}
+              onClick={() => router.push(`/trips/${trip.id}`)}
+            >
               <CardContent>
                 <Stack spacing={2}>
-                  <Stack direction="row" justifyContent="space-between" alignItems="start">
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="start"
+                  >
                     <Box flex={1}>
                       <Typography variant="h6">{trip.title}</Typography>
                       {trip.destinations && trip.destinations.length > 0 && (
                         <Typography variant="body2" color="text.secondary">
-                          📍 {trip.destinations.map(d => {
-                            const countryData = COUNTRIES[d.country];
-                            const countryName = countryData ? getDisplayName(countryData, language) : d.country;
-                            const cityNames = d.cities.map(city => {
-                              const cityData = CITIES[d.country]?.[city];
-                              return cityData ? getDisplayName(cityData, language) : city;
-                            }).join(', ');
-                            return `${countryName} (${cityNames})`;
-                          }).join(' • ')}
+                          📍{" "}
+                          {trip.destinations
+                            .map((d) => {
+                              const countryData = COUNTRIES[d.country];
+                              const countryName = countryData
+                                ? getDisplayName(countryData, language)
+                                : d.country;
+                              const cityNames = d.cities
+                                .map((city) => {
+                                  const cityData = CITIES[d.country]?.[city];
+                                  return cityData
+                                    ? getDisplayName(cityData, language)
+                                    : city;
+                                })
+                                .join(", ");
+                              return `${countryName} (${cityNames})`;
+                            })
+                            .join(" • ")}
                         </Typography>
                       )}
                       <Typography variant="body2" color="text.secondary">
-                        {formatUTCDate(trip.startDate, 'en-US', { month: 'short', day: 'numeric' })} - {formatUTCDate(trip.endDate, 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        {formatUTCDate(trip.startDate, "en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })}{" "}
+                        -{" "}
+                        {formatUTCDate(trip.endDate, "en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
                       </Typography>
                     </Box>
                     <Stack direction="row" spacing={1}>
                       <IconButton
                         size="small"
                         color="primary"
-                        onClick={() => handleEditClick(trip)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditClick(trip);
+                        }}
                         title="Edit trip"
                       >
                         <EditIcon />
@@ -198,35 +235,37 @@ export default function TripsPage() {
                       <IconButton
                         size="small"
                         color="error"
-                        onClick={() => handleDeleteClick(trip.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClick(trip.id);
+                        }}
                         title="Delete trip"
                       >
                         <DeleteIcon />
                       </IconButton>
                     </Stack>
                   </Stack>
-                  
+
                   <Stack direction="row" spacing={1}>
                     <Button
                       variant="outlined"
                       size="small"
-                      href={`/trips/${trip.id}/itinerary`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/trips/${trip.id}/itinerary`);
+                      }}
                     >
                       Itinerary
                     </Button>
                     <Button
                       variant="outlined"
                       size="small"
-                      href={`/trips/${trip.id}/locations`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/trips/${trip.id}/locations`);
+                      }}
                     >
                       Locations
-                    </Button>
-                    <Button
-                      variant="text"
-                      size="small"
-                      href={`/trips/${trip.id}`}
-                    >
-                      Details
                     </Button>
                   </Stack>
                 </Stack>

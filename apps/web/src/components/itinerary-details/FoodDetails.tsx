@@ -64,7 +64,9 @@ export function FoodDetailsComponent({
             <Typography variant="overline" color="text.secondary">
               Reservation
             </Typography>
-            <Typography variant="body1">📝 {details.reservationInfo}</Typography>
+            <Typography variant="body1">
+              📝 {details.reservationInfo}
+            </Typography>
           </Stack>
         </>
       )}
