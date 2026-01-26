@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ItinaviCN Web
 
-## Getting Started
+Next.js frontend application for ItinaviCN travel itinerary planning.
 
-First, run the development server:
+## Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Framework**: Next.js 16 (App Router)
+- **UI Library**: Material-UI (MUI) v7
+- **Language**: TypeScript
+- **Styling**: Emotion CSS-in-JS
+- **Maps**: Baidu Maps (AMap) integration
+
+## Features
+
+- **Trip Management** - Create and view travel trips
+- **Bilingual Support** - Toggle between Chinese (中文) and English
+- **Destination Autocomplete** - Search countries and cities in both languages
+- **Itinerary Planning** - Add flights, accommodations, food, and activities
+- **Location Search** - Integrated with AMap for place autocomplete
+- **Expense Tracking** - Track expenses with currency conversion
+- **Responsive Design** - Works on desktop and mobile
+
+## Project Structure
+
+```
+src/
+├── app/              # Next.js App Router pages
+│   ├── trips/        # Trips listing and management
+│   └── layout.tsx    # Root layout with theme provider
+├── components/       # React components
+│   ├── itinerary-cards/     # Display cards for different item types
+│   └── itinerary-form/      # Forms for creating itinerary items
+├── contexts/         # React contexts (user preferences, etc.)
+└── lib/              # Utilities and API client
+    ├── api.ts        # API client
+    ├── locations.ts  # Location data dictionary (countries/cities)
+    └── theme.ts      # MUI theme configuration
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+From the root of the monorepo:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Install dependencies
+pnpm install
 
-## Learn More
+# Start development server
+cd apps/web
+pnpm dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+The app will be available at `http://localhost:3000`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Environment Variables
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The API URL is configured to connect to `http://localhost:3001` by default. Update `src/lib/api.ts` if needed.
 
-## Deploy on Vercel
+## Key Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Bilingual Destination Support
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See [docs/FEATURE_DESTINATIONS.md](../../docs/FEATURE_DESTINATIONS.md) for details on the autocomplete and language toggle functionality.
+
+### AMap Integration
+
+See [docs/AMAP_INTEGRATION.md](../../docs/AMAP_INTEGRATION.md) for details on the Baidu Maps integration.
+
+## Scripts
+
+```bash
+# Development server
+pnpm dev
+
+# Production build
+pnpm build
+
+# Type checking
+pnpm typecheck
+
+# Lint code
+pnpm lint
+```

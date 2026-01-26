@@ -31,7 +31,7 @@
 
 4. Type in Cities field:
    - Type "重庆" → see "重庆 / Chongqing" in dropdown
-   - Type "chengdu" → see "成都 / Chengdu" in dropdown  
+   - Type "chengdu" → see "成都 / Chengdu" in dropdown
    - Select from dropdown → stored as "Chongqing", "Chengdu"
 
 #### Viewing Trips
@@ -44,6 +44,7 @@
 ### Data Structure
 
 **Database (JSON)**:
+
 ```json
 {
   "destinations": [
@@ -56,6 +57,7 @@
 ```
 
 **Display (based on user preference)**:
+
 - Chinese: 中国 (北京, 上海, 重庆)
 - English: China (Beijing, Shanghai, Chongqing)
 
@@ -76,6 +78,7 @@
 ### Location Data
 
 Currently includes:
+
 - **Countries**: China, Japan, South Korea, Thailand, Vietnam, Singapore, Malaysia, Indonesia
 - **China Cities**: 20+ major cities (Beijing, Shanghai, Chengdu, Chongqing, etc.)
 - **Other cities**: Major cities for each country
@@ -118,8 +121,8 @@ export const CITIES: Record<string, Record<string, LocationData>> = {
 
 ```javascript
 // Check stored preference
-localStorage.getItem('preferredLanguage')
+localStorage.getItem("preferredLanguage");
 
 // Set preference
-localStorage.setItem('preferredLanguage', 'zh')
+localStorage.setItem("preferredLanguage", "zh");
 ```
