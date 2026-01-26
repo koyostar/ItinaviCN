@@ -21,14 +21,15 @@ import {
 } from "@mui/material";
 import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { api } from "@/lib/api";
-import { 
-  COUNTRIES, 
-  CITIES, 
-  searchLocations, 
-  getDisplayName, 
-  findLocationKey 
+import {
+  COUNTRIES,
+  CITIES,
+  searchLocations,
+  getDisplayName,
+  findLocationKey,
 } from "@/lib/locations";
 import { useUserPreferences } from "@/contexts/UserPreferencesContext";
+import { useFormSubmit } from "@/hooks/useFormSubmit";
 
 interface DestinationInput {
   country: string;
@@ -38,7 +39,6 @@ interface DestinationInput {
 export default function NewTripPage() {
   const router = useRouter();
   const { language, setLanguage } = useUserPreferences();
-  const [loading, setLoading] = useState(false);
   const [destinations, setDestinations] = useState<DestinationInput[]>([
     { country: "", cities: [""] },
   ]);
@@ -52,6 +52,38 @@ export default function NewTripPage() {
     originCurrency: "SGD",
     notes: "",
   });
+
+  const { handleSubmit: submitForm, submitting } = useFormSubmit(
+    async (_: void) => {
+      // Filter out empty destinations
+      const validDestinations = destinations
+        .filter((d) => d.country.trim() && d.cities.some((c) => c.trim()))
+        .map((d) => ({
+          country: d.country.trim(),
+          cities: d.cities.filter((c) => c.trim()).map((c) => c.trim()),
+        }));
+
+      const payload: CreateTripRequest = {
+        title: formData.title!,
+        startDate: startDate + "T00:00:00Z",
+        endDate: endDate + "T23:59:59Z",
+        destinationCurrency: formData.destinationCurrency!,
+        originCurrency: formData.originCurrency!,
+        ...(validDestinations.length > 0 && {
+          destinations: validDestinations,
+        }),
+        ...(formData.notes && { notes: formData.notes }),
+      };
+
+      await api.trips.create(payload);
+    },
+    { onSuccess: () => router.push("/trips") },
+  );
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submitForm(undefined as void);
+  };
 
   const handleAddDestination = () => {
     setDestinations([...destinations, { country: "", cities: [""] }]);
@@ -93,39 +125,6 @@ export default function NewTripPage() {
     const updated = [...destinations];
     updated[destIndex].cities[cityIndex] = value;
     setDestinations(updated);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      // Filter out empty destinations
-      const validDestinations = destinations
-        .filter((d) => d.country.trim() && d.cities.some((c) => c.trim()))
-        .map((d) => ({
-          country: d.country.trim(),
-          cities: d.cities.filter((c) => c.trim()).map((c) => c.trim()),
-        }));
-
-      const payload: CreateTripRequest = {
-        title: formData.title!,
-        startDate: startDate + "T00:00:00Z",
-        endDate: endDate + "T23:59:59Z",
-        destinationCurrency: formData.destinationCurrency!,
-        originCurrency: formData.originCurrency!,
-        ...(validDestinations.length > 0 && {
-          destinations: validDestinations,
-        }),
-        ...(formData.notes && { notes: formData.notes }),
-      };
-
-      const result = await api.trips.create(payload);
-      router.push(`/trips`);
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to create trip");
-      setLoading(false);
-    }
   };
 
   return (
@@ -176,34 +175,49 @@ export default function NewTripPage() {
                           fullWidth
                           options={Object.keys(COUNTRIES)}
                           value={dest.country}
-                          inputValue={dest.country ? (COUNTRIES[dest.country] ? getDisplayName(COUNTRIES[dest.country], language) : dest.country) : ''}
+                          inputValue={
+                            dest.country
+                              ? COUNTRIES[dest.country]
+                                ? getDisplayName(
+                                    COUNTRIES[dest.country],
+                                    language,
+                                  )
+                                : dest.country
+                              : ""
+                          }
                           onInputChange={(_, newInputValue, reason) => {
-                            if (reason === 'input') {
+                            if (reason === "input") {
                               // Allow typing
                               handleCountryChange(destIndex, newInputValue);
-                            } else if (reason === 'clear') {
-                              handleCountryChange(destIndex, '');
+                            } else if (reason === "clear") {
+                              handleCountryChange(destIndex, "");
                             }
                           }}
                           onChange={(_, newValue) => {
                             // Store standardized English key
-                            const standardized = newValue ? (findLocationKey(newValue, COUNTRIES) || newValue) : '';
+                            const standardized = newValue
+                              ? findLocationKey(newValue, COUNTRIES) || newValue
+                              : "";
                             handleCountryChange(destIndex, standardized);
                           }}
                           filterOptions={(options, state) => {
                             const inputValue = state.inputValue.toLowerCase();
-                            return options.filter(option => {
+                            return options.filter((option) => {
                               const countryData = COUNTRIES[option];
                               return (
                                 option.toLowerCase().includes(inputValue) ||
-                                countryData.en.toLowerCase().includes(inputValue) ||
+                                countryData.en
+                                  .toLowerCase()
+                                  .includes(inputValue) ||
                                 countryData.zh.includes(state.inputValue)
                               );
                             });
                           }}
                           getOptionLabel={(option) => {
                             const countryData = COUNTRIES[option];
-                            return countryData ? getDisplayName(countryData, language) : option;
+                            return countryData
+                              ? getDisplayName(countryData, language)
+                              : option;
                           }}
                           renderInput={(params) => (
                             <TextField
@@ -216,7 +230,9 @@ export default function NewTripPage() {
                             const countryData = COUNTRIES[option];
                             return (
                               <li {...props} key={option}>
-                                {countryData ? `${countryData.zh} / ${countryData.en}` : option}
+                                {countryData
+                                  ? `${countryData.zh} / ${countryData.en}`
+                                  : option}
                               </li>
                             );
                           }}
@@ -251,8 +267,11 @@ export default function NewTripPage() {
                         </Stack>
 
                         {dest.cities.map((city, cityIndex) => {
-                          const countryCities = dest.country && CITIES[dest.country] ? CITIES[dest.country] : {};
-                          
+                          const countryCities =
+                            dest.country && CITIES[dest.country]
+                              ? CITIES[dest.country]
+                              : {};
+
                           return (
                             <Stack
                               key={cityIndex}
@@ -265,32 +284,61 @@ export default function NewTripPage() {
                                 fullWidth
                                 options={Object.keys(countryCities)}
                                 value={city}
-                                inputValue={city ? (countryCities[city] ? getDisplayName(countryCities[city], language) : city) : ''}
+                                inputValue={
+                                  city
+                                    ? countryCities[city]
+                                      ? getDisplayName(
+                                          countryCities[city],
+                                          language,
+                                        )
+                                      : city
+                                    : ""
+                                }
                                 onInputChange={(_, newInputValue, reason) => {
-                                  if (reason === 'input') {
-                                    handleCityChange(destIndex, cityIndex, newInputValue);
-                                  } else if (reason === 'clear') {
-                                    handleCityChange(destIndex, cityIndex, '');
+                                  if (reason === "input") {
+                                    handleCityChange(
+                                      destIndex,
+                                      cityIndex,
+                                      newInputValue,
+                                    );
+                                  } else if (reason === "clear") {
+                                    handleCityChange(destIndex, cityIndex, "");
                                   }
                                 }}
                                 onChange={(_, newValue) => {
-                                  const standardized = newValue ? (findLocationKey(newValue, countryCities) || newValue) : '';
-                                  handleCityChange(destIndex, cityIndex, standardized);
+                                  const standardized = newValue
+                                    ? findLocationKey(
+                                        newValue,
+                                        countryCities,
+                                      ) || newValue
+                                    : "";
+                                  handleCityChange(
+                                    destIndex,
+                                    cityIndex,
+                                    standardized,
+                                  );
                                 }}
                                 filterOptions={(options, state) => {
-                                  const inputValue = state.inputValue.toLowerCase();
-                                  return options.filter(option => {
+                                  const inputValue =
+                                    state.inputValue.toLowerCase();
+                                  return options.filter((option) => {
                                     const cityData = countryCities[option];
                                     return (
-                                      option.toLowerCase().includes(inputValue) ||
-                                      cityData.en.toLowerCase().includes(inputValue) ||
+                                      option
+                                        .toLowerCase()
+                                        .includes(inputValue) ||
+                                      cityData.en
+                                        .toLowerCase()
+                                        .includes(inputValue) ||
                                       cityData.zh.includes(state.inputValue)
                                     );
                                   });
                                 }}
                                 getOptionLabel={(option) => {
                                   const cityData = countryCities[option];
-                                  return cityData ? getDisplayName(cityData, language) : option;
+                                  return cityData
+                                    ? getDisplayName(cityData, language)
+                                    : option;
                                 }}
                                 renderInput={(params) => (
                                   <TextField
@@ -303,7 +351,9 @@ export default function NewTripPage() {
                                   const cityData = countryCities[option];
                                   return (
                                     <li {...props} key={option}>
-                                      {cityData ? `${cityData.zh} / ${cityData.en}` : option}
+                                      {cityData
+                                        ? `${cityData.zh} / ${cityData.en}`
+                                        : option}
                                     </li>
                                   );
                                 }}
@@ -397,12 +447,12 @@ export default function NewTripPage() {
                 <Button
                   variant="outlined"
                   onClick={() => router.push("/trips")}
-                  disabled={loading}
+                  disabled={submitting}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" variant="contained" disabled={loading}>
-                  {loading ? "Creating..." : "Create Trip"}
+                <Button type="submit" variant="contained" disabled={submitting}>
+                  {submitting ? "Creating..." : "Create Trip"}
                 </Button>
               </Stack>
             </Stack>
