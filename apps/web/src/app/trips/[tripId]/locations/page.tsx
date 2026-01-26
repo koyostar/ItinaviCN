@@ -20,13 +20,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PlaceIcon from "@mui/icons-material/Place";
 import { api } from "@/lib/api";
-import { ConfirmDialog } from "@/components/ConfirmDialog";
-import { PageLoadingState } from "@/components/PageLoadingState";
-import { PageErrorState } from "@/components/PageErrorState";
-import { EmptyState } from "@/components/EmptyState";
-import { PageHeader } from "@/components/PageHeader";
-import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
-import { useLocations } from "@/hooks/useLocations";
+import {
+  ConfirmDialog,
+  PageLoadingState,
+  PageErrorState,
+  EmptyState,
+  PageHeader,
+} from "@/components/ui";
+import { useDeleteConfirmation, useLocations } from "@/hooks";
 import { LOCATION_CATEGORY_COLORS } from "@/lib/constants";
 
 export default function LocationsPage({

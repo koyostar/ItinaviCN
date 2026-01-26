@@ -13,7 +13,7 @@ export class ItineraryService {
   /**
    * Retrieves all itinerary items for a specific trip.
    * Items are ordered chronologically by start date/time.
-   * 
+   *
    * @param {string} tripId - The unique identifier of the trip
    * @returns {Promise} List of itinerary items for the trip
    */
@@ -26,7 +26,7 @@ export class ItineraryService {
 
   /**
    * Retrieves a single itinerary item by ID.
-   * 
+   *
    * @param {string} itemId - The unique identifier of the itinerary item
    * @returns {Promise} The itinerary item data
    * @throws {NotFoundException} If item with given ID is not found
@@ -41,7 +41,7 @@ export class ItineraryService {
 
   /**
    * Creates a new itinerary item for a trip.
-   * 
+   *
    * @param {string} tripId - The unique identifier of the trip
    * @param {Omit<Prisma.ItineraryItemCreateInput, 'trip'>} input - Itinerary item creation data
    * @returns {Promise} The newly created itinerary item
@@ -60,7 +60,7 @@ export class ItineraryService {
 
   /**
    * Updates an existing itinerary item.
-   * 
+   *
    * @param {string} itemId - The unique identifier of the item to update
    * @param {Prisma.ItineraryItemUpdateInput} input - Itinerary item update data
    * @returns {Promise} The updated itinerary item
@@ -76,7 +76,7 @@ export class ItineraryService {
 
   /**
    * Deletes an itinerary item by ID.
-   * 
+   *
    * @param {string} itemId - The unique identifier of the item to delete
    * @returns {Promise<void>}
    * @throws {NotFoundException} If item with given ID is not found

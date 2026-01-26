@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import {
   CreateLocationRequestSchema,
   ListLocationsResponseSchema,
@@ -37,7 +45,8 @@ function toLocationResponse(location: {
     category: location.category,
     address: location.address,
     latitude: location.latitude === null ? null : location.latitude.toNumber(),
-    longitude: location.longitude === null ? null : location.longitude.toNumber(),
+    longitude:
+      location.longitude === null ? null : location.longitude.toNumber(),
     baiduPlaceId: location.baiduPlaceId,
     notes: location.notes,
     createdAt: location.createdAt.toISOString(),
@@ -136,10 +145,18 @@ export class LocationsController {
     const location = await this.locations.updateLocation(locationId, {
       ...(input.name !== undefined ? { name: input.name } : {}),
       ...(input.category !== undefined ? { category: input.category } : {}),
-      ...(input.address !== undefined ? { address: input.address ?? null } : {}),
-      ...(input.latitude !== undefined ? { latitude: input.latitude ?? null } : {}),
-      ...(input.longitude !== undefined ? { longitude: input.longitude ?? null } : {}),
-      ...(input.baiduPlaceId !== undefined ? { baiduPlaceId: input.baiduPlaceId ?? null } : {}),
+      ...(input.address !== undefined
+        ? { address: input.address ?? null }
+        : {}),
+      ...(input.latitude !== undefined
+        ? { latitude: input.latitude ?? null }
+        : {}),
+      ...(input.longitude !== undefined
+        ? { longitude: input.longitude ?? null }
+        : {}),
+      ...(input.baiduPlaceId !== undefined
+        ? { baiduPlaceId: input.baiduPlaceId ?? null }
+        : {}),
       ...(input.notes !== undefined ? { notes: input.notes ?? null } : {}),
     });
 

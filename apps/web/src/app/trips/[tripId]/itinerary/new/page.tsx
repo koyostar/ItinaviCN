@@ -5,9 +5,8 @@ import { useRouter } from "next/navigation";
 import type { CreateItineraryItemRequest } from "@itinavi/schema";
 import { Card, CardContent, Container, Typography } from "@mui/material";
 import { api } from "@/lib/api";
-import { ItineraryForm } from "@/components/ItineraryForm";
-import { useTripTimezone } from "@/hooks/useTripTimezone";
-import { useFormSubmit } from "@/hooks/useFormSubmit";
+import { ItineraryForm } from "@/components/forms";
+import { useTripTimezone, useFormSubmit } from "@/hooks";
 
 export default function NewItineraryItemPage({
   params,

@@ -30,19 +30,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { api } from "@/lib/api";
-import { ConfirmDialog } from "@/components/ConfirmDialog";
-import { PageLoadingState } from "@/components/PageLoadingState";
-import { PageErrorState } from "@/components/PageErrorState";
-import { EmptyState } from "@/components/EmptyState";
-import { PageHeader } from "@/components/PageHeader";
-import { FormDialog } from "@/components/FormDialog";
-import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
-import { useEditDialog } from "@/hooks/useEditDialog";
-import { useDetailsDialog } from "@/hooks/useDetailsDialog";
-import { useTripTimezone } from "@/hooks/useTripTimezone";
-import { useItineraryItems } from "@/hooks/useItineraryItems";
+import { ConfirmDialog, PageLoadingState, PageErrorState, EmptyState, PageHeader, FormDialog } from "@/components/ui";
+import { useDeleteConfirmation, useEditDialog, useDetailsDialog, useTripTimezone, useItineraryItems } from "@/hooks";
 import { getTimezoneForCountry } from "@/lib/utils/timezone";
-import { ItineraryForm } from "@/components/ItineraryForm";
+import { ItineraryForm } from "@/components/forms";
 import { formatUTCDate } from "@/lib/dateUtils";
 import {
   ITINERARY_TYPE_ICONS,
@@ -55,14 +46,14 @@ import {
   TransportCard,
   PlaceVisitCard,
   FoodCard,
-} from "@/components/itinerary-cards";
+} from "@/components/itinerary/cards";
 import {
   FlightDetailsComponent,
   AccommodationDetailsComponent,
   TransportDetailsComponent,
   PlaceVisitDetailsComponent,
   FoodDetailsComponent,
-} from "@/components/itinerary-details";
+} from "@/components/itinerary/details";
 
 export default function ItineraryPage({
   params,

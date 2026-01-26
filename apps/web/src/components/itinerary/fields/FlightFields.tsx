@@ -1,6 +1,6 @@
 import { Stack, TextField, Typography, Box } from "@mui/material";
 import { DateTimeFields } from "./DateTimeFields";
-import { AmapPlaceAutocomplete } from "../AmapPlaceAutocomplete";
+import { AmapPlaceAutocomplete } from "../../AmapPlaceAutocomplete";
 
 interface FlightDetails {
   departureCity: string;

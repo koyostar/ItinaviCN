@@ -5,17 +5,17 @@ import type { TripResponse, CreateTripRequest } from "@itinavi/schema";
 import { Container, Stack } from "@mui/material";
 import { api } from "@/lib/api";
 import { useUserPreferences } from "@/contexts/UserPreferencesContext";
-import { TripForm } from "@/components/TripForm";
-import { ConfirmDialog } from "@/components/ConfirmDialog";
-import { PageLoadingState } from "@/components/PageLoadingState";
-import { PageErrorState } from "@/components/PageErrorState";
-import { EmptyState } from "@/components/EmptyState";
-import { PageHeader } from "@/components/PageHeader";
-import { FormDialog } from "@/components/FormDialog";
+import { TripForm } from "@/components/forms";
+import {
+  ConfirmDialog,
+  PageLoadingState,
+  PageErrorState,
+  EmptyState,
+  PageHeader,
+  FormDialog,
+} from "@/components/ui";
 import { TripCard } from "@/components/TripCard";
-import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
-import { useEditDialog } from "@/hooks/useEditDialog";
-import { useTrips } from "@/hooks/useTrips";
+import { useDeleteConfirmation, useEditDialog, useTrips } from "@/hooks";
 
 export default function TripsPage() {
   const router = useRouter();

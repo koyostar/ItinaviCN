@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import {
   CreateTripRequestSchema,
   ListTripsResponseSchema,
@@ -12,7 +20,7 @@ import { TripsService } from './trips.service';
 /**
  * Transforms a database trip record to API response format.
  * Converts Date objects to ISO strings and validates response schema.
- * 
+ *
  * @param trip - Raw trip data from database
  * @returns Validated trip response conforming to TripResponseSchema
  */
@@ -49,7 +57,7 @@ function toTripResponse(trip: {
 /**
  * REST controller for trip management endpoints.
  * Handles HTTP requests for CRUD operations on trips.
- * 
+ *
  * Base path: /api/trips
  */
 @Controller('api/trips')
@@ -59,7 +67,7 @@ export class TripsController {
   /**
    * GET /api/trips
    * Retrieves all trips sorted by start date.
-   * 
+   *
    * @returns List of trips with their details
    */
   @Get()
@@ -72,7 +80,7 @@ export class TripsController {
   /**
    * GET /api/trips/:tripId
    * Retrieves a single trip by ID.
-   * 
+   *
    * @param params - Route parameters containing tripId
    * @returns Trip details
    * @throws {NotFoundException} If trip is not found
@@ -88,7 +96,7 @@ export class TripsController {
   /**
    * POST /api/trips
    * Creates a new trip.
-   * 
+   *
    * @param body - Trip creation data
    * @returns The newly created trip
    * @throws {BadRequestException} If request body is invalid
@@ -99,7 +107,9 @@ export class TripsController {
 
     const trip = await this.trips.createTrip({
       title: input.title,
-      destinations: input.destinations ? (input.destinations as object) : undefined,
+      destinations: input.destinations
+        ? (input.destinations as object)
+        : undefined,
       startDate: new Date(input.startDate),
       endDate: new Date(input.endDate),
       destinationCurrency: input.destinationCurrency,
@@ -113,7 +123,7 @@ export class TripsController {
   /**
    * PATCH /api/trips/:tripId
    * Updates an existing trip with partial data.
-   * 
+   *
    * @param params - Route parameters containing tripId
    * @param body - Trip update data (partial)
    * @returns The updated trip
@@ -151,7 +161,7 @@ export class TripsController {
   /**
    * DELETE /api/trips/:tripId
    * Deletes a trip by ID.
-   * 
+   *
    * @param params - Route parameters containing tripId
    * @returns Success confirmation
    * @throws {NotFoundException} If trip is not found

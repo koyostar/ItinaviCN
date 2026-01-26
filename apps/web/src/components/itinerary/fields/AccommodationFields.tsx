@@ -1,5 +1,5 @@
 import { Stack, TextField, Typography } from "@mui/material";
-import { AmapPlaceAutocomplete } from "../AmapPlaceAutocomplete";
+import { AmapPlaceAutocomplete } from "../../AmapPlaceAutocomplete";
 import { DateTimeFields } from "./DateTimeFields";
 
 interface AccommodationDetails {

@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import { api } from "@/lib/api";
 import { LOCATION_CATEGORIES } from "@/lib/constants";
-import { useFormSubmit } from "@/hooks/useFormSubmit";
+import { useFormSubmit } from "@/hooks";
 
 export default function NewLocationPage({
   params,

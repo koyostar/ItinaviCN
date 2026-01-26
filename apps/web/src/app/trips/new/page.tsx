@@ -29,7 +29,7 @@ import {
   findLocationKey,
 } from "@/lib/locations";
 import { useUserPreferences } from "@/contexts/UserPreferencesContext";
-import { useFormSubmit } from "@/hooks/useFormSubmit";
+import { useFormSubmit } from "@/hooks";
 
 interface DestinationInput {
   country: string;

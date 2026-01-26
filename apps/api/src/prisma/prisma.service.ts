@@ -5,7 +5,7 @@ import { Pool } from 'pg';
 
 /**
  * Retrieves a required environment variable.
- * 
+ *
  * @param {string} name - The environment variable name
  * @returns {string} The environment variable value
  * @throws {Error} If the environment variable is not set or empty
@@ -20,7 +20,7 @@ function mustGetEnv(name: string): string {
 
 /**
  * Prisma database service with PostgreSQL adapter.
- * 
+ *
  * Manages database connections and lifecycle hooks for the NestJS application.
  * Uses PostgreSQL connection pooling for optimal performance.
  * Automatically connects on module initialization and disconnects on destruction.

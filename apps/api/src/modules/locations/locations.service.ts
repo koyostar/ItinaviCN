@@ -13,7 +13,7 @@ export class LocationsService {
   /**
    * Retrieves all locations for a specific trip.
    * Locations are ordered by creation date.
-   * 
+   *
    * @param {string} tripId - The unique identifier of the trip
    * @returns {Promise} List of locations for the trip
    */
@@ -26,7 +26,7 @@ export class LocationsService {
 
   /**
    * Retrieves a single location by ID.
-   * 
+   *
    * @param {string} locationId - The unique identifier of the location
    * @returns {Promise} The location data
    * @throws {NotFoundException} If location with given ID is not found
@@ -41,12 +41,15 @@ export class LocationsService {
 
   /**
    * Creates a new location for a trip.
-   * 
+   *
    * @param {string} tripId - The unique identifier of the trip
    * @param {Omit<Prisma.LocationCreateInput, 'trip'>} input - Location creation data
    * @returns {Promise} The newly created location
    */
-  async createLocation(tripId: string, input: Omit<Prisma.LocationCreateInput, 'trip'>) {
+  async createLocation(
+    tripId: string,
+    input: Omit<Prisma.LocationCreateInput, 'trip'>,
+  ) {
     return this.prisma.location.create({
       data: {
         ...input,
@@ -57,7 +60,7 @@ export class LocationsService {
 
   /**
    * Updates an existing location.
-   * 
+   *
    * @param {string} locationId - The unique identifier of the location to update
    * @param {Prisma.LocationUpdateInput} input - Location update data
    * @returns {Promise} The updated location
@@ -73,7 +76,7 @@ export class LocationsService {
 
   /**
    * Deletes a location by ID.
-   * 
+   *
    * @param {string} locationId - The unique identifier of the location to delete
    * @returns {Promise<void>}
    * @throws {NotFoundException} If location with given ID is not found

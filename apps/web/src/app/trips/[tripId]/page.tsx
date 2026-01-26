@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { use, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import type { TripResponse, CreateTripRequest } from '@itinavi/schema';
+import { use, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import type { TripResponse, CreateTripRequest } from "@itinavi/schema";
 import {
   Box,
   Button,
@@ -17,21 +17,25 @@ import {
   IconButton,
   Stack,
   Typography,
-} from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PlaceIcon from '@mui/icons-material/Place';
-import EventIcon from '@mui/icons-material/Event';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import { api } from '@/lib/api';
-import { COUNTRIES, CITIES, getDisplayName } from '@/lib/locations';
-import { useUserPreferences } from '@/contexts/UserPreferencesContext';
-import { TripForm } from '@/components/TripForm';
-import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { formatUTCDate, calculateDays } from '@/lib/dateUtils';
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import PlaceIcon from "@mui/icons-material/Place";
+import EventIcon from "@mui/icons-material/Event";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import { api } from "@/lib/api";
+import { COUNTRIES, CITIES, getDisplayName } from "@/lib/locations";
+import { useUserPreferences } from "@/contexts/UserPreferencesContext";
+import { TripForm } from "@/components/forms";
+import { ConfirmDialog } from "@/components/ui";
+import { formatUTCDate, calculateDays } from "@/lib/dateUtils";
 
-export default function TripDetailPage({ params }: { params: Promise<{ tripId: string }> }) {
+export default function TripDetailPage({
+  params,
+}: {
+  params: Promise<{ tripId: string }>;
+}) {
   const { tripId } = use(params);
   const router = useRouter();
   const { language } = useUserPreferences();
@@ -55,7 +59,7 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
       const data = (await api.trips.get(tripId)) as TripResponse;
       setTrip(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load trip');
+      setError(err instanceof Error ? err.message : "Failed to load trip");
     } finally {
       setLoading(false);
     }
@@ -72,7 +76,7 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
       setEditDialogOpen(false);
       loadTrip();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to update trip');
+      alert(err instanceof Error ? err.message : "Failed to update trip");
     } finally {
       setUpdating(false);
     }
@@ -90,9 +94,9 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
     try {
       setDeleting(true);
       await api.trips.delete(tripId);
-      router.push('/trips');
+      router.push("/trips");
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to delete trip');
+      alert(err instanceof Error ? err.message : "Failed to delete trip");
       setDeleting(false);
     }
   }
@@ -112,8 +116,8 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
   if (error || !trip) {
     return (
       <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Typography color="error">{error || 'Trip not found'}</Typography>
-        <Button onClick={() => router.push('/trips')} sx={{ mt: 2 }}>
+        <Typography color="error">{error || "Trip not found"}</Typography>
+        <Button onClick={() => router.push("/trips")} sx={{ mt: 2 }}>
           Back to Trips
         </Button>
       </Container>
@@ -126,7 +130,11 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Stack spacing={3}>
         {/* Header */}
-        <Stack direction="row" justifyContent="space-between" alignItems="start">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="start"
+        >
           <Box>
             <Typography variant="h4" component="h1" gutterBottom>
               {trip.title}
@@ -145,7 +153,7 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
                         ? getDisplayName(cityData, language)
                         : city;
                     })
-                    .join(', ');
+                    .join(", ");
                   return (
                     <Chip
                       key={idx}
@@ -183,7 +191,7 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
               Trip Information
             </Typography>
             <Divider sx={{ mb: 2 }} />
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
               <Box sx={{ flex: 1 }}>
                 <Stack spacing={2}>
                   <Box>
@@ -192,9 +200,7 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
                     </Typography>
                     <Stack direction="row" spacing={1} alignItems="center">
                       <CalendarMonthIcon fontSize="small" color="action" />
-                      <Typography>
-                        {formatUTCDate(trip.startDate)}
-                      </Typography>
+                      <Typography>{formatUTCDate(trip.startDate)}</Typography>
                     </Stack>
                   </Box>
                   <Box>
@@ -203,9 +209,7 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
                     </Typography>
                     <Stack direction="row" spacing={1} alignItems="center">
                       <CalendarMonthIcon fontSize="small" color="action" />
-                      <Typography>
-                        {formatUTCDate(trip.endDate)}
-                      </Typography>
+                      <Typography>{formatUTCDate(trip.endDate)}</Typography>
                     </Stack>
                   </Box>
                   <Box>
@@ -215,7 +219,7 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
                     <Stack direction="row" spacing={1} alignItems="center">
                       <EventIcon fontSize="small" color="action" />
                       <Typography>
-                        {duration} {duration === 1 ? 'day' : 'days'}
+                        {duration} {duration === 1 ? "day" : "days"}
                       </Typography>
                     </Stack>
                   </Box>
@@ -256,8 +260,12 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
         </Card>
 
         {/* Quick Actions */}
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} flexWrap="wrap">
-          <Card sx={{ flex: { sm: '1 1 45%', md: '1 1 22%' } }}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          flexWrap="wrap"
+        >
+          <Card sx={{ flex: { sm: "1 1 45%", md: "1 1 22%" } }}>
             <CardContent>
               <Stack spacing={2} alignItems="center">
                 <PlaceIcon sx={{ fontSize: 48 }} color="primary" />
@@ -274,7 +282,7 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
               </Stack>
             </CardContent>
           </Card>
-          <Card sx={{ flex: { sm: '1 1 45%', md: '1 1 22%' } }}>
+          <Card sx={{ flex: { sm: "1 1 45%", md: "1 1 22%" } }}>
             <CardContent>
               <Stack spacing={2} alignItems="center">
                 <EventIcon sx={{ fontSize: 48 }} color="primary" />
@@ -291,7 +299,7 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
               </Stack>
             </CardContent>
           </Card>
-          <Card sx={{ flex: { sm: '1 1 45%', md: '1 1 22%' } }}>
+          <Card sx={{ flex: { sm: "1 1 45%", md: "1 1 22%" } }}>
             <CardContent>
               <Stack spacing={2} alignItems="center">
                 <AttachMoneyIcon sx={{ fontSize: 48 }} color="action" />
@@ -304,7 +312,7 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
               </Stack>
             </CardContent>
           </Card>
-          <Card sx={{ flex: { sm: '1 1 45%', md: '1 1 22%' } }}>
+          <Card sx={{ flex: { sm: "1 1 45%", md: "1 1 22%" } }}>
             <CardContent>
               <Stack spacing={2} alignItems="center">
                 <PlaceIcon sx={{ fontSize: 48 }} color="action" />
@@ -321,7 +329,7 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
 
         {/* Back Button */}
         <Box>
-          <Button variant="outlined" onClick={() => router.push('/trips')}>
+          <Button variant="outlined" onClick={() => router.push("/trips")}>
             Back to Trips
           </Button>
         </Box>

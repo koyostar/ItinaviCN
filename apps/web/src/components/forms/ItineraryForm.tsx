@@ -8,12 +8,16 @@ import type {
   ItineraryItemResponse,
 } from "@itinavi/schema";
 import { ITINERARY_TYPES, ITINERARY_STATUSES } from "@/lib/constants";
-import { utcToDateTimeLocal, dateTimeLocalToUTC, utcToDateTimeLocalInTimezone } from "@/lib/dateUtils";
-import { FlightFields } from "./itinerary-form/FlightFields";
-import { AccommodationFields } from "./itinerary-form/AccommodationFields";
-import { TransportFields } from "./itinerary-form/TransportFields";
-import { PlaceVisitFields } from "./itinerary-form/PlaceVisitFields";
-import { FoodFields } from "./itinerary-form/FoodFields";
+import {
+  utcToDateTimeLocal,
+  dateTimeLocalToUTC,
+  utcToDateTimeLocalInTimezone,
+} from "@/lib/dateUtils";
+import { FlightFields } from "../itinerary/fields/FlightFields";
+import { AccommodationFields } from "../itinerary/fields/AccommodationFields";
+import { TransportFields } from "../itinerary/fields/TransportFields";
+import { PlaceVisitFields } from "../itinerary/fields/PlaceVisitFields";
+import { FoodFields } from "../itinerary/fields/FoodFields";
 import {
   Box,
   Button,
@@ -84,26 +88,42 @@ export function ItineraryForm({
     arrivalAirportAddress:
       (initialData?.details as any)?.arrivalAirportAddress || "",
     startTimezone: initialData?.startTimezone || defaultTimezone,
-    startDateTime: initialData?.startDateTime && initialData?.startTimezone
-      ? utcToDateTimeLocalInTimezone(initialData.startDateTime, initialData.startTimezone)
-      : "",
+    startDateTime:
+      initialData?.startDateTime && initialData?.startTimezone
+        ? utcToDateTimeLocalInTimezone(
+            initialData.startDateTime,
+            initialData.startTimezone,
+          )
+        : "",
     endTimezone: initialData?.endTimezone || defaultTimezone,
-    endDateTime: initialData?.endDateTime && initialData?.endTimezone
-      ? utcToDateTimeLocalInTimezone(initialData.endDateTime, initialData.endTimezone)
-      : "",
+    endDateTime:
+      initialData?.endDateTime && initialData?.endTimezone
+        ? utcToDateTimeLocalInTimezone(
+            initialData.endDateTime,
+            initialData.endTimezone,
+          )
+        : "",
   });
 
   const [transportDetails, setTransportDetails] = useState({
     title: initialData?.type === "Transport" ? initialData.title : "",
     mode: ((initialData?.details as any)?.mode || "Metro") as TransportMode,
     startTimezone: initialData?.startTimezone || defaultTimezone,
-    startDateTime: initialData?.startDateTime && initialData?.startTimezone
-      ? utcToDateTimeLocalInTimezone(initialData.startDateTime, initialData.startTimezone)
-      : "",
+    startDateTime:
+      initialData?.startDateTime && initialData?.startTimezone
+        ? utcToDateTimeLocalInTimezone(
+            initialData.startDateTime,
+            initialData.startTimezone,
+          )
+        : "",
     endTimezone: initialData?.endTimezone || defaultTimezone,
-    endDateTime: initialData?.endDateTime && initialData?.endTimezone
-      ? utcToDateTimeLocalInTimezone(initialData.endDateTime, initialData.endTimezone)
-      : "",
+    endDateTime:
+      initialData?.endDateTime && initialData?.endTimezone
+        ? utcToDateTimeLocalInTimezone(
+            initialData.endDateTime,
+            initialData.endTimezone,
+          )
+        : "",
   });
 
   const [accommodationDetails, setAccommodationDetails] = useState({
@@ -111,13 +131,21 @@ export function ItineraryForm({
     address: (initialData?.details as any)?.address || "",
     guests: (initialData?.details as any)?.guests?.toString() || "",
     startTimezone: initialData?.startTimezone || defaultTimezone,
-    startDateTime: initialData?.startDateTime && initialData?.startTimezone
-      ? utcToDateTimeLocalInTimezone(initialData.startDateTime, initialData.startTimezone)
-      : "",
+    startDateTime:
+      initialData?.startDateTime && initialData?.startTimezone
+        ? utcToDateTimeLocalInTimezone(
+            initialData.startDateTime,
+            initialData.startTimezone,
+          )
+        : "",
     endTimezone: initialData?.endTimezone || defaultTimezone,
-    endDateTime: initialData?.endDateTime && initialData?.endTimezone
-      ? utcToDateTimeLocalInTimezone(initialData.endDateTime, initialData.endTimezone)
-      : "",
+    endDateTime:
+      initialData?.endDateTime && initialData?.endTimezone
+        ? utcToDateTimeLocalInTimezone(
+            initialData.endDateTime,
+            initialData.endTimezone,
+          )
+        : "",
   });
 
   const [placeVisitDetails, setPlaceVisitDetails] = useState({
@@ -125,13 +153,21 @@ export function ItineraryForm({
     ticketInfo: (initialData?.details as any)?.ticketInfo || "",
     openingHours: (initialData?.details as any)?.openingHours || "",
     startTimezone: initialData?.startTimezone || defaultTimezone,
-    startDateTime: initialData?.startDateTime && initialData?.startTimezone
-      ? utcToDateTimeLocalInTimezone(initialData.startDateTime, initialData.startTimezone)
-      : "",
+    startDateTime:
+      initialData?.startDateTime && initialData?.startTimezone
+        ? utcToDateTimeLocalInTimezone(
+            initialData.startDateTime,
+            initialData.startTimezone,
+          )
+        : "",
     endTimezone: initialData?.endTimezone || defaultTimezone,
-    endDateTime: initialData?.endDateTime && initialData?.endTimezone
-      ? utcToDateTimeLocalInTimezone(initialData.endDateTime, initialData.endTimezone)
-      : "",
+    endDateTime:
+      initialData?.endDateTime && initialData?.endTimezone
+        ? utcToDateTimeLocalInTimezone(
+            initialData.endDateTime,
+            initialData.endTimezone,
+          )
+        : "",
   });
 
   const [foodDetails, setFoodDetails] = useState({
@@ -139,13 +175,21 @@ export function ItineraryForm({
     cuisine: (initialData?.details as any)?.cuisine || "",
     reservationInfo: (initialData?.details as any)?.reservationInfo || "",
     startTimezone: initialData?.startTimezone || defaultTimezone,
-    startDateTime: initialData?.startDateTime && initialData?.startTimezone
-      ? utcToDateTimeLocalInTimezone(initialData.startDateTime, initialData.startTimezone)
-      : "",
+    startDateTime:
+      initialData?.startDateTime && initialData?.startTimezone
+        ? utcToDateTimeLocalInTimezone(
+            initialData.startDateTime,
+            initialData.startTimezone,
+          )
+        : "",
     endTimezone: initialData?.endTimezone || defaultTimezone,
-    endDateTime: initialData?.endDateTime && initialData?.endTimezone
-      ? utcToDateTimeLocalInTimezone(initialData.endDateTime, initialData.endTimezone)
-      : "",
+    endDateTime:
+      initialData?.endDateTime && initialData?.endTimezone
+        ? utcToDateTimeLocalInTimezone(
+            initialData.endDateTime,
+            initialData.endTimezone,
+          )
+        : "",
   });
 
   useEffect(() => {

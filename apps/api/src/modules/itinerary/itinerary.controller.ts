@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import {
   CreateItineraryItemRequestSchema,
   ItineraryItemIdParamSchema,
@@ -13,7 +21,7 @@ import { ItineraryService } from './itinerary.service';
 /**
  * Transforms a database itinerary item record to API response format.
  * Converts Date objects to ISO strings and validates response schema.
- * 
+ *
  * @param item - Raw itinerary item data from database
  * @returns Validated itinerary item response conforming to schema
  */
@@ -61,7 +69,7 @@ function toItineraryItemResponse(item: {
  * REST controller for itinerary item management.
  * Handles HTTP requests for CRUD operations on itinerary items
  * (flights, accommodations, transport, place visits, food).
- * 
+ *
  * Base path: /api/trips/:tripId/itinerary
  */
 @Controller('api/trips/:tripId/itinerary')
@@ -71,7 +79,7 @@ export class ItineraryController {
   /**
    * GET /api/trips/:tripId/itinerary
    * Retrieves all itinerary items for a trip, sorted chronologically.
-   * 
+   *
    * @param params - Route parameters containing tripId
    * @returns List of itinerary items for the trip
    * @throws {BadRequestException} If tripId is invalid
@@ -87,7 +95,7 @@ export class ItineraryController {
   /**
    * GET /api/trips/:tripId/itinerary/:itemId
    * Retrieves a single itinerary item by ID.
-   * 
+   *
    * @param params - Route parameters containing itemId
    * @returns Itinerary item details
    * @throws {NotFoundException} If item is not found
@@ -103,7 +111,7 @@ export class ItineraryController {
   /**
    * POST /api/trips/:tripId/itinerary
    * Creates a new itinerary item for a trip.
-   * 
+   *
    * @param params - Route parameters containing tripId
    * @param body - Itinerary item creation data
    * @returns The newly created itinerary item
@@ -123,7 +131,9 @@ export class ItineraryController {
       startTimezone: input.startTimezone ?? null,
       endTimezone: input.endTimezone ?? null,
       status: input.status,
-      ...(input.locationId ? { location: { connect: { id: input.locationId } } } : {}),
+      ...(input.locationId
+        ? { location: { connect: { id: input.locationId } } }
+        : {}),
       bookingRef: input.bookingRef ?? null,
       url: input.url ?? null,
       notes: input.notes ?? null,
@@ -136,7 +146,7 @@ export class ItineraryController {
   /**
    * PATCH /api/trips/:tripId/itinerary/:itemId
    * Updates an existing itinerary item with partial data.
-   * 
+   *
    * @param params - Route parameters containing itemId
    * @param body - Itinerary item update data (partial)
    * @returns The updated itinerary item
@@ -155,11 +165,17 @@ export class ItineraryController {
         ? { startDateTime: new Date(input.startDateTime) }
         : {}),
       ...(input.endDateTime !== undefined
-        ? { endDateTime: input.endDateTime ? new Date(input.endDateTime) : null }
+        ? {
+            endDateTime: input.endDateTime ? new Date(input.endDateTime) : null,
+          }
         : {}),
       ...(input.timezone !== undefined ? { timezone: input.timezone } : {}),
-      ...(input.startTimezone !== undefined ? { startTimezone: input.startTimezone ?? null } : {}),
-      ...(input.endTimezone !== undefined ? { endTimezone: input.endTimezone ?? null } : {}),
+      ...(input.startTimezone !== undefined
+        ? { startTimezone: input.startTimezone ?? null }
+        : {}),
+      ...(input.endTimezone !== undefined
+        ? { endTimezone: input.endTimezone ?? null }
+        : {}),
       ...(input.status !== undefined ? { status: input.status } : {}),
       ...(input.locationId !== undefined
         ? input.locationId
@@ -171,7 +187,9 @@ export class ItineraryController {
         : {}),
       ...(input.url !== undefined ? { url: input.url ?? null } : {}),
       ...(input.notes !== undefined ? { notes: input.notes ?? null } : {}),
-      ...(input.details !== undefined ? { details: input.details as object } : {}),
+      ...(input.details !== undefined
+        ? { details: input.details as object }
+        : {}),
     });
 
     return toItineraryItemResponse(item);
@@ -180,7 +198,7 @@ export class ItineraryController {
   /**
    * DELETE /api/trips/:tripId/itinerary/:itemId
    * Deletes an itinerary item by ID.
-   * 
+   *
    * @param params - Route parameters containing itemId
    * @returns Success confirmation
    * @throws {NotFoundException} If item is not found

@@ -12,7 +12,7 @@ export class TripsService {
 
   /**
    * Retrieves all trips ordered by start date.
-   * 
+   *
    * @returns {Promise} List of all trips sorted chronologically
    */
   async listTrips() {
@@ -23,7 +23,7 @@ export class TripsService {
 
   /**
    * Retrieves a single trip by ID.
-   * 
+   *
    * @param {string} tripId - The unique identifier of the trip
    * @returns {Promise} The trip data
    * @throws {NotFoundException} If trip with given ID is not found
@@ -36,7 +36,7 @@ export class TripsService {
 
   /**
    * Creates a new trip.
-   * 
+   *
    * @param {Prisma.TripCreateInput} input - Trip creation data
    * @returns {Promise} The newly created trip
    */
@@ -46,7 +46,7 @@ export class TripsService {
 
   /**
    * Updates an existing trip.
-   * 
+   *
    * @param {string} tripId - The unique identifier of the trip to update
    * @param {Prisma.TripUpdateInput} input - Trip update data
    * @returns {Promise} The updated trip
@@ -62,7 +62,7 @@ export class TripsService {
 
   /**
    * Deletes a trip by ID.
-   * 
+   *
    * @param {string} tripId - The unique identifier of the trip to delete
    * @returns {Promise<void>}
    * @throws {NotFoundException} If trip with given ID is not found
