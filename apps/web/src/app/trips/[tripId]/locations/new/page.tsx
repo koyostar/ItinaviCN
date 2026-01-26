@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { use, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import type { CreateLocationRequest, LocationCategory } from '@itinavi/schema';
+import { use, useState } from "react";
+import { useRouter } from "next/navigation";
+import type { CreateLocationRequest, LocationCategory } from "@itinavi/schema";
 import {
   Box,
   Button,
@@ -16,45 +16,49 @@ import {
   Stack,
   TextField,
   Typography,
-} from '@mui/material';
-import { api } from '@/lib/api';
-import { LOCATION_CATEGORIES } from '@/lib/constants';
+} from "@mui/material";
+import { api } from "@/lib/api";
+import { LOCATION_CATEGORIES } from "@/lib/constants";
+import { useFormSubmit } from "@/hooks/useFormSubmit";
 
-export default function NewLocationPage({ params }: { params: Promise<{ tripId: string }> }) {
+export default function NewLocationPage({
+  params,
+}: {
+  params: Promise<{ tripId: string }>;
+}) {
   const { tripId } = use(params);
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<CreateLocationRequest>({
-    name: '',
-    category: 'Place',
-    address: '',
+    name: "",
+    category: "Place",
+    address: "",
     latitude: undefined,
     longitude: undefined,
-    baiduPlaceId: '',
-    notes: '',
+    baiduPlaceId: "",
+    notes: "",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
+  const { handleSubmit: submitForm, submitting } = useFormSubmit(
+    async (_: void) => {
       const payload = {
         name: formData.name,
         category: formData.category,
         ...(formData.address && { address: formData.address }),
         ...(formData.latitude !== undefined && { latitude: formData.latitude }),
-        ...(formData.longitude !== undefined && { longitude: formData.longitude }),
+        ...(formData.longitude !== undefined && {
+          longitude: formData.longitude,
+        }),
         ...(formData.baiduPlaceId && { baiduPlaceId: formData.baiduPlaceId }),
         ...(formData.notes && { notes: formData.notes }),
       };
-
       await api.locations.create(tripId, payload);
-      router.push(`/trips/${tripId}/locations`);
-    } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to create location');
-      setLoading(false);
-    }
+    },
+    { onSuccess: () => router.push(`/trips/${tripId}/locations`) },
+  );
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submitForm(undefined as void);
   };
 
   return (
@@ -72,7 +76,9 @@ export default function NewLocationPage({ params }: { params: Promise<{ tripId: 
                 required
                 fullWidth
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="e.g., Great Wall of China"
               />
 
@@ -82,7 +88,10 @@ export default function NewLocationPage({ params }: { params: Promise<{ tripId: 
                   value={formData.category}
                   label="Category"
                   onChange={(e) =>
-                    setFormData({ ...formData, category: e.target.value as LocationCategory })
+                    setFormData({
+                      ...formData,
+                      category: e.target.value as LocationCategory,
+                    })
                   }
                 >
                   {LOCATION_CATEGORIES.map((cat) => (
@@ -97,7 +106,9 @@ export default function NewLocationPage({ params }: { params: Promise<{ tripId: 
                 label="Address"
                 fullWidth
                 value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, address: e.target.value })
+                }
                 placeholder="e.g., Huairou District, Beijing"
               />
 
@@ -106,29 +117,33 @@ export default function NewLocationPage({ params }: { params: Promise<{ tripId: 
                   label="Latitude"
                   type="number"
                   fullWidth
-                  value={formData.latitude ?? ''}
+                  value={formData.latitude ?? ""}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      latitude: e.target.value ? parseFloat(e.target.value) : undefined,
+                      latitude: e.target.value
+                        ? parseFloat(e.target.value)
+                        : undefined,
                     })
                   }
                   placeholder="e.g., 40.4319"
-                  inputProps={{ step: 'any' }}
+                  inputProps={{ step: "any" }}
                 />
                 <TextField
                   label="Longitude"
                   type="number"
                   fullWidth
-                  value={formData.longitude ?? ''}
+                  value={formData.longitude ?? ""}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      longitude: e.target.value ? parseFloat(e.target.value) : undefined,
+                      longitude: e.target.value
+                        ? parseFloat(e.target.value)
+                        : undefined,
                     })
                   }
                   placeholder="e.g., 116.5704"
-                  inputProps={{ step: 'any' }}
+                  inputProps={{ step: "any" }}
                 />
               </Stack>
 
@@ -136,7 +151,9 @@ export default function NewLocationPage({ params }: { params: Promise<{ tripId: 
                 label="Baidu Place ID"
                 fullWidth
                 value={formData.baiduPlaceId}
-                onChange={(e) => setFormData({ ...formData, baiduPlaceId: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, baiduPlaceId: e.target.value })
+                }
                 placeholder="Optional - Baidu Maps place identifier"
               />
 
@@ -146,7 +163,9 @@ export default function NewLocationPage({ params }: { params: Promise<{ tripId: 
                 multiline
                 rows={4}
                 value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, notes: e.target.value })
+                }
                 placeholder="Any additional notes about this location"
               />
 
@@ -154,12 +173,12 @@ export default function NewLocationPage({ params }: { params: Promise<{ tripId: 
                 <Button
                   variant="outlined"
                   onClick={() => router.push(`/trips/${tripId}/locations`)}
-                  disabled={loading}
+                  disabled={submitting}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" variant="contained" disabled={loading}>
-                  {loading ? 'Creating...' : 'Create Location'}
+                <Button type="submit" variant="contained" disabled={submitting}>
+                  {submitting ? "Creating..." : "Create Location"}
                 </Button>
               </Stack>
             </Stack>
