@@ -6,12 +6,12 @@ import {
   calculateDuration,
 } from "@/lib/dateUtils";
 
-interface PlaceVisitDetails {
+interface PlaceDetails {
   ticketInfo?: string;
   openingHours?: string;
 }
 
-interface PlaceVisitDetailsProps {
+interface PlaceDetailsProps {
   title: string;
   startDateTime: string;
   endDateTime?: string | null;
@@ -19,10 +19,10 @@ interface PlaceVisitDetailsProps {
   bookingRef?: string | null;
   url?: string | null;
   notes?: string | null;
-  details: PlaceVisitDetails | null;
+  details: PlaceDetails | null;
 }
 
-export function PlaceVisitDetailsComponent({
+export function PlaceDetailsComponent({
   title,
   startDateTime,
   endDateTime,
@@ -31,7 +31,7 @@ export function PlaceVisitDetailsComponent({
   url,
   notes,
   details,
-}: PlaceVisitDetailsProps) {
+}: PlaceDetailsProps) {
   return (
     <Stack spacing={3}>
       {/* Header */}

@@ -24,7 +24,7 @@ export const ITINERARY_TYPES: ItineraryItemType[] = [
   "Flight",
   "Transport",
   "Accommodation",
-  "PlaceVisit",
+  "Place",
   "Food",
 ];
 
@@ -63,7 +63,7 @@ export const ITINERARY_TYPE_ICONS: Record<
   Flight: FlightIcon,
   Transport: DirectionsBusIcon,
   Accommodation: HotelIcon,
-  PlaceVisit: PlaceIcon,
+  Place: PlaceIcon,
   Food: RestaurantIcon,
 };
 
@@ -78,7 +78,7 @@ export const ITINERARY_TYPE_COLORS: Record<
   Flight: "primary",
   Transport: "secondary",
   Accommodation: "info",
-  PlaceVisit: "warning",
+  Place: "warning",
   Food: "success",
 };
 

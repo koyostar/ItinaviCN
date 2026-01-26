@@ -5,7 +5,7 @@ export const ItineraryItemTypeSchema = z.enum([
   "Flight",
   "Transport",
   "Accommodation",
-  "PlaceVisit",
+  "Place",
   "Food",
 ]);
 
@@ -62,12 +62,12 @@ export const AccommodationDetailsSchema = z.object({
 
 export type AccommodationDetails = z.infer<typeof AccommodationDetailsSchema>;
 
-export const PlaceVisitDetailsSchema = z.object({
+export const PlaceDetailsSchema = z.object({
   ticketInfo: z.string().optional(),
   openingHours: z.string().optional(),
 });
 
-export type PlaceVisitDetails = z.infer<typeof PlaceVisitDetailsSchema>;
+export type PlaceDetails = z.infer<typeof PlaceDetailsSchema>;
 
 export const FoodDetailsSchema = z.object({
   cuisine: z.string().optional(),
@@ -107,9 +107,9 @@ export const CreateAccommodationRequestSchema = BaseItineraryItemSchema.extend({
   details: AccommodationDetailsSchema.optional(),
 });
 
-export const CreatePlaceVisitRequestSchema = BaseItineraryItemSchema.extend({
-  type: z.literal("PlaceVisit"),
-  details: PlaceVisitDetailsSchema.optional(),
+export const CreatePlaceRequestSchema = BaseItineraryItemSchema.extend({
+  type: z.literal("Place"),
+  details: PlaceDetailsSchema.optional(),
 });
 
 export const CreateFoodRequestSchema = BaseItineraryItemSchema.extend({
@@ -121,7 +121,7 @@ export const CreateItineraryItemRequestSchema = z.discriminatedUnion("type", [
   CreateFlightRequestSchema,
   CreateTransportRequestSchema,
   CreateAccommodationRequestSchema,
-  CreatePlaceVisitRequestSchema,
+  CreatePlaceRequestSchema,
   CreateFoodRequestSchema,
 ]);
 
@@ -178,9 +178,9 @@ export const AccommodationResponseSchema =
     details: AccommodationDetailsSchema.nullable(),
   });
 
-export const PlaceVisitResponseSchema = BaseItineraryItemResponseSchema.extend({
-  type: z.literal("PlaceVisit"),
-  details: PlaceVisitDetailsSchema.nullable(),
+export const PlaceResponseSchema = BaseItineraryItemResponseSchema.extend({
+  type: z.literal("Place"),
+  details: PlaceDetailsSchema.nullable(),
 });
 
 export const FoodResponseSchema = BaseItineraryItemResponseSchema.extend({
@@ -192,7 +192,7 @@ export const ItineraryItemResponseSchema = z.discriminatedUnion("type", [
   FlightResponseSchema,
   TransportResponseSchema,
   AccommodationResponseSchema,
-  PlaceVisitResponseSchema,
+  PlaceResponseSchema,
   FoodResponseSchema,
 ]);
 

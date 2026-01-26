@@ -19,7 +19,7 @@ enum ItineraryItemType {
   Flight
   Transport
   Accommodation
-  PlaceVisit
+  Place
   Food
 }
 

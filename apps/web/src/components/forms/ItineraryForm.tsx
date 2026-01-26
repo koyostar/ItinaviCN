@@ -16,7 +16,7 @@ import {
 import { FlightFields } from "../itinerary/fields/FlightFields";
 import { AccommodationFields } from "../itinerary/fields/AccommodationFields";
 import { TransportFields } from "../itinerary/fields/TransportFields";
-import { PlaceVisitFields } from "../itinerary/fields/PlaceVisitFields";
+import { PlaceFields } from "../itinerary/fields/PlaceFields";
 import { FoodFields } from "../itinerary/fields/FoodFields";
 import {
   Box,
@@ -49,7 +49,7 @@ export function ItineraryForm({
   loading = false,
 }: ItineraryFormProps) {
   const [type, setType] = useState<ItineraryItemType>(
-    initialData?.type || "PlaceVisit",
+    initialData?.type || "Place",
   );
 
   // Parse title for flights (format: "DepartureCity - ArrivalCity")
@@ -148,8 +148,8 @@ export function ItineraryForm({
         : "",
   });
 
-  const [placeVisitDetails, setPlaceVisitDetails] = useState({
-    title: initialData?.type === "PlaceVisit" ? initialData.title : "",
+  const [placeDetails, setPlaceDetails] = useState({
+    title: initialData?.type === "Place" ? initialData.title : "",
     ticketInfo: (initialData?.details as any)?.ticketInfo || "",
     openingHours: (initialData?.details as any)?.openingHours || "",
     startTimezone: initialData?.startTimezone || defaultTimezone,
@@ -215,7 +215,7 @@ export function ItineraryForm({
         startTimezone: defaultTimezone,
         endTimezone: defaultTimezone,
       }));
-      setPlaceVisitDetails((prev) => ({
+      setPlaceDetails((prev) => ({
         ...prev,
         startTimezone: defaultTimezone,
         endTimezone: defaultTimezone,
@@ -277,8 +277,8 @@ export function ItineraryForm({
             : undefined,
         }).filter(([, v]) => v !== undefined && v !== ""),
       );
-    } else if (type === "PlaceVisit") {
-      title = placeVisitDetails.title;
+    } else if (type === "Place") {
+      title = placeDetails.title;
       const {
         startTimezone: st,
         startDateTime: sdt,
@@ -286,13 +286,13 @@ export function ItineraryForm({
         endDateTime: edt,
         title: t,
         ...placeData
-      } = placeVisitDetails;
+      } = placeDetails;
       details = Object.fromEntries(
         Object.entries(placeData).filter(([, v]) => v !== ""),
       );
-      startDateTime = dateTimeLocalToUTC(placeVisitDetails.startDateTime);
-      endDateTime = placeVisitDetails.endDateTime
-        ? dateTimeLocalToUTC(placeVisitDetails.endDateTime)
+      startDateTime = dateTimeLocalToUTC(placeDetails.startDateTime);
+      endDateTime = placeDetails.endDateTime
+        ? dateTimeLocalToUTC(placeDetails.endDateTime)
         : undefined;
     } else if (type === "Food") {
       title = foodDetails.title;
@@ -331,9 +331,9 @@ export function ItineraryForm({
     } else if (type === "Accommodation") {
       startTimezone = accommodationDetails.startTimezone;
       endTimezone = accommodationDetails.endTimezone;
-    } else if (type === "PlaceVisit") {
-      startTimezone = placeVisitDetails.startTimezone;
-      endTimezone = placeVisitDetails.endTimezone;
+    } else if (type === "Place") {
+      startTimezone = placeDetails.startTimezone;
+      endTimezone = placeDetails.endTimezone;
     } else if (type === "Food") {
       startTimezone = foodDetails.startTimezone;
       endTimezone = foodDetails.endTimezone;
@@ -400,11 +400,11 @@ export function ItineraryForm({
               setTransportDetails({ ...transportDetails, ...updates })
             }
           />
-        ) : type === "PlaceVisit" ? (
-          <PlaceVisitFields
-            placeVisitDetails={placeVisitDetails}
-            onPlaceVisitDetailsChange={(updates) =>
-              setPlaceVisitDetails({ ...placeVisitDetails, ...updates })
+        ) : type === "Place" ? (
+          <PlaceFields
+            placeDetails={placeDetails}
+            onPlaceDetailsChange={(updates) =>
+              setPlaceDetails({ ...placeDetails, ...updates })
             }
           />
         ) : type === "Food" ? (

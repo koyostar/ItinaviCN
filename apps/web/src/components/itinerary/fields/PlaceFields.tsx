@@ -1,7 +1,7 @@
 import { Stack, TextField, Typography } from "@mui/material";
 import { DateTimeFields } from "./DateTimeFields";
 
-interface PlaceVisitDetails {
+interface PlaceDetails {
   title: string;
   ticketInfo: string;
   openingHours: string;
@@ -11,25 +11,25 @@ interface PlaceVisitDetails {
   endDateTime: string;
 }
 
-interface PlaceVisitFieldsProps {
-  placeVisitDetails: PlaceVisitDetails;
-  onPlaceVisitDetailsChange: (details: Partial<PlaceVisitDetails>) => void;
+interface PlaceFieldsProps {
+  placeDetails: PlaceDetails;
+  onPlaceDetailsChange: (details: Partial<PlaceDetails>) => void;
 }
 
-export function PlaceVisitFields({
-  placeVisitDetails,
-  onPlaceVisitDetailsChange,
-}: PlaceVisitFieldsProps) {
+export function PlaceFields({
+  placeDetails,
+  onPlaceDetailsChange,
+}: PlaceFieldsProps) {
   return (
     <>
       <TextField
         label="Title"
         required
         fullWidth
-        value={placeVisitDetails.title}
+        value={placeDetails.title}
         onChange={(e) =>
-          onPlaceVisitDetailsChange({
-            ...placeVisitDetails,
+          onPlaceDetailsChange({
+            ...placeDetails,
             title: e.target.value,
           })
         }
@@ -37,15 +37,15 @@ export function PlaceVisitFields({
       />
       <Stack spacing={2}>
         <Typography variant="subtitle2" color="primary">
-          Place Visit Details
+          Place Details
         </Typography>
         <TextField
           label="Ticket Info"
           fullWidth
-          value={placeVisitDetails.ticketInfo}
+          value={placeDetails.ticketInfo}
           onChange={(e) =>
-            onPlaceVisitDetailsChange({
-              ...placeVisitDetails,
+            onPlaceDetailsChange({
+              ...placeDetails,
               ticketInfo: e.target.value,
             })
           }
@@ -54,10 +54,10 @@ export function PlaceVisitFields({
         <TextField
           label="Opening Hours"
           fullWidth
-          value={placeVisitDetails.openingHours}
+          value={placeDetails.openingHours}
           onChange={(e) =>
-            onPlaceVisitDetailsChange({
-              ...placeVisitDetails,
+            onPlaceDetailsChange({
+              ...placeDetails,
               openingHours: e.target.value,
             })
           }
@@ -67,26 +67,26 @@ export function PlaceVisitFields({
 
       <DateTimeFields
         label="Start Date & Time"
-        timezone={placeVisitDetails.startTimezone}
-        dateTime={placeVisitDetails.startDateTime}
+        timezone={placeDetails.startTimezone}
+        dateTime={placeDetails.startDateTime}
         required
         onTimezoneChange={(tz) =>
-          onPlaceVisitDetailsChange({ startTimezone: tz })
+          onPlaceDetailsChange({ startTimezone: tz })
         }
         onDateTimeChange={(dt) =>
-          onPlaceVisitDetailsChange({ startDateTime: dt })
+          onPlaceDetailsChange({ startDateTime: dt })
         }
       />
 
       <DateTimeFields
         label="End Date & Time"
-        timezone={placeVisitDetails.endTimezone}
-        dateTime={placeVisitDetails.endDateTime}
+        timezone={placeDetails.endTimezone}
+        dateTime={placeDetails.endDateTime}
         onTimezoneChange={(tz) =>
-          onPlaceVisitDetailsChange({ endTimezone: tz })
+          onPlaceDetailsChange({ endTimezone: tz })
         }
         onDateTimeChange={(dt) =>
-          onPlaceVisitDetailsChange({ endDateTime: dt })
+          onPlaceDetailsChange({ endDateTime: dt })
         }
       />
     </>

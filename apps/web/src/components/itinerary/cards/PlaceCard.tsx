@@ -2,23 +2,23 @@ import { Box, Stack, Typography } from "@mui/material";
 import { getUTCOffset } from "@/lib/utils/timezone";
 import { formatUTCTime } from "@/lib/dateUtils";
 
-interface PlaceVisitDetails {
+interface PlaceDetails {
   ticketInfo?: string;
   openingHours?: string;
 }
 
-interface PlaceVisitCardProps {
+interface PlaceCardProps {
   title: string;
   startDateTime: string;
   endDateTime?: string | null;
   startTimezone?: string | null;
   status: string;
-  details: PlaceVisitDetails | null;
+  details: PlaceDetails | null;
   statusColor: "default" | "primary" | "success" | "error";
   typeColor: "primary" | "secondary" | "success" | "error" | "warning" | "info";
 }
 
-export function PlaceVisitCard({
+export function PlaceCard({
   title,
   startDateTime,
   endDateTime,
@@ -27,7 +27,7 @@ export function PlaceVisitCard({
   details,
   statusColor,
   typeColor,
-}: PlaceVisitCardProps) {
+}: PlaceCardProps) {
   return (
     <Box>
       <Typography variant="h6" mb={1}>

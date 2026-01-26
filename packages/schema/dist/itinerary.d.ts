@@ -1,5 +1,5 @@
 import { z } from "zod";
-export declare const ItineraryItemTypeSchema: z.ZodEnum<["Flight", "Transport", "Accommodation", "PlaceVisit", "Food"]>;
+export declare const ItineraryItemTypeSchema: z.ZodEnum<["Flight", "Transport", "Accommodation", "Place", "Food"]>;
 export type ItineraryItemType = z.infer<typeof ItineraryItemTypeSchema>;
 export declare const ItineraryStatusSchema: z.ZodEnum<["Planned", "Booked", "Done", "Skipped"]>;
 export type ItineraryStatus = z.infer<typeof ItineraryStatusSchema>;
@@ -62,7 +62,7 @@ export declare const AccommodationDetailsSchema: z.ZodObject<{
     guests?: number | undefined;
 }>;
 export type AccommodationDetails = z.infer<typeof AccommodationDetailsSchema>;
-export declare const PlaceVisitDetailsSchema: z.ZodObject<{
+export declare const PlaceDetailsSchema: z.ZodObject<{
     ticketInfo: z.ZodOptional<z.ZodString>;
     openingHours: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
@@ -72,7 +72,7 @@ export declare const PlaceVisitDetailsSchema: z.ZodObject<{
     ticketInfo?: string | undefined;
     openingHours?: string | undefined;
 }>;
-export type PlaceVisitDetails = z.infer<typeof PlaceVisitDetailsSchema>;
+export type PlaceDetails = z.infer<typeof PlaceDetailsSchema>;
 export declare const FoodDetailsSchema: z.ZodObject<{
     cuisine: z.ZodOptional<z.ZodString>;
     reservationInfo: z.ZodOptional<z.ZodString>;
@@ -301,7 +301,7 @@ export declare const CreateAccommodationRequestSchema: z.ZodObject<{
         guests?: number | undefined;
     } | undefined;
 }>;
-export declare const CreatePlaceVisitRequestSchema: z.ZodObject<{
+export declare const CreatePlaceRequestSchema: z.ZodObject<{
     title: z.ZodString;
     startDateTime: z.ZodString;
     endDateTime: z.ZodOptional<z.ZodString>;
@@ -314,7 +314,7 @@ export declare const CreatePlaceVisitRequestSchema: z.ZodObject<{
     url: z.ZodOptional<z.ZodString>;
     notes: z.ZodOptional<z.ZodString>;
 } & {
-    type: z.ZodLiteral<"PlaceVisit">;
+    type: z.ZodLiteral<"Place">;
     details: z.ZodOptional<z.ZodObject<{
         ticketInfo: z.ZodOptional<z.ZodString>;
         openingHours: z.ZodOptional<z.ZodString>;
@@ -327,7 +327,7 @@ export declare const CreatePlaceVisitRequestSchema: z.ZodObject<{
     }>>;
 }, "strip", z.ZodTypeAny, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
-    type: "PlaceVisit";
+    type: "Place";
     title: string;
     startDateTime: string;
     timezone: string;
@@ -343,7 +343,7 @@ export declare const CreatePlaceVisitRequestSchema: z.ZodObject<{
         openingHours?: string | undefined;
     } | undefined;
 }, {
-    type: "PlaceVisit";
+    type: "Place";
     title: string;
     startDateTime: string;
     status?: "Planned" | "Booked" | "Done" | "Skipped" | undefined;
@@ -646,7 +646,7 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     url: z.ZodOptional<z.ZodString>;
     notes: z.ZodOptional<z.ZodString>;
 } & {
-    type: z.ZodLiteral<"PlaceVisit">;
+    type: z.ZodLiteral<"Place">;
     details: z.ZodOptional<z.ZodObject<{
         ticketInfo: z.ZodOptional<z.ZodString>;
         openingHours: z.ZodOptional<z.ZodString>;
@@ -659,7 +659,7 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     }>>;
 }, "strip", z.ZodTypeAny, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
-    type: "PlaceVisit";
+    type: "Place";
     title: string;
     startDateTime: string;
     timezone: string;
@@ -675,7 +675,7 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
         openingHours?: string | undefined;
     } | undefined;
 }, {
-    type: "PlaceVisit";
+    type: "Place";
     title: string;
     startDateTime: string;
     status?: "Planned" | "Booked" | "Done" | "Skipped" | undefined;
@@ -764,11 +764,11 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     url: z.ZodOptional<z.ZodOptional<z.ZodString>>;
     notes: z.ZodOptional<z.ZodOptional<z.ZodString>>;
 } & {
-    type: z.ZodOptional<z.ZodEnum<["Flight", "Transport", "Accommodation", "PlaceVisit", "Food"]>>;
+    type: z.ZodOptional<z.ZodEnum<["Flight", "Transport", "Accommodation", "Place", "Food"]>>;
     details: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
 }, "strip", z.ZodTypeAny, {
     status?: "Planned" | "Booked" | "Done" | "Skipped" | undefined;
-    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "PlaceVisit" | undefined;
+    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "Place" | undefined;
     title?: string | undefined;
     notes?: string | undefined;
     startDateTime?: string | undefined;
@@ -782,7 +782,7 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     details?: Record<string, unknown> | undefined;
 }, {
     status?: "Planned" | "Booked" | "Done" | "Skipped" | undefined;
-    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "PlaceVisit" | undefined;
+    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "Place" | undefined;
     title?: string | undefined;
     notes?: string | undefined;
     startDateTime?: string | undefined;
@@ -796,7 +796,7 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     details?: Record<string, unknown> | undefined;
 }>, {
     status?: "Planned" | "Booked" | "Done" | "Skipped" | undefined;
-    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "PlaceVisit" | undefined;
+    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "Place" | undefined;
     title?: string | undefined;
     notes?: string | undefined;
     startDateTime?: string | undefined;
@@ -810,7 +810,7 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     details?: Record<string, unknown> | undefined;
 }, {
     status?: "Planned" | "Booked" | "Done" | "Skipped" | undefined;
-    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "PlaceVisit" | undefined;
+    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "Place" | undefined;
     title?: string | undefined;
     notes?: string | undefined;
     startDateTime?: string | undefined;
@@ -1077,7 +1077,7 @@ export declare const AccommodationResponseSchema: z.ZodObject<{
         guests?: number | undefined;
     } | null;
 }>;
-export declare const PlaceVisitResponseSchema: z.ZodObject<{
+export declare const PlaceResponseSchema: z.ZodObject<{
     id: z.ZodString;
     tripId: z.ZodString;
     title: z.ZodString;
@@ -1094,7 +1094,7 @@ export declare const PlaceVisitResponseSchema: z.ZodObject<{
     createdAt: z.ZodString;
     updatedAt: z.ZodString;
 } & {
-    type: z.ZodLiteral<"PlaceVisit">;
+    type: z.ZodLiteral<"Place">;
     details: z.ZodNullable<z.ZodObject<{
         ticketInfo: z.ZodOptional<z.ZodString>;
         openingHours: z.ZodOptional<z.ZodString>;
@@ -1107,7 +1107,7 @@ export declare const PlaceVisitResponseSchema: z.ZodObject<{
     }>>;
 }, "strip", z.ZodTypeAny, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
-    type: "PlaceVisit";
+    type: "Place";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1128,7 +1128,7 @@ export declare const PlaceVisitResponseSchema: z.ZodObject<{
     } | null;
 }, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
-    type: "PlaceVisit";
+    type: "Place";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1486,7 +1486,7 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     createdAt: z.ZodString;
     updatedAt: z.ZodString;
 } & {
-    type: z.ZodLiteral<"PlaceVisit">;
+    type: z.ZodLiteral<"Place">;
     details: z.ZodNullable<z.ZodObject<{
         ticketInfo: z.ZodOptional<z.ZodString>;
         openingHours: z.ZodOptional<z.ZodString>;
@@ -1499,7 +1499,7 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     }>>;
 }, "strip", z.ZodTypeAny, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
-    type: "PlaceVisit";
+    type: "Place";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1520,7 +1520,7 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     } | null;
 }, {
     status: "Planned" | "Booked" | "Done" | "Skipped";
-    type: "PlaceVisit";
+    type: "Place";
     tripId: string;
     title: string;
     notes: string | null;
@@ -1879,7 +1879,7 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         createdAt: z.ZodString;
         updatedAt: z.ZodString;
     } & {
-        type: z.ZodLiteral<"PlaceVisit">;
+        type: z.ZodLiteral<"Place">;
         details: z.ZodNullable<z.ZodObject<{
             ticketInfo: z.ZodOptional<z.ZodString>;
             openingHours: z.ZodOptional<z.ZodString>;
@@ -1892,7 +1892,7 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         }>>;
     }, "strip", z.ZodTypeAny, {
         status: "Planned" | "Booked" | "Done" | "Skipped";
-        type: "PlaceVisit";
+        type: "Place";
         tripId: string;
         title: string;
         notes: string | null;
@@ -1913,7 +1913,7 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         } | null;
     }, {
         status: "Planned" | "Booked" | "Done" | "Skipped";
-        type: "PlaceVisit";
+        type: "Place";
         tripId: string;
         title: string;
         notes: string | null;
@@ -2077,7 +2077,7 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         } | null;
     } | {
         status: "Planned" | "Booked" | "Done" | "Skipped";
-        type: "PlaceVisit";
+        type: "Place";
         tripId: string;
         title: string;
         notes: string | null;
@@ -2192,7 +2192,7 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         } | null;
     } | {
         status: "Planned" | "Booked" | "Done" | "Skipped";
-        type: "PlaceVisit";
+        type: "Place";
         tripId: string;
         title: string;
         notes: string | null;

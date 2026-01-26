@@ -44,14 +44,14 @@ import {
   FlightCard,
   AccommodationCard,
   TransportCard,
-  PlaceVisitCard,
+  PlaceCard,
   FoodCard,
 } from "@/components/itinerary/cards";
 import {
   FlightDetailsComponent,
   AccommodationDetailsComponent,
   TransportDetailsComponent,
-  PlaceVisitDetailsComponent,
+  PlaceDetailsComponent,
   FoodDetailsComponent,
 } from "@/components/itinerary/details";
 
@@ -135,7 +135,7 @@ export default function ItineraryPage({
               <MenuItem value="Flight">Flight</MenuItem>
               <MenuItem value="Transport">Transport</MenuItem>
               <MenuItem value="Accommodation">Accommodation</MenuItem>
-              <MenuItem value="PlaceVisit">Place Visit</MenuItem>
+              <MenuItem value="Place">Place</MenuItem>
               <MenuItem value="Food">Food</MenuItem>
             </Select>
           </FormControl>
@@ -322,8 +322,8 @@ export default function ItineraryPage({
                                     }
                                     typeColor={ITINERARY_TYPE_COLORS[item.type]}
                                   />
-                                ) : item.type === "PlaceVisit" ? (
-                                  <PlaceVisitCard
+                                ) : item.type === "Place" ? (
+                                  <PlaceCard
                                     title={item.title}
                                     startDateTime={item.startDateTime}
                                     endDateTime={item.endDateTime}
@@ -454,8 +454,8 @@ export default function ItineraryPage({
                     details={detailsDialog.item.details as any}
                   />
                 )}
-                {detailsDialog.item.type === "PlaceVisit" && (
-                  <PlaceVisitDetailsComponent
+                {detailsDialog.item.type === "Place" && (
+                  <PlaceDetailsComponent
                     title={detailsDialog.item.title}
                     startDateTime={detailsDialog.item.startDateTime}
                     endDateTime={detailsDialog.item.endDateTime}

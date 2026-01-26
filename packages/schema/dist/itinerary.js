@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ItineraryItemIdParamSchema = exports.ListItineraryItemsResponseSchema = exports.ItineraryItemResponseSchema = exports.FoodResponseSchema = exports.PlaceVisitResponseSchema = exports.AccommodationResponseSchema = exports.TransportResponseSchema = exports.FlightResponseSchema = exports.UpdateItineraryItemRequestSchema = exports.CreateItineraryItemRequestSchema = exports.CreateFoodRequestSchema = exports.CreatePlaceVisitRequestSchema = exports.CreateAccommodationRequestSchema = exports.CreateTransportRequestSchema = exports.CreateFlightRequestSchema = exports.FoodDetailsSchema = exports.PlaceVisitDetailsSchema = exports.AccommodationDetailsSchema = exports.TransportDetailsSchema = exports.FlightDetailsSchema = exports.TransportModeSchema = exports.ItineraryStatusSchema = exports.ItineraryItemTypeSchema = void 0;
+exports.ItineraryItemIdParamSchema = exports.ListItineraryItemsResponseSchema = exports.ItineraryItemResponseSchema = exports.FoodResponseSchema = exports.PlaceResponseSchema = exports.AccommodationResponseSchema = exports.TransportResponseSchema = exports.FlightResponseSchema = exports.UpdateItineraryItemRequestSchema = exports.CreateItineraryItemRequestSchema = exports.CreateFoodRequestSchema = exports.CreatePlaceRequestSchema = exports.CreateAccommodationRequestSchema = exports.CreateTransportRequestSchema = exports.CreateFlightRequestSchema = exports.FoodDetailsSchema = exports.PlaceDetailsSchema = exports.AccommodationDetailsSchema = exports.TransportDetailsSchema = exports.FlightDetailsSchema = exports.TransportModeSchema = exports.ItineraryStatusSchema = exports.ItineraryItemTypeSchema = void 0;
 const zod_1 = require("zod");
 // Enums
 exports.ItineraryItemTypeSchema = zod_1.z.enum([
     "Flight",
     "Transport",
     "Accommodation",
-    "PlaceVisit",
+    "Place",
     "Food",
 ]);
 exports.ItineraryStatusSchema = zod_1.z.enum([
@@ -46,7 +46,7 @@ exports.AccommodationDetailsSchema = zod_1.z.object({
     checkOutDateTime: zod_1.z.string().datetime().optional(),
     guests: zod_1.z.number().int().positive().optional(),
 });
-exports.PlaceVisitDetailsSchema = zod_1.z.object({
+exports.PlaceDetailsSchema = zod_1.z.object({
     ticketInfo: zod_1.z.string().optional(),
     openingHours: zod_1.z.string().optional(),
 });
@@ -81,9 +81,9 @@ exports.CreateAccommodationRequestSchema = BaseItineraryItemSchema.extend({
     type: zod_1.z.literal("Accommodation"),
     details: exports.AccommodationDetailsSchema.optional(),
 });
-exports.CreatePlaceVisitRequestSchema = BaseItineraryItemSchema.extend({
-    type: zod_1.z.literal("PlaceVisit"),
-    details: exports.PlaceVisitDetailsSchema.optional(),
+exports.CreatePlaceRequestSchema = BaseItineraryItemSchema.extend({
+    type: zod_1.z.literal("Place"),
+    details: exports.PlaceDetailsSchema.optional(),
 });
 exports.CreateFoodRequestSchema = BaseItineraryItemSchema.extend({
     type: zod_1.z.literal("Food"),
@@ -93,7 +93,7 @@ exports.CreateItineraryItemRequestSchema = zod_1.z.discriminatedUnion("type", [
     exports.CreateFlightRequestSchema,
     exports.CreateTransportRequestSchema,
     exports.CreateAccommodationRequestSchema,
-    exports.CreatePlaceVisitRequestSchema,
+    exports.CreatePlaceRequestSchema,
     exports.CreateFoodRequestSchema,
 ]);
 exports.UpdateItineraryItemRequestSchema = BaseItineraryItemSchema.partial()
@@ -134,9 +134,9 @@ exports.AccommodationResponseSchema = BaseItineraryItemResponseSchema.extend({
     type: zod_1.z.literal("Accommodation"),
     details: exports.AccommodationDetailsSchema.nullable(),
 });
-exports.PlaceVisitResponseSchema = BaseItineraryItemResponseSchema.extend({
-    type: zod_1.z.literal("PlaceVisit"),
-    details: exports.PlaceVisitDetailsSchema.nullable(),
+exports.PlaceResponseSchema = BaseItineraryItemResponseSchema.extend({
+    type: zod_1.z.literal("Place"),
+    details: exports.PlaceDetailsSchema.nullable(),
 });
 exports.FoodResponseSchema = BaseItineraryItemResponseSchema.extend({
     type: zod_1.z.literal("Food"),
@@ -146,7 +146,7 @@ exports.ItineraryItemResponseSchema = zod_1.z.discriminatedUnion("type", [
     exports.FlightResponseSchema,
     exports.TransportResponseSchema,
     exports.AccommodationResponseSchema,
-    exports.PlaceVisitResponseSchema,
+    exports.PlaceResponseSchema,
     exports.FoodResponseSchema,
 ]);
 exports.ListItineraryItemsResponseSchema = zod_1.z.object({
