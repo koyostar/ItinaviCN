@@ -45,6 +45,13 @@ import {
   PlaceVisitCard,
   FoodCard,
 } from "@/components/itinerary-cards";
+import {
+  FlightDetailsComponent,
+  AccommodationDetailsComponent,
+  TransportDetailsComponent,
+  PlaceVisitDetailsComponent,
+  FoodDetailsComponent,
+} from "@/components/itinerary-details";
 
 export default function ItineraryPage({
   params,
@@ -67,6 +74,10 @@ export default function ItineraryPage({
   );
   const [updating, setUpdating] = useState(false);
   const [defaultTimezone, setDefaultTimezone] = useState("Asia/Shanghai");
+  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+  const [itemToView, setItemToView] = useState<ItineraryItemResponse | null>(
+    null,
+  );
 
   useEffect(() => {
     loadItems();
@@ -122,6 +133,11 @@ export default function ItineraryPage({
   function handleEdit(item: ItineraryItemResponse) {
     setItemToEdit(item);
     setEditDialogOpen(true);
+  }
+
+  function handleViewDetails(item: ItineraryItemResponse) {
+    setItemToView(item);
+    setDetailsDialogOpen(true);
   }
 
   async function handleUpdate(data: UpdateItineraryItemRequest) {
@@ -358,7 +374,15 @@ export default function ItineraryPage({
                                   </IconButton>
                                 </Stack>
                               </Stack>
-                              <Box>
+                              <Box
+                                onClick={() => handleViewDetails(item)}
+                                sx={{
+                                  cursor: "pointer",
+                                  "&:hover": {
+                                    opacity: 0.8,
+                                  },
+                                }}
+                              >
                                 {item.type === "Flight" ? (
                                   <FlightCard
                                     title={item.title}
@@ -484,6 +508,86 @@ export default function ItineraryPage({
                   }}
                   loading={updating}
                 />
+              </Box>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        <Dialog
+          open={detailsDialogOpen}
+          onClose={() => {
+            setDetailsDialogOpen(false);
+            setItemToView(null);
+          }}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>
+            {itemToView?.type} Details
+          </DialogTitle>
+          <DialogContent>
+            {itemToView && (
+              <Box sx={{ pt: 2 }}>
+                {itemToView.type === "Flight" && (
+                  <FlightDetailsComponent
+                    title={itemToView.title}
+                    startDateTime={itemToView.startDateTime}
+                    endDateTime={itemToView.endDateTime}
+                    startTimezone={itemToView.startTimezone}
+                    endTimezone={itemToView.endTimezone}
+                    bookingRef={itemToView.bookingRef}
+                    url={itemToView.url}
+                    notes={itemToView.notes}
+                    details={itemToView.details as any}
+                  />
+                )}
+                {itemToView.type === "Accommodation" && (
+                  <AccommodationDetailsComponent
+                    title={itemToView.title}
+                    startDateTime={itemToView.startDateTime}
+                    endDateTime={itemToView.endDateTime}
+                    startTimezone={itemToView.startTimezone}
+                    bookingRef={itemToView.bookingRef}
+                    url={itemToView.url}
+                    notes={itemToView.notes}
+                    details={itemToView.details as any}
+                  />
+                )}
+                {itemToView.type === "Transport" && (
+                  <TransportDetailsComponent
+                    title={itemToView.title}
+                    startDateTime={itemToView.startDateTime}
+                    endDateTime={itemToView.endDateTime}
+                    startTimezone={itemToView.startTimezone}
+                    bookingRef={itemToView.bookingRef}
+                    url={itemToView.url}
+                    notes={itemToView.notes}
+                    details={itemToView.details as any}
+                  />
+                )}
+                {itemToView.type === "PlaceVisit" && (
+                  <PlaceVisitDetailsComponent
+                    title={itemToView.title}
+                    startDateTime={itemToView.startDateTime}
+                    endDateTime={itemToView.endDateTime}
+                    startTimezone={itemToView.startTimezone}
+                    bookingRef={itemToView.bookingRef}
+                    url={itemToView.url}
+                    notes={itemToView.notes}
+                    details={itemToView.details as any}
+                  />
+                )}
+                {itemToView.type === "Food" && (
+                  <FoodDetailsComponent
+                    title={itemToView.title}
+                    startDateTime={itemToView.startDateTime}
+                    startTimezone={itemToView.startTimezone}
+                    bookingRef={itemToView.bookingRef}
+                    url={itemToView.url}
+                    notes={itemToView.notes}
+                    details={itemToView.details as any}
+                  />
+                )}
               </Box>
             )}
           </DialogContent>

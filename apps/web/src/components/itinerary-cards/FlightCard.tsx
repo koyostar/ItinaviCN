@@ -46,8 +46,8 @@ export function FlightCard({
       spacing={{ xs: 2, md: 3 }}
       alignItems={{ xs: "flex-start", md: "center" }}
     >
-        {/* Departure */}
-        <Box sx={{ textAlign: "left" }}>
+      {/* Departure */}
+      <Box sx={{ textAlign: "left" }}>
         <Typography variant="subtitle1" fontWeight="600">
           {departureCity}
         </Typography>
@@ -62,12 +62,14 @@ export function FlightCard({
       </Box>
 
       {/* Arrow with flight number */}
-      <Box sx={{ 
-        textAlign: "center", 
-        minWidth: 100,
-        alignSelf: { xs: "center", md: "auto" },
-        mx: { xs: 0, md: 2 }
-      }}>
+      <Box
+        sx={{
+          textAlign: "center",
+          minWidth: 100,
+          alignSelf: { xs: "center", md: "auto" },
+          mx: { xs: 0, md: 2 },
+        }}
+      >
         {details?.flightNo && (
           <Typography variant="caption" color="primary" fontWeight="600">
             ✈️ {details.flightNo}
