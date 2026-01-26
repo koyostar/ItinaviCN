@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import type {
   ItineraryItemResponse,
@@ -31,6 +31,17 @@ import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { api } from "@/lib/api";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { PageLoadingState } from "@/components/PageLoadingState";
+import { PageErrorState } from "@/components/PageErrorState";
+import { EmptyState } from "@/components/EmptyState";
+import { PageHeader } from "@/components/PageHeader";
+import { FormDialog } from "@/components/FormDialog";
+import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
+import { useEditDialog } from "@/hooks/useEditDialog";
+import { useDetailsDialog } from "@/hooks/useDetailsDialog";
+import { useTripTimezone } from "@/hooks/useTripTimezone";
+import { useItineraryItems } from "@/hooks/useItineraryItems";
+import { getTimezoneForCountry } from "@/lib/utils/timezone";
 import { ItineraryForm } from "@/components/ItineraryForm";
 import { formatUTCDate } from "@/lib/dateUtils";
 import {
@@ -60,104 +71,21 @@ export default function ItineraryPage({
 }) {
   const { tripId } = use(params);
   const router = useRouter();
-  const [items, setItems] = useState<ItineraryItemResponse[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<string>("all");
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
-  const [deleting, setDeleting] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [itemToEdit, setItemToEdit] = useState<ItineraryItemResponse | null>(
-    null,
-  );
-  const [updating, setUpdating] = useState(false);
-  const [defaultTimezone, setDefaultTimezone] = useState("Asia/Shanghai");
-  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
-  const [itemToView, setItemToView] = useState<ItineraryItemResponse | null>(
-    null,
+
+  const { items, loading, error, refetch } = useItineraryItems(tripId);
+
+  const deleteConfirmation = useDeleteConfirmation(
+    async (id) => {
+      await api.itinerary.delete(tripId, id);
+    },
+    refetch,
   );
 
-  useEffect(() => {
-    loadItems();
-  }, [tripId]);
-
-  async function loadItems() {
-    try {
-      setLoading(true);
-      setError(null);
-      const [itemsResponse, tripData] = await Promise.all([
-        api.itinerary.list(tripId),
-        api.trips.get(tripId) as Promise<TripResponse>,
-      ]);
-      setItems((itemsResponse as { items: ItineraryItemResponse[] }).items);
-
-      // Set default timezone from trip destination
-      const country = tripData.destinations?.[0]?.country;
-      let timezone = "Asia/Shanghai";
-      if (country === "Singapore") timezone = "Asia/Singapore";
-      else if (country === "Japan") timezone = "Asia/Tokyo";
-      else if (country === "Hong Kong") timezone = "Asia/Hong_Kong";
-      else if (country === "South Korea") timezone = "Asia/Seoul";
-      else if (country === "Thailand") timezone = "Asia/Bangkok";
-      setDefaultTimezone(timezone);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load itinerary");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleDelete(itemId: string) {
-    setItemToDelete(itemId);
-    setDeleteDialogOpen(true);
-  }
-
-  async function handleConfirmDelete() {
-    if (!itemToDelete) return;
-
-    try {
-      setDeleting(true);
-      await api.itinerary.delete(tripId, itemToDelete);
-      setItems((prev) => prev.filter((item) => item.id !== itemToDelete));
-      setDeleteDialogOpen(false);
-      setItemToDelete(null);
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to delete item");
-    } finally {
-      setDeleting(false);
-    }
-  }
-
-  function handleEdit(item: ItineraryItemResponse) {
-    setItemToEdit(item);
-    setEditDialogOpen(true);
-  }
-
-  function handleViewDetails(item: ItineraryItemResponse) {
-    setItemToView(item);
-    setDetailsDialogOpen(true);
-  }
-
-  async function handleUpdate(data: UpdateItineraryItemRequest) {
-    if (!itemToEdit) return;
-    setUpdating(true);
-    try {
-      const updated = await api.itinerary.update(tripId, itemToEdit.id, data);
-      setItems(
-        items.map((item) =>
-          item.id === itemToEdit.id ? (updated as ItineraryItemResponse) : item,
-        ),
-      );
-      setEditDialogOpen(false);
-      setItemToEdit(null);
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to update item");
-    } finally {
-      setUpdating(false);
-    }
-  }
+  const editDialog = useEditDialog<ItineraryItemResponse>();
+  const detailsDialog = useDetailsDialog<ItineraryItemResponse>();
+  const { timezone: defaultTimezone } = useTripTimezone(tripId);
 
   const filteredItems = items.filter((item) => {
     if (filterType !== "all" && item.type !== filterType) return false;
@@ -182,48 +110,26 @@ export default function ItineraryPage({
   );
 
   if (loading) {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Typography>Loading itinerary...</Typography>
-      </Container>
-    );
+    return <PageLoadingState message="Loading itinerary..." />;
   }
 
   if (error) {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Typography color="error">{error}</Typography>
-        <Button onClick={loadItems} sx={{ mt: 2 }}>
-          Retry
-        </Button>
-      </Container>
-    );
+    return <PageErrorState error={error} onRetry={refetch} />;
   }
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Stack spacing={3}>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Stack direction="row" spacing={2} alignItems="center">
-            <IconButton onClick={() => router.push(`/trips/${tripId}`)}>
-              <ArrowBackIcon />
-            </IconButton>
-            <Typography variant="h4" component="h1">
-              Itinerary
-            </Typography>
-          </Stack>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            href={`/trips/${tripId}/itinerary/new`}
-          >
-            Add
-          </Button>
-        </Stack>
+        <PageHeader
+          title="Itinerary"
+          backButton={{
+            onClick: () => router.push(`/trips/${tripId}`),
+          }}
+          action={{
+            label: "Add",
+            href: `/trips/${tripId}/itinerary/new`,
+          }}
+        />
 
         {/* Filters */}
         <Stack direction="row" spacing={2}>
@@ -361,21 +267,23 @@ export default function ItineraryPage({
                                   <IconButton
                                     size="small"
                                     color="primary"
-                                    onClick={() => handleEdit(item)}
+                                    onClick={() => editDialog.openEdit(item)}
                                   >
                                     <EditIcon />
                                   </IconButton>
                                   <IconButton
                                     size="small"
                                     color="error"
-                                    onClick={() => handleDelete(item.id)}
+                                    onClick={() =>
+                                    deleteConfirmation.handleDelete(item.id)
+                                  }
                                   >
                                     <DeleteIcon />
                                   </IconButton>
                                 </Stack>
                               </Stack>
                               <Box
-                                onClick={() => handleViewDetails(item)}
+                                onClick={() => detailsDialog.openDetails(item)}
                                 sx={{
                                   cursor: "pointer",
                                   "&:hover": {
@@ -473,119 +381,109 @@ export default function ItineraryPage({
         )}
 
         <ConfirmDialog
-          open={deleteDialogOpen}
-          onCancel={() => setDeleteDialogOpen(false)}
-          onConfirm={handleConfirmDelete}
+          open={deleteConfirmation.open}
+          onCancel={deleteConfirmation.handleCancel}
+          onConfirm={deleteConfirmation.handleConfirm}
           title="Delete Itinerary Item"
           message="Are you sure you want to delete this itinerary item? This action cannot be undone."
           confirmLabel="Delete"
           confirmColor="error"
-          loading={deleting}
+          loading={deleteConfirmation.loading}
         />
 
-        <Dialog
-          open={editDialogOpen}
-          onClose={() => {
-            if (!updating) {
-              setEditDialogOpen(false);
-              setItemToEdit(null);
-            }
-          }}
-          maxWidth="md"
-          fullWidth
+        <FormDialog
+          open={editDialog.open}
+          title="Edit Itinerary Item"
+          onClose={editDialog.closeEdit}
         >
-          <DialogTitle>Edit Itinerary Item</DialogTitle>
-          <DialogContent>
-            {itemToEdit && (
-              <Box sx={{ pt: 1 }}>
-                <ItineraryForm
-                  initialData={itemToEdit}
-                  defaultTimezone={defaultTimezone}
-                  onSubmit={handleUpdate}
-                  onCancel={() => {
-                    setEditDialogOpen(false);
-                    setItemToEdit(null);
-                  }}
-                  loading={updating}
-                />
-              </Box>
-            )}
-          </DialogContent>
-        </Dialog>
+          {editDialog.item && (
+            <ItineraryForm
+              initialData={editDialog.item}
+              defaultTimezone={defaultTimezone}
+              onSubmit={(data) =>
+                editDialog.handleSubmit(async (item) => {
+                  await api.itinerary.update(
+                    tripId,
+                    item.id,
+                    data,
+                  );
+                  refetch();
+                })
+              }
+              onCancel={editDialog.closeEdit}
+              loading={editDialog.submitting}
+            />
+          )}
+        </FormDialog>
 
         <Dialog
-          open={detailsDialogOpen}
-          onClose={() => {
-            setDetailsDialogOpen(false);
-            setItemToView(null);
-          }}
+          open={detailsDialog.open}
+          onClose={detailsDialog.closeDetails}
           maxWidth="md"
           fullWidth
         >
-          <DialogTitle>
-            {itemToView?.type} Details
-          </DialogTitle>
+          <DialogTitle>{detailsDialog.item?.type} Details</DialogTitle>
           <DialogContent>
-            {itemToView && (
+            {detailsDialog.item && (
               <Box sx={{ pt: 2 }}>
-                {itemToView.type === "Flight" && (
+                {detailsDialog.item.type === "Flight" && (
                   <FlightDetailsComponent
-                    title={itemToView.title}
-                    startDateTime={itemToView.startDateTime}
-                    endDateTime={itemToView.endDateTime}
-                    startTimezone={itemToView.startTimezone}
-                    endTimezone={itemToView.endTimezone}
-                    bookingRef={itemToView.bookingRef}
-                    url={itemToView.url}
-                    notes={itemToView.notes}
-                    details={itemToView.details as any}
+                    title={detailsDialog.item.title}
+                    startDateTime={detailsDialog.item.startDateTime}
+                    endDateTime={detailsDialog.item.endDateTime}
+                    startTimezone={detailsDialog.item.startTimezone}
+                    endTimezone={detailsDialog.item.endTimezone}
+                    bookingRef={detailsDialog.item.bookingRef}
+                    url={detailsDialog.item.url}
+                    notes={detailsDialog.item.notes}
+                    details={detailsDialog.item.details as any}
                   />
                 )}
-                {itemToView.type === "Accommodation" && (
+                {detailsDialog.item.type === "Accommodation" && (
                   <AccommodationDetailsComponent
-                    title={itemToView.title}
-                    startDateTime={itemToView.startDateTime}
-                    endDateTime={itemToView.endDateTime}
-                    startTimezone={itemToView.startTimezone}
-                    bookingRef={itemToView.bookingRef}
-                    url={itemToView.url}
-                    notes={itemToView.notes}
-                    details={itemToView.details as any}
+                    title={detailsDialog.item.title}
+                    startDateTime={detailsDialog.item.startDateTime}
+                    endDateTime={detailsDialog.item.endDateTime}
+                    startTimezone={detailsDialog.item.startTimezone}
+                    bookingRef={detailsDialog.item.bookingRef}
+                    url={detailsDialog.item.url}
+                    notes={detailsDialog.item.notes}
+                    details={detailsDialog.item.details as any}
                   />
                 )}
-                {itemToView.type === "Transport" && (
+                {detailsDialog.item.type === "Transport" && (
                   <TransportDetailsComponent
-                    title={itemToView.title}
-                    startDateTime={itemToView.startDateTime}
-                    endDateTime={itemToView.endDateTime}
-                    startTimezone={itemToView.startTimezone}
-                    bookingRef={itemToView.bookingRef}
-                    url={itemToView.url}
-                    notes={itemToView.notes}
-                    details={itemToView.details as any}
+                    title={detailsDialog.item.title}
+                    startDateTime={detailsDialog.item.startDateTime}
+                    endDateTime={detailsDialog.item.endDateTime}
+                    startTimezone={detailsDialog.item.startTimezone}
+                    bookingRef={detailsDialog.item.bookingRef}
+                    url={detailsDialog.item.url}
+                    notes={detailsDialog.item.notes}
+                    details={detailsDialog.item.details as any}
                   />
                 )}
-                {itemToView.type === "PlaceVisit" && (
+                {detailsDialog.item.type === "PlaceVisit" && (
                   <PlaceVisitDetailsComponent
-                    title={itemToView.title}
-                    startDateTime={itemToView.startDateTime}
-                    endDateTime={itemToView.endDateTime}
-                    startTimezone={itemToView.startTimezone}
-                    bookingRef={itemToView.bookingRef}
-                    url={itemToView.url}
-                    notes={itemToView.notes}
-                    details={itemToView.details as any}
+                    title={detailsDialog.item.title}
+                    startDateTime={detailsDialog.item.startDateTime}
+                    endDateTime={detailsDialog.item.endDateTime}
+                    startTimezone={detailsDialog.item.startTimezone}
+                    bookingRef={detailsDialog.item.bookingRef}
+                    url={detailsDialog.item.url}
+                    notes={detailsDialog.item.notes}
+                    details={detailsDialog.item.details as any}
                   />
                 )}
-                {itemToView.type === "Food" && (
+                {detailsDialog.item.type === "Food" && (
                   <FoodDetailsComponent
-                    title={itemToView.title}
-                    startDateTime={itemToView.startDateTime}
-                    startTimezone={itemToView.startTimezone}
-                    bookingRef={itemToView.bookingRef}
-                    url={itemToView.url}
-                    notes={itemToView.notes}
-                    details={itemToView.details as any}
+                    title={detailsDialog.item.title}
+                    startDateTime={detailsDialog.item.startDateTime}
+                    startTimezone={detailsDialog.item.startTimezone}
+                    bookingRef={detailsDialog.item.bookingRef}
+                    url={detailsDialog.item.url}
+                    notes={detailsDialog.item.notes}
+                    details={detailsDialog.item.details as any}
                   />
                 )}
               </Box>
