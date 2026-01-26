@@ -1,318 +1,126 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { TripResponse, CreateTripRequest } from "@itinavi/schema";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Container,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Container, Stack } from "@mui/material";
 import { api } from "@/lib/api";
-import { COUNTRIES, CITIES, getDisplayName } from "@/lib/locations";
 import { useUserPreferences } from "@/contexts/UserPreferencesContext";
 import { TripForm } from "@/components/TripForm";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
-import { formatUTCDate } from "@/lib/dateUtils";
+import { PageLoadingState } from "@/components/PageLoadingState";
+import { PageErrorState } from "@/components/PageErrorState";
+import { EmptyState } from "@/components/EmptyState";
+import { PageHeader } from "@/components/PageHeader";
+import { FormDialog } from "@/components/FormDialog";
+import { TripCard } from "@/components/TripCard";
+import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
+import { useEditDialog } from "@/hooks/useEditDialog";
+import { useTrips } from "@/hooks/useTrips";
 
 export default function TripsPage() {
   const router = useRouter();
   const { language } = useUserPreferences();
-  const [trips, setTrips] = useState<TripResponse[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [tripToDelete, setTripToDelete] = useState<string | null>(null);
-  const [deleting, setDeleting] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [tripToEdit, setTripToEdit] = useState<TripResponse | null>(null);
-  const [updating, setUpdating] = useState(false);
+  const { trips, loading, error, refetch } = useTrips();
 
-  useEffect(() => {
-    loadTrips();
-  }, []);
+  const deleteConfirmation = useDeleteConfirmation(async (id) => {
+    await api.trips.delete(id);
+  }, refetch);
 
-  async function loadTrips() {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await api.trips.list();
-      setTrips((response as { items: TripResponse[] }).items);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load trips");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function handleEditClick(trip: TripResponse) {
-    setTripToEdit(trip);
-    setEditDialogOpen(true);
-  }
-
-  async function handleEditSubmit(payload: Partial<CreateTripRequest>) {
-    if (!tripToEdit) return;
-
-    try {
-      setUpdating(true);
-      await api.trips.update(tripToEdit.id, payload);
-      setEditDialogOpen(false);
-      setTripToEdit(null);
-      loadTrips();
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to update trip");
-    } finally {
-      setUpdating(false);
-    }
-  }
-
-  function handleCancelEdit() {
-    setEditDialogOpen(false);
-    setTripToEdit(null);
-  }
-
-  function handleDeleteClick(tripId: string) {
-    setTripToDelete(tripId);
-    setDeleteDialogOpen(true);
-  }
-
-  async function handleConfirmDelete() {
-    if (!tripToDelete) return;
-
-    try {
-      setDeleting(true);
-      await api.trips.delete(tripToDelete);
-      setDeleteDialogOpen(false);
-      setTripToDelete(null);
-      loadTrips();
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to delete trip");
-    } finally {
-      setDeleting(false);
-    }
-  }
-
-  function handleCancelDelete() {
-    setDeleteDialogOpen(false);
-    setTripToDelete(null);
-  }
+  const editDialog = useEditDialog<TripResponse>();
 
   if (loading) {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Typography>Loading trips...</Typography>
-      </Container>
-    );
+    return <PageLoadingState message="Loading trips..." />;
   }
 
   if (error) {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Typography color="error">{error}</Typography>
-        <Button onClick={loadTrips} sx={{ mt: 2 }}>
-          Retry
-        </Button>
-      </Container>
-    );
+    return <PageErrorState error={error} onRetry={refetch} />;
   }
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={3}
-      >
-        <Typography variant="h4" component="h1">
-          My Trips
-        </Typography>
-        <Button variant="contained" startIcon={<AddIcon />} href="/trips/new">
-          Create Trip
-        </Button>
-      </Stack>
+      <PageHeader
+        title="My Trips"
+        action={{
+          label: "Create Trip",
+          href: "/trips/new",
+        }}
+      />
 
       {trips.length === 0 ? (
-        <Card>
-          <CardContent>
-            <Stack alignItems="center" spacing={2} py={4}>
-              <Typography variant="h6" color="text.secondary">
-                No trips yet
-              </Typography>
-              <Typography color="text.secondary">
-                Create your first trip to start planning
-              </Typography>
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                href="/trips/new"
-              >
-                Create Trip
-              </Button>
-            </Stack>
-          </CardContent>
-        </Card>
+        <EmptyState
+          title="No trips yet"
+          description="Create your first trip to start planning"
+          action={{
+            label: "Create Trip",
+            href: "/trips/new",
+          }}
+        />
       ) : (
         <Stack spacing={2}>
           {trips.map((trip) => (
-            <Card
+            <TripCard
               key={trip.id}
-              sx={{
-                cursor: "pointer",
-                "&:hover": {
-                  boxShadow: 3,
-                },
-              }}
+              trip={trip}
+              language={language}
               onClick={() => router.push(`/trips/${trip.id}`)}
-            >
-              <CardContent>
-                <Stack spacing={2}>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="start"
-                  >
-                    <Box flex={1}>
-                      <Typography variant="h6">{trip.title}</Typography>
-                      {trip.destinations && trip.destinations.length > 0 && (
-                        <Typography variant="body2" color="text.secondary">
-                          📍{" "}
-                          {trip.destinations
-                            .map((d) => {
-                              const countryData = COUNTRIES[d.country];
-                              const countryName = countryData
-                                ? getDisplayName(countryData, language)
-                                : d.country;
-                              const cityNames = d.cities
-                                .map((city) => {
-                                  const cityData = CITIES[d.country]?.[city];
-                                  return cityData
-                                    ? getDisplayName(cityData, language)
-                                    : city;
-                                })
-                                .join(", ");
-                              return `${countryName} (${cityNames})`;
-                            })
-                            .join(" • ")}
-                        </Typography>
-                      )}
-                      <Typography variant="body2" color="text.secondary">
-                        {formatUTCDate(trip.startDate, "en-US", {
-                          month: "short",
-                          day: "numeric",
-                        })}{" "}
-                        -{" "}
-                        {formatUTCDate(trip.endDate, "en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      </Typography>
-                    </Box>
-                    <Stack direction="row" spacing={1}>
-                      <IconButton
-                        size="small"
-                        color="primary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEditClick(trip);
-                        }}
-                        title="Edit trip"
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteClick(trip.id);
-                        }}
-                        title="Delete trip"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Stack>
-                  </Stack>
-
-                  <Stack direction="row" spacing={1}>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/trips/${trip.id}/itinerary`);
-                      }}
-                    >
-                      Itinerary
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/trips/${trip.id}/locations`);
-                      }}
-                    >
-                      Locations
-                    </Button>
-                  </Stack>
-                </Stack>
-              </CardContent>
-            </Card>
+              onEdit={(e) => {
+                e.stopPropagation();
+                editDialog.openEdit(trip);
+              }}
+              onDelete={(e) => {
+                e.stopPropagation();
+                deleteConfirmation.handleDelete(trip.id);
+              }}
+              onNavigateToItinerary={(e) => {
+                e.stopPropagation();
+                router.push(`/trips/${trip.id}/itinerary`);
+              }}
+              onNavigateToLocations={(e) => {
+                e.stopPropagation();
+                router.push(`/trips/${trip.id}/locations`);
+              }}
+            />
           ))}
         </Stack>
       )}
 
-      <Dialog
-        open={editDialogOpen}
-        onClose={handleCancelEdit}
-        maxWidth="md"
-        fullWidth
+      <FormDialog
+        open={editDialog.open}
+        title="Edit Trip"
+        onClose={editDialog.closeEdit}
       >
-        <DialogTitle>Edit Trip</DialogTitle>
-        <DialogContent>
-          {tripToEdit && (
-            <Box sx={{ pt: 1 }}>
-              <TripForm
-                initialData={{
-                  title: tripToEdit.title,
-                  destinations: tripToEdit.destinations || [],
-                  startDate: tripToEdit.startDate,
-                  endDate: tripToEdit.endDate,
-                  destinationCurrency: tripToEdit.destinationCurrency,
-                  originCurrency: tripToEdit.originCurrency,
-                  notes: tripToEdit.notes || undefined,
-                }}
-                onSubmit={handleEditSubmit}
-                onCancel={handleCancelEdit}
-                submitLabel="Update Trip"
-                loading={updating}
-              />
-            </Box>
-          )}
-        </DialogContent>
-      </Dialog>
+        {editDialog.item && (
+          <TripForm
+            initialData={{
+              title: editDialog.item.title,
+              destinations: editDialog.item.destinations || [],
+              startDate: editDialog.item.startDate,
+              endDate: editDialog.item.endDate,
+              destinationCurrency: editDialog.item.destinationCurrency,
+              originCurrency: editDialog.item.originCurrency,
+              notes: editDialog.item.notes || undefined,
+            }}
+            onSubmit={(data) =>
+              editDialog.handleSubmit(async (trip) => {
+                await api.trips.update(trip.id, data);
+                refetch();
+              })
+            }
+            onCancel={editDialog.closeEdit}
+            submitLabel="Update Trip"
+            loading={editDialog.submitting}
+          />
+        )}
+      </FormDialog>
 
       <ConfirmDialog
-        open={deleteDialogOpen}
+        open={deleteConfirmation.open}
         title="Delete Trip"
         message="Are you sure you want to delete this trip? This action cannot be undone. All locations and itinerary items associated with this trip will also be deleted."
         confirmLabel="Delete"
-        onConfirm={handleConfirmDelete}
-        onCancel={handleCancelDelete}
-        loading={deleting}
+        onConfirm={deleteConfirmation.handleConfirm}
+        onCancel={deleteConfirmation.handleCancel}
+        loading={deleteConfirmation.loading}
         confirmColor="error"
       />
     </Container>
