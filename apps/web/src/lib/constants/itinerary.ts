@@ -1,3 +1,8 @@
+/**
+ * Constants and configuration for itinerary items.
+ * Includes types, statuses, transport modes, and UI mappings (icons, colors).
+ */
+
 import type {
   ItineraryItemType,
   TransportMode,
@@ -11,6 +16,10 @@ import RestaurantIcon from "@mui/icons-material/Restaurant";
 import type { SvgIconTypeMap } from "@mui/material";
 import type { OverridableComponent } from "@mui/material/OverridableComponent";
 
+/**
+ * All available itinerary item types.
+ * Used for filtering and type selection in forms.
+ */
 export const ITINERARY_TYPES: ItineraryItemType[] = [
   "Flight",
   "Transport",
@@ -19,6 +28,9 @@ export const ITINERARY_TYPES: ItineraryItemType[] = [
   "Food",
 ];
 
+/**
+ * Available transport modes for Transport-type itinerary items.
+ */
 export const TRANSPORT_MODES: TransportMode[] = [
   "Metro",
   "Bus",
@@ -29,6 +41,10 @@ export const TRANSPORT_MODES: TransportMode[] = [
   "Other",
 ];
 
+/**
+ * Available status values for itinerary items.
+ * Tracks progression from planning to completion.
+ */
 export const ITINERARY_STATUSES: ItineraryStatus[] = [
   "Planned",
   "Booked",
@@ -36,6 +52,10 @@ export const ITINERARY_STATUSES: ItineraryStatus[] = [
   "Skipped",
 ];
 
+/**
+ * Maps itinerary types to Material-UI icons.
+ * Used for visual representation in cards and lists.
+ */
 export const ITINERARY_TYPE_ICONS: Record<
   ItineraryItemType,
   OverridableComponent<SvgIconTypeMap>
@@ -47,6 +67,10 @@ export const ITINERARY_TYPE_ICONS: Record<
   Food: RestaurantIcon,
 };
 
+/**
+ * Maps itinerary types to Material-UI chip colors.
+ * Provides visual distinction between different item types.
+ */
 export const ITINERARY_TYPE_COLORS: Record<
   ItineraryItemType,
   "primary" | "secondary" | "success" | "error" | "warning" | "info"
@@ -58,6 +82,10 @@ export const ITINERARY_TYPE_COLORS: Record<
   Food: "success",
 };
 
+/**
+ * Maps itinerary statuses to Material-UI chip colors.
+ * Indicates progress state with appropriate color coding.
+ */
 export const ITINERARY_STATUS_COLORS: Record<
   ItineraryStatus,
   "default" | "primary" | "success" | "error"
