@@ -3,6 +3,7 @@
     "dev": { "cache": false, "persistent": true },
     "build": { "dependsOn": ["^build"] },
     "lint": { "dependsOn": ["^lint"] },
+    "lint:fix": { "cache": false },
     "typecheck": { "dependsOn": ["^typecheck"] }
   }
 }
