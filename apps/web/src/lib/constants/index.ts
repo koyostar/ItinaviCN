@@ -5,3 +5,4 @@
 
 export * from "./itinerary";
 export * from "./location";
+export * from "./expense";

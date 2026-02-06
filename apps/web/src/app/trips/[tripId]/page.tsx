@@ -302,12 +302,16 @@ export default function TripDetailPage({
           <Card sx={{ flex: { sm: "1 1 45%", md: "1 1 22%" } }}>
             <CardContent>
               <Stack spacing={2} alignItems="center">
-                <AttachMoneyIcon sx={{ fontSize: 48 }} color="action" />
+                <AttachMoneyIcon sx={{ fontSize: 48 }} color="primary" />
                 <Typography variant="h6" textAlign="center">
                   Expenses
                 </Typography>
-                <Button variant="outlined" fullWidth disabled>
-                  Coming Soon
+                <Button
+                  variant="contained"
+                  fullWidth
+                  href={`/trips/${tripId}/expenses`}
+                >
+                  Track Expenses
                 </Button>
               </Stack>
             </CardContent>
