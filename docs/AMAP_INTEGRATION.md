@@ -2,6 +2,8 @@
 
 This document describes the Amap integration in the Itinavi application.
 
+> **See also**: [PROJECT_STATUS.md](PROJECT_STATUS.md) for overall project progress.
+
 ## Overview
 
 ### Current Integration: Web Service API
@@ -11,6 +13,7 @@ We use Amap's **Web Service API** to provide place autocomplete functionality wh
 ### Future Integration: JavaScript API
 
 The **JavaScript API** (Web端 JS API) will be used in the future for:
+
 - Interactive map displays
 - Showing itinerary items on a map
 - Route visualization
@@ -55,7 +58,8 @@ NEXT_PUBLIC_AMAP_JS_API_KEY=your_js_api_key_here
 NEXT_PUBLIC_AMAP_SECURITY_JSCODE=your_jscode_here
 ```
 
-**Important**: 
+**Important**:
+
 - The `NEXT_PUBLIC_` prefix is required for client-side code
 - Web Service and JS API require **different keys**
 - Security jscode only works with JS API, not Web Service API
@@ -77,6 +81,7 @@ We use Amap's Input Tips API for autocomplete suggestions:
 **Endpoint**: `https://restapi.amap.com/v3/assistant/inputtips`
 
 **Parameters**:
+
 - `key`: Your Amap API key
 - `keywords`: Search query
 - `city`: Optional city parameter to limit results
@@ -84,6 +89,7 @@ We use Amap's Input Tips API for autocomplete suggestions:
 - `datatype`: Data type (default: 'all')
 
 **Response**:
+
 ```json
 {
   "status": "1",
@@ -105,7 +111,7 @@ We use Amap's Input Tips API for autocomplete suggestions:
 ### AmapPlaceAutocomplete Component
 
 ```tsx
-import { AmapPlaceAutocomplete } from '@/components/AmapPlaceAutocomplete';
+import { AmapPlaceAutocomplete } from "@/components/AmapPlaceAutocomplete";
 
 <AmapPlaceAutocomplete
   label="Hotel Name"
@@ -116,12 +122,13 @@ import { AmapPlaceAutocomplete } from '@/components/AmapPlaceAutocomplete';
   }}
   placeholder="Search for hotel..."
   city="北京" // Optional: limit results to specific city
-/>
+/>;
 ```
 
 ## Development Mode
 
 If `NEXT_PUBLIC_AMAP_WEB_SERVICE_KEY` is not configured, the component will:
+
 1. Log a warning to the console
 2. Show mock data with Chinese hotel names
 3. Allow testing without a real API key
@@ -129,10 +136,12 @@ If `NEXT_PUBLIC_AMAP_WEB_SERVICE_KEY` is not configured, the component will:
 ## API Limits
 
 Free tier limits (as of 2026):
+
 - 300,000 calls/day for Web Service APIs
 - Rate limit: 200 QPS per key
 
 For production use with high traffic, consider:
+
 - Caching frequent searches
 - Implementing server-side proxy to hide API key
 - Upgrading to a paid plan if needed
@@ -140,9 +149,11 @@ For production use with high traffic, consider:
 ## API Keys: Web Service vs JavaScript API
 
 ### Web Service API (Currently Used)
+
 **Environment Variable**: `NEXT_PUBLIC_AMAP_WEB_SERVICE_KEY`
 
 **Use Cases**:
+
 - ✅ Place search / autocomplete (current feature)
 - ✅ Geocoding (address → coordinates)
 - ✅ Reverse geocoding (coordinates → address)
@@ -154,9 +165,11 @@ For production use with high traffic, consider:
 **Security**: Does NOT use jscode parameter
 
 ### JavaScript API (Future Use)
+
 **Environment Variable**: `NEXT_PUBLIC_AMAP_JS_API_KEY`
 
 **Use Cases**:
+
 - 🗺️ Interactive map display
 - 📍 Markers and overlays
 - 🛣️ Route visualization on map
@@ -170,7 +183,6 @@ For production use with high traffic, consider:
 ## Security Notes
 
 1. **API Key Exposure**: The API key is exposed in client-side code. This is required for Web Service API but poses a security risk.
-   
 2. **Recommended**: For production:
    - Set up IP whitelist restrictions in Amap console
    - Set up referer restrictions to your domain
@@ -186,6 +198,7 @@ For production use with high traffic, consider:
 **Most Common Issue**: This error means your API key is not configured for Web Service API.
 
 **Solution**:
+
 1. Go to [Amap Console](https://console.amap.com/dev/key/app)
 2. Click on "应用管理" (Application Management)
 3. Find your application and key
@@ -201,6 +214,7 @@ For production use with high traffic, consider:
 **Alternative**: Some keys require domain whitelisting. Add your domain (e.g., `localhost:3000` for development) in the key settings.
 
 ### No results appearing
+
 - Check if API key is correctly set in `.env.local`
 - Verify the key has "Web Service API" enabled (see above)
 - Check browser console for error messages
@@ -210,10 +224,12 @@ For production use with high traffic, consider:
   ```
 
 ### CORS errors
+
 - Amap Web Service API should not have CORS issues
 - If you see CORS errors, verify you're using Web Service API, not JavaScript API
 
 ### Wrong results
+
 - Use the `city` parameter to limit results to specific cities
 - Adjust the `type` parameter to filter by POI category
 

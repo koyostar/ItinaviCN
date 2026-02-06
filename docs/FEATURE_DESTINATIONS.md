@@ -2,6 +2,10 @@
 
 ## ✅ Implementation Complete
 
+This document describes the bilingual destination input feature for ItinaviCN.
+
+> **See also**: [PROJECT_STATUS.md](PROJECT_STATUS.md) for overall project progress.
+
 ### Features
 
 1. **Autocomplete Dropdown**
