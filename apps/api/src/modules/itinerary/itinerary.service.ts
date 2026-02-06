@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import type { Prisma } from '@prisma/client';
+import type { Prisma, LocationCategory } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 
 /**
@@ -41,6 +41,7 @@ export class ItineraryService {
 
   /**
    * Creates a new itinerary item for a trip.
+   * Automatically creates a location if the item has an address.
    *
    * @param {string} tripId - The unique identifier of the trip
    * @param {Omit<Prisma.ItineraryItemCreateInput, 'trip'>} input - Itinerary item creation data
@@ -50,6 +51,45 @@ export class ItineraryService {
     tripId: string,
     input: Omit<Prisma.ItineraryItemCreateInput, 'trip'>,
   ) {
+    // Extract details to check for address
+    const details = input.details as any;
+    const type = input.type as string;
+
+    // Auto-create location for items with addresses (only if no manual locationId provided)
+    if (
+      !input.location &&
+      details?.address &&
+      (type === 'Accommodation' || type === 'Place' || type === 'Food')
+    ) {
+      const categoryMap: Record<string, LocationCategory> = {
+        Accommodation: 'Accommodation',
+        Place: 'Place',
+        Food: 'Restaurant',
+      };
+
+      const locationName =
+        type === 'Accommodation' && details.hotelName
+          ? details.hotelName
+          : input.title;
+
+      const location = await this.prisma.location.create({
+        data: {
+          tripId,
+          name: locationName as string,
+          category: categoryMap[type],
+          address: details.address,
+        },
+      });
+
+      return this.prisma.itineraryItem.create({
+        data: {
+          ...input,
+          location: { connect: { id: location.id } },
+          trip: { connect: { id: tripId } },
+        },
+      });
+    }
+
     return this.prisma.itineraryItem.create({
       data: {
         ...input,
