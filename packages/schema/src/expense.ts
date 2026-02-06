@@ -1,27 +1,73 @@
 import { z } from "zod";
 import { CurrencyCodeSchema } from "./trip";
 
-export const ExpenseSchema = z.object({
+// Expense category enum matching Prisma schema
+export const ExpenseCategorySchema = z.enum([
+  "Accommodation",
+  "Transport",
+  "Food",
+  "Shop",
+  "Attraction",
+  "Other",
+]);
+
+export type ExpenseCategory = z.infer<typeof ExpenseCategorySchema>;
+
+// Base expense schema
+export const ExpenseResponseSchema = z.object({
   id: z.string().uuid(),
   tripId: z.string().uuid(),
-  date: z.string(), // ISO date
-  amount: z.number().positive(),
-  currency: CurrencyCodeSchema,
-  category: z
-    .enum([
-      "Food",
-      "Transport",
-      "Accommodation",
-      "Shopping",
-      "Entertainment",
-      "Other",
-    ])
-    .default("Other"),
-  description: z.string().optional(),
-  notes: z.string().optional(),
+  title: z.string(),
+  category: ExpenseCategorySchema,
+  expenseDateTime: z.string().datetime(),
+  amountDestinationMinor: z.number().int().min(0),
+  destinationCurrency: CurrencyCodeSchema,
+  exchangeRateUsed: z.number().optional(),
+  linkedItineraryItemId: z.string().uuid().nullable(),
+  linkedLocationId: z.string().uuid().nullable(),
+  notes: z.string().nullable(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
 });
 
-export type Expense = z.infer<typeof ExpenseSchema>;
+export type ExpenseResponse = z.infer<typeof ExpenseResponseSchema>;
 
-export const CreateExpenseInputSchema = ExpenseSchema.omit({ id: true });
-export type CreateExpenseInput = z.infer<typeof CreateExpenseInputSchema>;
+// Create expense request schema
+export const CreateExpenseRequestSchema = z.object({
+  title: z.string().min(1).max(200),
+  category: ExpenseCategorySchema.default("Other"),
+  expenseDateTime: z.string().datetime(),
+  amountDestinationMinor: z.number().int().min(0),
+  destinationCurrency: CurrencyCodeSchema,
+  exchangeRateUsed: z.number().optional(),
+  linkedItineraryItemId: z.string().uuid().optional(),
+  linkedLocationId: z.string().uuid().optional(),
+  notes: z.string().max(2000).optional(),
+});
+
+export type CreateExpenseRequest = z.infer<typeof CreateExpenseRequestSchema>;
+
+// Update expense request schema
+export const UpdateExpenseRequestSchema =
+  CreateExpenseRequestSchema.partial().refine(
+    (v) => Object.keys(v).length > 0,
+    {
+      message: "At least one field is required",
+    },
+  );
+
+export type UpdateExpenseRequest = z.infer<typeof UpdateExpenseRequestSchema>;
+
+// List expenses response
+export const ListExpensesResponseSchema = z.object({
+  items: z.array(ExpenseResponseSchema),
+});
+
+export type ListExpensesResponse = z.infer<typeof ListExpensesResponseSchema>;
+
+// Expense ID param
+export const ExpenseIdParamSchema = z.object({
+  expenseId: z.string().uuid(),
+});
+
+export type ExpenseIdParam = z.infer<typeof ExpenseIdParamSchema>;

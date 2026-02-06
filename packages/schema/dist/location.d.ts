@@ -17,7 +17,7 @@ export declare const CreateLocationRequestSchema: z.ZodObject<{
     baiduPlaceId: z.ZodOptional<z.ZodString>;
     notes: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    category: "Accommodation" | "Other" | "Place" | "Restaurant" | "TransportNode" | "Shop";
+    category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
     name: string;
     notes?: string | undefined;
     address?: string | undefined;
@@ -25,7 +25,7 @@ export declare const CreateLocationRequestSchema: z.ZodObject<{
     longitude?: number | undefined;
     baiduPlaceId?: string | undefined;
 }, {
-    category: "Accommodation" | "Other" | "Place" | "Restaurant" | "TransportNode" | "Shop";
+    category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
     name: string;
     notes?: string | undefined;
     address?: string | undefined;
@@ -44,7 +44,7 @@ export declare const UpdateLocationRequestSchema: z.ZodEffects<z.ZodObject<{
     notes: z.ZodOptional<z.ZodOptional<z.ZodString>>;
 }, "strip", z.ZodTypeAny, {
     notes?: string | undefined;
-    category?: "Accommodation" | "Other" | "Place" | "Restaurant" | "TransportNode" | "Shop" | undefined;
+    category?: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode" | undefined;
     address?: string | undefined;
     name?: string | undefined;
     latitude?: number | undefined;
@@ -52,7 +52,7 @@ export declare const UpdateLocationRequestSchema: z.ZodEffects<z.ZodObject<{
     baiduPlaceId?: string | undefined;
 }, {
     notes?: string | undefined;
-    category?: "Accommodation" | "Other" | "Place" | "Restaurant" | "TransportNode" | "Shop" | undefined;
+    category?: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode" | undefined;
     address?: string | undefined;
     name?: string | undefined;
     latitude?: number | undefined;
@@ -60,7 +60,7 @@ export declare const UpdateLocationRequestSchema: z.ZodEffects<z.ZodObject<{
     baiduPlaceId?: string | undefined;
 }>, {
     notes?: string | undefined;
-    category?: "Accommodation" | "Other" | "Place" | "Restaurant" | "TransportNode" | "Shop" | undefined;
+    category?: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode" | undefined;
     address?: string | undefined;
     name?: string | undefined;
     latitude?: number | undefined;
@@ -68,7 +68,7 @@ export declare const UpdateLocationRequestSchema: z.ZodEffects<z.ZodObject<{
     baiduPlaceId?: string | undefined;
 }, {
     notes?: string | undefined;
-    category?: "Accommodation" | "Other" | "Place" | "Restaurant" | "TransportNode" | "Shop" | undefined;
+    category?: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode" | undefined;
     address?: string | undefined;
     name?: string | undefined;
     latitude?: number | undefined;
@@ -94,7 +94,7 @@ export declare const LocationResponseSchema: z.ZodObject<{
     id: string;
     createdAt: string;
     updatedAt: string;
-    category: "Accommodation" | "Other" | "Place" | "Restaurant" | "TransportNode" | "Shop";
+    category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
     address: string | null;
     name: string;
     latitude: number | null;
@@ -106,7 +106,7 @@ export declare const LocationResponseSchema: z.ZodObject<{
     id: string;
     createdAt: string;
     updatedAt: string;
-    category: "Accommodation" | "Other" | "Place" | "Restaurant" | "TransportNode" | "Shop";
+    category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
     address: string | null;
     name: string;
     latitude: number | null;
@@ -133,7 +133,7 @@ export declare const ListLocationsResponseSchema: z.ZodObject<{
         id: string;
         createdAt: string;
         updatedAt: string;
-        category: "Accommodation" | "Other" | "Place" | "Restaurant" | "TransportNode" | "Shop";
+        category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
         address: string | null;
         name: string;
         latitude: number | null;
@@ -145,7 +145,7 @@ export declare const ListLocationsResponseSchema: z.ZodObject<{
         id: string;
         createdAt: string;
         updatedAt: string;
-        category: "Accommodation" | "Other" | "Place" | "Restaurant" | "TransportNode" | "Shop";
+        category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
         address: string | null;
         name: string;
         latitude: number | null;
@@ -159,7 +159,7 @@ export declare const ListLocationsResponseSchema: z.ZodObject<{
         id: string;
         createdAt: string;
         updatedAt: string;
-        category: "Accommodation" | "Other" | "Place" | "Restaurant" | "TransportNode" | "Shop";
+        category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
         address: string | null;
         name: string;
         latitude: number | null;
@@ -173,7 +173,7 @@ export declare const ListLocationsResponseSchema: z.ZodObject<{
         id: string;
         createdAt: string;
         updatedAt: string;
-        category: "Accommodation" | "Other" | "Place" | "Restaurant" | "TransportNode" | "Shop";
+        category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
         address: string | null;
         name: string;
         latitude: number | null;

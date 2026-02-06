@@ -833,7 +833,7 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     details: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
 }, "strip", z.ZodTypeAny, {
     status?: "Planned" | "Booked" | "Done" | "Skipped" | undefined;
-    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "Place" | undefined;
+    type?: "Accommodation" | "Transport" | "Food" | "Flight" | "Place" | undefined;
     title?: string | undefined;
     notes?: string | undefined;
     startDateTime?: string | undefined;
@@ -847,7 +847,7 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     details?: Record<string, unknown> | undefined;
 }, {
     status?: "Planned" | "Booked" | "Done" | "Skipped" | undefined;
-    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "Place" | undefined;
+    type?: "Accommodation" | "Transport" | "Food" | "Flight" | "Place" | undefined;
     title?: string | undefined;
     notes?: string | undefined;
     startDateTime?: string | undefined;
@@ -861,7 +861,7 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     details?: Record<string, unknown> | undefined;
 }>, {
     status?: "Planned" | "Booked" | "Done" | "Skipped" | undefined;
-    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "Place" | undefined;
+    type?: "Accommodation" | "Transport" | "Food" | "Flight" | "Place" | undefined;
     title?: string | undefined;
     notes?: string | undefined;
     startDateTime?: string | undefined;
@@ -875,7 +875,7 @@ export declare const UpdateItineraryItemRequestSchema: z.ZodEffects<z.ZodObject<
     details?: Record<string, unknown> | undefined;
 }, {
     status?: "Planned" | "Booked" | "Done" | "Skipped" | undefined;
-    type?: "Food" | "Transport" | "Accommodation" | "Flight" | "Place" | undefined;
+    type?: "Accommodation" | "Transport" | "Food" | "Flight" | "Place" | undefined;
     title?: string | undefined;
     notes?: string | undefined;
     startDateTime?: string | undefined;
