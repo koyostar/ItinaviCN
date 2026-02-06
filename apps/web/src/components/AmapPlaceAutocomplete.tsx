@@ -1,7 +1,7 @@
 "use client";
 
+import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import { TextField, Autocomplete, CircularProgress } from "@mui/material";
 
 interface PlaceSuggestion {
   name: string;
@@ -84,10 +84,18 @@ export function AmapPlaceAutocomplete({
       const data = await response.json();
 
       if (data.status === "1" && data.tips) {
-        const suggestions: PlaceSuggestion[] = data.tips
-          .filter((item: any) => item.location) // Only include results with location
-          .map((item: any) => {
-            const [lng, lat] = item.location.split(",").map(Number);
+        const suggestions: PlaceSuggestion[] = (
+          data.tips as Array<{
+            location?: string;
+            name: string;
+            address?: string;
+            district?: string;
+            id: string;
+          }>
+        )
+          .filter((item) => item.location) // Only include results with location
+          .map((item) => {
+            const [lng, lat] = item.location!.split(",").map(Number);
             return {
               name: item.name,
               address: item.address || item.district || "",

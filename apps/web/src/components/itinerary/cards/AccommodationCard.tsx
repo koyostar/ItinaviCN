@@ -1,6 +1,5 @@
-import { Box, Stack, Typography } from "@mui/material";
-import { getUTCOffset } from "@/lib/utils/timezone";
 import { formatUTCDateTime } from "@/lib/dateUtils";
+import { Box, Stack, Typography } from "@mui/material";
 
 interface AccommodationDetails {
   hotelName?: string;
@@ -14,22 +13,14 @@ interface AccommodationCardProps {
   title: string;
   startDateTime: string;
   endDateTime?: string | null;
-  startTimezone?: string | null;
-  status: string;
   details: AccommodationDetails | null;
-  statusColor: "default" | "primary" | "success" | "error";
-  typeColor: "primary" | "secondary" | "success" | "error" | "warning" | "info";
 }
 
 export function AccommodationCard({
   title,
   startDateTime,
   endDateTime,
-  startTimezone,
-  status,
   details,
-  statusColor,
-  typeColor,
 }: AccommodationCardProps) {
   return (
     <Box

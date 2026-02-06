@@ -1,12 +1,46 @@
 "use client";
 
-import { use, useState } from "react";
-import { useRouter } from "next/navigation";
-import type {
-  ItineraryItemResponse,
-  UpdateItineraryItemRequest,
-  TripResponse,
-} from "@itinavi/schema";
+import { ItineraryForm } from "@/components/forms";
+import {
+  AccommodationCard,
+  FlightCard,
+  FoodCard,
+  PlaceCard,
+  TransportCard,
+} from "@/components/itinerary/cards";
+import {
+  AccommodationDetailsComponent,
+  FlightDetailsComponent,
+  FoodDetailsComponent,
+  PlaceDetailsComponent,
+  TransportDetailsComponent,
+} from "@/components/itinerary/details";
+import {
+  ConfirmDialog,
+  FormDialog,
+  PageErrorState,
+  PageHeader,
+  PageLoadingState,
+} from "@/components/ui";
+import {
+  useDeleteConfirmation,
+  useDetailsDialog,
+  useEditDialog,
+  useItineraryItems,
+  useTripTimezone,
+} from "@/hooks";
+import { api } from "@/lib/api";
+import {
+  ITINERARY_STATUS_COLORS,
+  ITINERARY_TYPE_COLORS,
+  ITINERARY_TYPE_ICONS,
+} from "@/lib/constants";
+import { formatUTCDate } from "@/lib/dateUtils";
+import type { ItineraryItemResponse } from "@itinavi/schema";
+import AddIcon from "@mui/icons-material/Add";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
   Button,
@@ -17,57 +51,16 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  FormControl,
   IconButton,
-  Stack,
-  Typography,
+  InputLabel,
   MenuItem,
   Select,
-  FormControl,
-  InputLabel,
+  Stack,
+  Typography,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { api } from "@/lib/api";
-import {
-  ConfirmDialog,
-  PageLoadingState,
-  PageErrorState,
-  EmptyState,
-  PageHeader,
-  FormDialog,
-} from "@/components/ui";
-import {
-  useDeleteConfirmation,
-  useEditDialog,
-  useDetailsDialog,
-  useTripTimezone,
-  useItineraryItems,
-} from "@/hooks";
-import { getTimezoneForCountry } from "@/lib/utils/timezone";
-import { ItineraryForm } from "@/components/forms";
-import { formatUTCDate } from "@/lib/dateUtils";
-import {
-  ITINERARY_TYPE_ICONS,
-  ITINERARY_TYPE_COLORS,
-  ITINERARY_STATUS_COLORS,
-} from "@/lib/constants";
-import {
-  FlightCard,
-  AccommodationCard,
-  TransportCard,
-  PlaceCard,
-  FoodCard,
-} from "@/components/itinerary/cards";
-import {
-  FlightDetailsComponent,
-  AccommodationDetailsComponent,
-  TransportDetailsComponent,
-  PlaceDetailsComponent,
-  FoodDetailsComponent,
-} from "@/components/itinerary/details";
+import { useRouter } from "next/navigation";
+import { use, useState } from "react";
 
 export default function ItineraryPage({
   params,
@@ -262,202 +255,179 @@ export default function ItineraryPage({
                 return dateA.getTime() - dateB.getTime();
               })
               .map(([day, dayItems]) => (
-              <Box key={day}>
-                <Typography variant="h6" mb={2} color="primary">
-                  {day}
-                </Typography>
-                <Stack spacing={0}>
-                  {dayItems.map((item, index) => {
-                    const Icon = ITINERARY_TYPE_ICONS[item.type];
-                    const isLast = index === dayItems.length - 1;
-                    return (
-                      <Box key={item.id} sx={{ position: "relative", pl: 6 }}>
-                        {/* Timeline connector line */}
-                        {!isLast && (
+                <Box key={day}>
+                  <Typography variant="h6" mb={2} color="primary">
+                    {day}
+                  </Typography>
+                  <Stack spacing={0}>
+                    {dayItems.map((item, index) => {
+                      const Icon = ITINERARY_TYPE_ICONS[item.type];
+                      const isLast = index === dayItems.length - 1;
+                      return (
+                        <Box key={item.id} sx={{ position: "relative", pl: 6 }}>
+                          {/* Timeline connector line */}
+                          {!isLast && (
+                            <Box
+                              sx={{
+                                position: "absolute",
+                                left: 14,
+                                top: 48,
+                                bottom: -16,
+                                width: 2,
+                                bgcolor: "divider",
+                              }}
+                            />
+                          )}
+
+                          {/* Timeline dot with icon */}
                           <Box
                             sx={{
                               position: "absolute",
-                              left: 14,
-                              top: 48,
-                              bottom: -16,
-                              width: 2,
-                              bgcolor: "divider",
+                              left: 0,
+                              top: 16,
+                              width: 32,
+                              height: 32,
+                              borderRadius: "50%",
+                              bgcolor: "background.paper",
+                              border: 2,
+                              borderColor: `${ITINERARY_TYPE_COLORS[item.type]}.main`,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              zIndex: 1,
                             }}
-                          />
-                        )}
+                          >
+                            <Icon
+                              sx={{ fontSize: 18 }}
+                              color={ITINERARY_TYPE_COLORS[item.type]}
+                            />
+                          </Box>
 
-                        {/* Timeline dot with icon */}
-                        <Box
-                          sx={{
-                            position: "absolute",
-                            left: 0,
-                            top: 16,
-                            width: 32,
-                            height: 32,
-                            borderRadius: "50%",
-                            bgcolor: "background.paper",
-                            border: 2,
-                            borderColor: `${ITINERARY_TYPE_COLORS[item.type]}.main`,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            zIndex: 1,
-                          }}
-                        >
-                          <Icon
-                            sx={{ fontSize: 18 }}
-                            color={ITINERARY_TYPE_COLORS[item.type]}
-                          />
-                        </Box>
+                          <Card sx={{ mb: 2 }}>
+                            <CardContent>
+                              <Stack spacing={2}>
+                                <Stack
+                                  direction="row"
+                                  justifyContent="space-between"
+                                  alignItems="center"
+                                  width="100%"
+                                >
+                                  <Stack direction="row" spacing={1}>
+                                    <Chip
+                                      label={item.type}
+                                      size="small"
+                                      color={ITINERARY_TYPE_COLORS[item.type]}
+                                    />
+                                    <Chip
+                                      label={item.status}
+                                      size="small"
+                                      color={
+                                        ITINERARY_STATUS_COLORS[item.status]
+                                      }
+                                      variant="outlined"
+                                    />
+                                  </Stack>
+                                  <Stack direction="row" spacing={1}>
+                                    <IconButton
+                                      size="small"
+                                      color="success"
+                                      onClick={() =>
+                                        router.push(
+                                          `/trips/${tripId}/expenses/new?itineraryItemId=${item.id}`,
+                                        )
+                                      }
+                                      title="Add expense for this item"
+                                    >
+                                      <AttachMoneyIcon />
+                                    </IconButton>
+                                    <IconButton
+                                      size="small"
+                                      color="primary"
+                                      onClick={() => editDialog.openEdit(item)}
+                                    >
+                                      <EditIcon />
+                                    </IconButton>
+                                    <IconButton
+                                      size="small"
+                                      color="error"
+                                      onClick={() =>
+                                        deleteConfirmation.handleDelete(item.id)
+                                      }
+                                    >
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </Stack>
+                                </Stack>
+                                <Box
+                                  onClick={() =>
+                                    detailsDialog.openDetails(item)
+                                  }
+                                  sx={{
+                                    cursor: "pointer",
+                                    "&:hover": {
+                                      opacity: 0.8,
+                                    },
+                                  }}
+                                >
+                                  {item.type === "Flight" ? (
+                                    <FlightCard
+                                      title={item.title}
+                                      startDateTime={item.startDateTime}
+                                      endDateTime={item.endDateTime}
+                                      startTimezone={item.startTimezone}
+                                      endTimezone={item.endTimezone}
+                                      details={item.details as any}
+                                    />
+                                  ) : item.type === "Accommodation" ? (
+                                    <AccommodationCard
+                                      title={item.title}
+                                      startDateTime={item.startDateTime}
+                                      endDateTime={item.endDateTime}
+                                      details={item.details as any}
+                                    />
+                                  ) : item.type === "Transport" ? (
+                                    <TransportCard
+                                      title={item.title}
+                                      startDateTime={item.startDateTime}
+                                      endDateTime={item.endDateTime}
+                                      startTimezone={item.startTimezone}
+                                    />
+                                  ) : item.type === "Place" ? (
+                                    <PlaceCard
+                                      title={item.title}
+                                      startDateTime={item.startDateTime}
+                                      endDateTime={item.endDateTime}
+                                      startTimezone={item.startTimezone}
+                                      details={item.details as any}
+                                    />
+                                  ) : item.type === "Food" ? (
+                                    <FoodCard
+                                      title={item.title}
+                                      startDateTime={item.startDateTime}
+                                      startTimezone={item.startTimezone}
+                                      details={item.details as any}
+                                    />
+                                  ) : null}
 
-                        <Card sx={{ mb: 2 }}>
-                          <CardContent>
-                            <Stack spacing={2}>
-                              <Stack
-                                direction="row"
-                                justifyContent="space-between"
-                                alignItems="center"
-                                width="100%"
-                              >
-                                <Stack direction="row" spacing={1}>
-                                  <Chip
-                                    label={item.type}
-                                    size="small"
-                                    color={ITINERARY_TYPE_COLORS[item.type]}
-                                  />
-                                  <Chip
-                                    label={item.status}
-                                    size="small"
-                                    color={ITINERARY_STATUS_COLORS[item.status]}
-                                    variant="outlined"
-                                  />
-                                </Stack>
-                                <Stack direction="row" spacing={1}>
-                                  <IconButton
-                                    size="small"
-                                    color="success"
-                                    onClick={() =>
-                                      router.push(
-                                        `/trips/${tripId}/expenses/new?itineraryItemId=${item.id}`,
-                                      )
-                                    }
-                                    title="Add expense for this item"
-                                  >
-                                    <AttachMoneyIcon />
-                                  </IconButton>
-                                  <IconButton
-                                    size="small"
-                                    color="primary"
-                                    onClick={() => editDialog.openEdit(item)}
-                                  >
-                                    <EditIcon />
-                                  </IconButton>
-                                  <IconButton
-                                    size="small"
-                                    color="error"
-                                    onClick={() =>
-                                      deleteConfirmation.handleDelete(item.id)
-                                    }
-                                  >
-                                    <DeleteIcon />
-                                  </IconButton>
-                                </Stack>
+                                  {item.notes && (
+                                    <Typography
+                                      variant="body2"
+                                      color="text.secondary"
+                                      mt={1}
+                                    >
+                                      {item.notes}
+                                    </Typography>
+                                  )}
+                                </Box>
                               </Stack>
-                              <Box
-                                onClick={() => detailsDialog.openDetails(item)}
-                                sx={{
-                                  cursor: "pointer",
-                                  "&:hover": {
-                                    opacity: 0.8,
-                                  },
-                                }}
-                              >
-                                {item.type === "Flight" ? (
-                                  <FlightCard
-                                    title={item.title}
-                                    startDateTime={item.startDateTime}
-                                    endDateTime={item.endDateTime}
-                                    startTimezone={item.startTimezone}
-                                    endTimezone={item.endTimezone}
-                                    status={item.status}
-                                    details={item.details as any}
-                                    statusColor={
-                                      ITINERARY_STATUS_COLORS[item.status]
-                                    }
-                                    typeColor={ITINERARY_TYPE_COLORS[item.type]}
-                                  />
-                                ) : item.type === "Accommodation" ? (
-                                  <AccommodationCard
-                                    title={item.title}
-                                    startDateTime={item.startDateTime}
-                                    endDateTime={item.endDateTime}
-                                    startTimezone={item.startTimezone}
-                                    status={item.status}
-                                    details={item.details as any}
-                                    statusColor={
-                                      ITINERARY_STATUS_COLORS[item.status]
-                                    }
-                                    typeColor={ITINERARY_TYPE_COLORS[item.type]}
-                                  />
-                                ) : item.type === "Transport" ? (
-                                  <TransportCard
-                                    title={item.title}
-                                    startDateTime={item.startDateTime}
-                                    endDateTime={item.endDateTime}
-                                    startTimezone={item.startTimezone}
-                                    status={item.status}
-                                    details={item.details as any}
-                                    statusColor={
-                                      ITINERARY_STATUS_COLORS[item.status]
-                                    }
-                                    typeColor={ITINERARY_TYPE_COLORS[item.type]}
-                                  />
-                                ) : item.type === "Place" ? (
-                                  <PlaceCard
-                                    title={item.title}
-                                    startDateTime={item.startDateTime}
-                                    endDateTime={item.endDateTime}
-                                    startTimezone={item.startTimezone}
-                                    status={item.status}
-                                    details={item.details as any}
-                                    statusColor={
-                                      ITINERARY_STATUS_COLORS[item.status]
-                                    }
-                                    typeColor={ITINERARY_TYPE_COLORS[item.type]}
-                                  />
-                                ) : item.type === "Food" ? (
-                                  <FoodCard
-                                    title={item.title}
-                                    startDateTime={item.startDateTime}
-                                    startTimezone={item.startTimezone}
-                                    status={item.status}
-                                    details={item.details as any}
-                                    statusColor={
-                                      ITINERARY_STATUS_COLORS[item.status]
-                                    }
-                                    typeColor={ITINERARY_TYPE_COLORS[item.type]}
-                                  />
-                                ) : null}
-
-                                {item.notes && (
-                                  <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                    mt={1}
-                                  >
-                                    {item.notes}
-                                  </Typography>
-                                )}
-                              </Box>
-                            </Stack>
-                          </CardContent>
-                        </Card>
-                      </Box>
-                    );
-                  })}
-                </Stack>
-              </Box>
-            ))}
+                            </CardContent>
+                          </Card>
+                        </Box>
+                      );
+                    })}
+                  </Stack>
+                </Box>
+              ))}
           </Stack>
         )}
 
@@ -521,7 +491,6 @@ export default function ItineraryPage({
                     title={detailsDialog.item.title}
                     startDateTime={detailsDialog.item.startDateTime}
                     endDateTime={detailsDialog.item.endDateTime}
-                    startTimezone={detailsDialog.item.startTimezone}
                     bookingRef={detailsDialog.item.bookingRef}
                     url={detailsDialog.item.url}
                     notes={detailsDialog.item.notes}

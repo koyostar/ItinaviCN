@@ -1,6 +1,6 @@
-import { Box, Stack, Typography } from "@mui/material";
-import { getUTCOffset } from "@/lib/utils/timezone";
 import { formatUTCTime } from "@/lib/dateUtils";
+import { getUTCOffset } from "@/lib/utils/timezone";
+import { Box, Stack, Typography } from "@mui/material";
 
 interface FoodDetails {
   address?: string;
@@ -14,20 +14,14 @@ interface FoodCardProps {
   title: string;
   startDateTime: string;
   startTimezone?: string | null;
-  status: string;
   details: FoodDetails | null;
-  statusColor: "default" | "primary" | "success" | "error";
-  typeColor: "primary" | "secondary" | "success" | "error" | "warning" | "info";
 }
 
 export function FoodCard({
   title,
   startDateTime,
   startTimezone,
-  status,
   details,
-  statusColor,
-  typeColor,
 }: FoodCardProps) {
   return (
     <Box

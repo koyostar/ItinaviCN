@@ -1,11 +1,11 @@
 import type { ExpenseCategory } from "@itinavi/schema";
 import {
-  Hotel as HotelIcon,
-  DirectionsBus as TransportIcon,
-  Restaurant as FoodIcon,
-  ShoppingBag as ShopIcon,
   Attractions as AttractionIcon,
+  Restaurant as FoodIcon,
+  Hotel as HotelIcon,
   MoreHoriz as OtherIcon,
+  ShoppingBag as ShopIcon,
+  DirectionsBus as TransportIcon,
 } from "@mui/icons-material";
 
 /**
@@ -26,14 +26,29 @@ export const EXPENSE_CATEGORY_ICONS: Record<ExpenseCategory, typeof HotelIcon> =
  */
 export const EXPENSE_CATEGORY_COLORS: Record<
   ExpenseCategory,
-  "primary" | "secondary" | "success" | "error" | "warning" | "info"
+  "primary" | "secondary" | "success" | "error" | "warning" | "info" | "default"
 > = {
   Accommodation: "primary",
   Transport: "info",
   Food: "warning",
   Shop: "secondary",
   Attraction: "success",
-  Other: "default" as any,
+  Other: "default",
+};
+
+/**
+ * Icon color mapping for expense categories (MUI SvgIcon colors)
+ */
+export const EXPENSE_CATEGORY_ICON_COLORS: Record<
+  ExpenseCategory,
+  "primary" | "secondary" | "success" | "error" | "warning" | "info" | "action"
+> = {
+  Accommodation: "primary",
+  Transport: "info",
+  Food: "warning",
+  Shop: "secondary",
+  Attraction: "success",
+  Other: "action",
 };
 
 /**

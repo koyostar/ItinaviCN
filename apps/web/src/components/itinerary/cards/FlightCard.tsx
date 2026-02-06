@@ -1,6 +1,6 @@
-import { Box, Divider, Stack, Typography } from "@mui/material";
+import { calculateDuration, formatUTCTime } from "@/lib/dateUtils";
 import { getUTCOffset } from "@/lib/utils/timezone";
-import { formatUTCTime, calculateDuration } from "@/lib/dateUtils";
+import { Box, Divider, Stack, Typography } from "@mui/material";
 
 interface FlightDetails {
   flightNo?: string;
@@ -19,10 +19,7 @@ interface FlightCardProps {
   endDateTime?: string | null;
   startTimezone?: string | null;
   endTimezone?: string | null;
-  status: string;
   details: FlightDetails | null;
-  statusColor: "default" | "primary" | "success" | "error";
-  typeColor: "primary" | "secondary" | "success" | "error" | "warning" | "info";
 }
 
 export function FlightCard({
@@ -31,10 +28,7 @@ export function FlightCard({
   endDateTime,
   startTimezone,
   endTimezone,
-  status,
   details,
-  statusColor,
-  typeColor,
 }: FlightCardProps) {
   const cities = title.split(" - ");
   const departureCity = cities[0] || "Departure";

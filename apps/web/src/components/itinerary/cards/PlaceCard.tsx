@@ -1,6 +1,6 @@
-import { Box, Stack, Typography } from "@mui/material";
-import { getUTCOffset } from "@/lib/utils/timezone";
 import { formatUTCTime } from "@/lib/dateUtils";
+import { getUTCOffset } from "@/lib/utils/timezone";
+import { Box, Stack, Typography } from "@mui/material";
 
 interface PlaceDetails {
   address?: string;
@@ -14,10 +14,7 @@ interface PlaceCardProps {
   startDateTime: string;
   endDateTime?: string | null;
   startTimezone?: string | null;
-  status: string;
   details: PlaceDetails | null;
-  statusColor: "default" | "primary" | "success" | "error";
-  typeColor: "primary" | "secondary" | "success" | "error" | "warning" | "info";
 }
 
 export function PlaceCard({
@@ -25,10 +22,7 @@ export function PlaceCard({
   startDateTime,
   endDateTime,
   startTimezone,
-  status,
   details,
-  statusColor,
-  typeColor,
 }: PlaceCardProps) {
   return (
     <Box
