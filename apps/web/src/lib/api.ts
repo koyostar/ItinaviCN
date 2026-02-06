@@ -168,5 +168,38 @@ export const api = {
       fetchApi(`/api/trips/${tripId}/itinerary/${itemId}`, {
         method: "DELETE",
       }),
+    /** Sync itinerary addresses to locations */
+    syncLocations: (tripId: string) =>
+      fetchApi(`/api/trips/${tripId}/itinerary/sync-locations`, {
+        method: "POST",
+      }),
+  },
+
+  /**
+   * Expense tracking endpoints
+   */
+  expenses: {
+    /** Fetch all expenses for a trip */
+    list: (tripId: string) => fetchApi(`/api/trips/${tripId}/expenses`),
+    /** Fetch a single expense by ID */
+    get: (tripId: string, expenseId: string) =>
+      fetchApi(`/api/trips/${tripId}/expenses/${expenseId}`),
+    /** Create a new expense */
+    create: (tripId: string, data: unknown) =>
+      fetchApi(`/api/trips/${tripId}/expenses`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    /** Update an existing expense */
+    update: (tripId: string, expenseId: string, data: unknown) =>
+      fetchApi(`/api/trips/${tripId}/expenses/${expenseId}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }),
+    /** Delete an expense */
+    delete: (tripId: string, expenseId: string) =>
+      fetchApi(`/api/trips/${tripId}/expenses/${expenseId}`, {
+        method: "DELETE",
+      }),
   },
 };

@@ -28,6 +28,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { api } from "@/lib/api";
 import {
@@ -103,20 +104,28 @@ export default function ItineraryPage({
         month: "long",
         day: "numeric",
       });
-      
+
       // Add to start day
       if (!acc[startDay]) acc[startDay] = [];
       acc[startDay].push(item);
-      
+
       // If item has end date on different day, add to all days in between
       if (item.endDateTime) {
         const startDate = new Date(item.startDateTime);
         const endDate = new Date(item.endDateTime);
-        
+
         // Check if they're on different calendar days
-        const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-        const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-        
+        const startDateOnly = new Date(
+          startDate.getFullYear(),
+          startDate.getMonth(),
+          startDate.getDate(),
+        );
+        const endDateOnly = new Date(
+          endDate.getFullYear(),
+          endDate.getMonth(),
+          endDate.getDate(),
+        );
+
         if (startDateOnly.getTime() !== endDateOnly.getTime()) {
           // Add to end day
           const endDay = formatUTCDate(item.endDateTime, "en-US", {
@@ -126,30 +135,34 @@ export default function ItineraryPage({
             day: "numeric",
           });
           if (!acc[endDay]) acc[endDay] = [];
-          if (!acc[endDay].find(i => i.id === item.id)) {
+          if (!acc[endDay].find((i) => i.id === item.id)) {
             acc[endDay].push(item);
           }
-          
+
           // Add to intermediate days
           const currentDate = new Date(startDateOnly);
           currentDate.setDate(currentDate.getDate() + 1);
-          
+
           while (currentDate < endDateOnly) {
-            const intermediateDay = formatUTCDate(currentDate.toISOString(), "en-US", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            });
+            const intermediateDay = formatUTCDate(
+              currentDate.toISOString(),
+              "en-US",
+              {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              },
+            );
             if (!acc[intermediateDay]) acc[intermediateDay] = [];
-            if (!acc[intermediateDay].find(i => i.id === item.id)) {
+            if (!acc[intermediateDay].find((i) => i.id === item.id)) {
               acc[intermediateDay].push(item);
             }
             currentDate.setDate(currentDate.getDate() + 1);
           }
         }
       }
-      
+
       return acc;
     },
     {} as Record<string, ItineraryItemResponse[]>,
@@ -241,7 +254,14 @@ export default function ItineraryPage({
           </Card>
         ) : (
           <Stack spacing={3}>
-            {Object.entries(groupedByDay).map(([day, dayItems]) => (
+            {Object.entries(groupedByDay)
+              .sort(([dayA], [dayB]) => {
+                // Parse the formatted date strings back to Date objects for comparison
+                const dateA = new Date(dayA);
+                const dateB = new Date(dayB);
+                return dateA.getTime() - dateB.getTime();
+              })
+              .map(([day, dayItems]) => (
               <Box key={day}>
                 <Typography variant="h6" mb={2} color="primary">
                   {day}
@@ -313,6 +333,18 @@ export default function ItineraryPage({
                                   />
                                 </Stack>
                                 <Stack direction="row" spacing={1}>
+                                  <IconButton
+                                    size="small"
+                                    color="success"
+                                    onClick={() =>
+                                      router.push(
+                                        `/trips/${tripId}/expenses/new?itineraryItemId=${item.id}`,
+                                      )
+                                    }
+                                    title="Add expense for this item"
+                                  >
+                                    <AttachMoneyIcon />
+                                  </IconButton>
                                   <IconButton
                                     size="small"
                                     color="primary"
