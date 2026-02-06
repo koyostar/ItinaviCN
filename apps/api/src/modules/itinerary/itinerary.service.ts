@@ -127,4 +127,58 @@ export class ItineraryService {
       where: { id: itemId },
     });
   }
+
+  /**
+   * Syncs existing itinerary items with locations.
+   * Creates locations for items that have addresses but no linked location.
+   *
+   * @param {string} tripId - The unique identifier of the trip
+   * @returns {Promise} Count of locations created
+   */
+  async syncLocations(tripId: string) {
+    const items = await this.prisma.itineraryItem.findMany({
+      where: {
+        tripId,
+        locationId: null,
+        type: { in: ['Accommodation', 'Place', 'Food'] },
+      },
+    });
+
+    const categoryMap: Record<string, LocationCategory> = {
+      Accommodation: 'Accommodation',
+      Place: 'Place',
+      Food: 'Restaurant',
+    };
+
+    let createdCount = 0;
+
+    for (const item of items) {
+      const details = item.details as any;
+      
+      if (details?.address) {
+        const locationName =
+          item.type === 'Accommodation' && details.hotelName
+            ? details.hotelName
+            : item.title;
+
+        const location = await this.prisma.location.create({
+          data: {
+            tripId,
+            name: locationName,
+            category: categoryMap[item.type],
+            address: details.address,
+          },
+        });
+
+        await this.prisma.itineraryItem.update({
+          where: { id: item.id },
+          data: { locationId: location.id },
+        });
+
+        createdCount++;
+      }
+    }
+
+    return { created: createdCount };
+  }
 }

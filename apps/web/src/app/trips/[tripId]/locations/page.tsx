@@ -17,6 +17,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import SyncIcon from "@mui/icons-material/Sync";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PlaceIcon from "@mui/icons-material/Place";
 import { api } from "@/lib/api";
@@ -38,10 +39,33 @@ export default function LocationsPage({
   const { tripId } = use(params);
   const router = useRouter();
   const { locations, loading, error, refetch } = useLocations(tripId);
+  const [syncing, setSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
 
   const deleteConfirmation = useDeleteConfirmation(async (id) => {
     await api.locations.delete(tripId, id);
   }, refetch);
+
+  const handleSyncLocations = async () => {
+    try {
+      setSyncing(true);
+      setSyncMessage(null);
+      const result = (await api.itinerary.syncLocations(tripId)) as {
+        created: number;
+      };
+      setSyncMessage(
+        `Synced successfully! ${result.created} location(s) created from itinerary.`,
+      );
+      await refetch();
+      setTimeout(() => setSyncMessage(null), 5000);
+    } catch (err) {
+      setSyncMessage(
+        err instanceof Error ? err.message : "Failed to sync locations",
+      );
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   if (loading) {
     return <PageLoadingState message="Loading locations..." />;
@@ -54,16 +78,45 @@ export default function LocationsPage({
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Stack spacing={3}>
-        <PageHeader
-          title="Locations"
-          backButton={{
-            onClick: () => router.push(`/trips/${tripId}`),
-          }}
-          action={{
-            label: "Add Location",
-            href: `/trips/${tripId}/locations/new`,
-          }}
-        />
+        {syncMessage && (
+          <Card sx={{ bgcolor: "info.light" }}>
+            <CardContent>
+              <Typography color="info.contrastText">{syncMessage}</Typography>
+            </CardContent>
+          </Card>
+        )}
+
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Stack direction="row" spacing={2} alignItems="center">
+            <IconButton onClick={() => router.push(`/trips/${tripId}`)}>
+              <ArrowBackIcon />
+            </IconButton>
+            <Typography variant="h4" component="h1">
+              Locations
+            </Typography>
+          </Stack>
+          <Stack direction="row" spacing={2}>
+            <Button
+              variant="outlined"
+              startIcon={<SyncIcon />}
+              onClick={handleSyncLocations}
+              disabled={syncing}
+            >
+              {syncing ? "Syncing..." : "Sync from Itinerary"}
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              href={`/trips/${tripId}/locations/new`}
+            >
+              Add Location
+            </Button>
+          </Stack>
+        </Stack>
 
         {locations.length === 0 ? (
           <EmptyState

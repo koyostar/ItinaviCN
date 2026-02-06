@@ -210,4 +210,18 @@ export class ItineraryController {
     await this.itinerary.deleteItem(itemId);
     return { success: true };
   }
+
+  /**
+   * POST /api/trips/:tripId/itinerary/sync-locations
+   * Syncs existing itinerary items with locations.
+   * Creates locations for items that have addresses but no linked location.
+   *
+   * @param params - Route parameters containing tripId
+   * @returns Count of locations created
+   */
+  @Post('sync-locations')
+  async syncLocations(@Param() params: unknown) {
+    const { tripId } = validate(TripIdParamSchema, params);
+    return await this.itinerary.syncLocations(tripId);
+  }
 }
