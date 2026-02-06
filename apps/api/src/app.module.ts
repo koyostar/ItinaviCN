@@ -6,6 +6,7 @@ import { HealthController } from './health.controller';
 import { TripsModule } from './modules/trips/trips.module';
 import { LocationsModule } from './modules/locations/locations.module';
 import { ItineraryModule } from './modules/itinerary/itinerary.module';
+import { ExpensesModule } from './modules/expenses/expenses.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ItineraryModule } from './modules/itinerary/itinerary.module';
     TripsModule,
     LocationsModule,
     ItineraryModule,
+    ExpensesModule,
   ],
   controllers: [HealthController],
 })
