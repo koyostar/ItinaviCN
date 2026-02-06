@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 type Language = "en" | "zh";
 
@@ -15,10 +15,15 @@ const UserPreferencesContext = createContext<UserPreferences | undefined>(
 );
 
 export function UserPreferencesProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(() => {
+  const [language, setLanguageState] = useState<Language>("zh");
+
+  // Load from localStorage after mounting (client-side only)
+  useEffect(() => {
     const saved = localStorage.getItem("preferredLanguage");
-    return saved === "en" || saved === "zh" ? saved : "zh";
-  });
+    if (saved === "en" || saved === "zh") {
+      setLanguageState(saved);
+    }
+  }, []);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);

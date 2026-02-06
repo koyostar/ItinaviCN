@@ -31,7 +31,8 @@ import {
 } from "@/hooks";
 import { api } from "@/lib/api";
 import {
-  ITINERARY_STATUS_COLORS,
+  getItineraryStatusChipSx,
+  getItineraryTypeChipSx,
   ITINERARY_TYPE_COLORS,
   ITINERARY_TYPE_ICONS,
 } from "@/lib/constants";
@@ -290,7 +291,7 @@ export default function ItineraryPage({
                               borderRadius: "50%",
                               bgcolor: "background.paper",
                               border: 2,
-                              borderColor: `${ITINERARY_TYPE_COLORS[item.type]}.main`,
+                              borderColor: ITINERARY_TYPE_COLORS[item.type],
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
@@ -298,8 +299,10 @@ export default function ItineraryPage({
                             }}
                           >
                             <Icon
-                              sx={{ fontSize: 18 }}
-                              color={ITINERARY_TYPE_COLORS[item.type]}
+                              sx={{
+                                fontSize: 18,
+                                color: ITINERARY_TYPE_COLORS[item.type],
+                              }}
                             />
                           </Box>
 
@@ -316,14 +319,12 @@ export default function ItineraryPage({
                                     <Chip
                                       label={item.type}
                                       size="small"
-                                      color={ITINERARY_TYPE_COLORS[item.type]}
+                                      sx={getItineraryTypeChipSx(item.type)}
                                     />
                                     <Chip
                                       label={item.status}
                                       size="small"
-                                      color={
-                                        ITINERARY_STATUS_COLORS[item.status]
-                                      }
+                                      sx={getItineraryStatusChipSx(item.status)}
                                       variant="outlined"
                                     />
                                   </Stack>

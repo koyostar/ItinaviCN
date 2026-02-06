@@ -3,13 +3,14 @@
  * Includes types, statuses, transport modes, and UI mappings (icons, colors).
  */
 
+import { categoryColors, getContrastColor } from "@/lib/theme";
 import type {
   ItineraryItemType,
-  TransportMode,
   ItineraryStatus,
+  TransportMode,
 } from "@itinavi/schema";
-import FlightIcon from "@mui/icons-material/Flight";
 import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
+import FlightIcon from "@mui/icons-material/Flight";
 import HotelIcon from "@mui/icons-material/Hotel";
 import PlaceIcon from "@mui/icons-material/Place";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
@@ -68,30 +69,42 @@ export const ITINERARY_TYPE_ICONS: Record<
 };
 
 /**
- * Maps itinerary types to Material-UI chip colors.
+ * Maps itinerary types to hex colors from theme.
  * Provides visual distinction between different item types.
  */
-export const ITINERARY_TYPE_COLORS: Record<
-  ItineraryItemType,
-  "primary" | "secondary" | "success" | "error" | "warning" | "info"
-> = {
-  Flight: "primary",
-  Transport: "secondary",
-  Accommodation: "info",
-  Place: "warning",
-  Food: "success",
+export const ITINERARY_TYPE_COLORS: Record<ItineraryItemType, string> = {
+  Flight: categoryColors.itinerary.flight,
+  Transport: categoryColors.itinerary.transport,
+  Accommodation: categoryColors.itinerary.accommodation,
+  Place: categoryColors.itinerary.place,
+  Food: categoryColors.itinerary.food,
 };
 
 /**
- * Maps itinerary statuses to Material-UI chip colors.
+ * Maps itinerary statuses to hex colors from theme.
  * Indicates progress state with appropriate color coding.
  */
-export const ITINERARY_STATUS_COLORS: Record<
-  ItineraryStatus,
-  "default" | "primary" | "success" | "error"
-> = {
-  Planned: "default",
-  Booked: "primary",
-  Done: "success",
-  Skipped: "error",
+export const ITINERARY_STATUS_COLORS: Record<ItineraryStatus, string> = {
+  Planned: categoryColors.status.planned,
+  Booked: categoryColors.status.booked,
+  Done: categoryColors.status.done,
+  Skipped: categoryColors.status.skipped,
 };
+
+/**
+ * Get chip sx props for itinerary type
+ */
+export const getItineraryTypeChipSx = (type: ItineraryItemType) => ({
+  backgroundColor: ITINERARY_TYPE_COLORS[type],
+  color: getContrastColor(ITINERARY_TYPE_COLORS[type]),
+  fontWeight: 600,
+});
+
+/**
+ * Get chip sx props for itinerary status
+ */
+export const getItineraryStatusChipSx = (status: ItineraryStatus) => ({
+  backgroundColor: ITINERARY_STATUS_COLORS[status],
+  color: getContrastColor(ITINERARY_STATUS_COLORS[status]),
+  fontWeight: 600,
+});

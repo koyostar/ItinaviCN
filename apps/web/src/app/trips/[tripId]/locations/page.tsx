@@ -8,7 +8,7 @@ import {
 } from "@/components/ui";
 import { useDeleteConfirmation, useLocations } from "@/hooks";
 import { api } from "@/lib/api";
-import { LOCATION_CATEGORY_COLORS } from "@/lib/constants";
+import { getLocationCategoryChipSx } from "@/lib/constants";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -147,7 +147,7 @@ export default function LocationsPage({
                         <Chip
                           label={location.category}
                           size="small"
-                          color={LOCATION_CATEGORY_COLORS[location.category]}
+                          sx={getLocationCategoryChipSx(location.category)}
                         />
                       </Stack>
 

@@ -1,3 +1,4 @@
+import { categoryColors, getContrastColor } from "@/lib/theme";
 import type { ExpenseCategory } from "@itinavi/schema";
 import {
   Attractions as AttractionIcon,
@@ -22,34 +23,31 @@ export const EXPENSE_CATEGORY_ICONS: Record<ExpenseCategory, typeof HotelIcon> =
   };
 
 /**
- * Color mapping for expense categories (MUI color palettes)
+ * Color mapping for expense categories (from theme)
  */
-export const EXPENSE_CATEGORY_COLORS: Record<
-  ExpenseCategory,
-  "primary" | "secondary" | "success" | "error" | "warning" | "info" | "default"
-> = {
-  Accommodation: "primary",
-  Transport: "info",
-  Food: "warning",
-  Shop: "secondary",
-  Attraction: "success",
-  Other: "default",
+export const EXPENSE_CATEGORY_COLORS: Record<ExpenseCategory, string> = {
+  Accommodation: categoryColors.expense.accommodation,
+  Transport: categoryColors.expense.transport,
+  Food: categoryColors.expense.food,
+  Shop: categoryColors.expense.shop,
+  Attraction: categoryColors.expense.attraction,
+  Other: categoryColors.expense.other,
 };
 
 /**
- * Icon color mapping for expense categories (MUI SvgIcon colors)
+ * Get chip sx props for expense category
  */
-export const EXPENSE_CATEGORY_ICON_COLORS: Record<
-  ExpenseCategory,
-  "primary" | "secondary" | "success" | "error" | "warning" | "info" | "action"
-> = {
-  Accommodation: "primary",
-  Transport: "info",
-  Food: "warning",
-  Shop: "secondary",
-  Attraction: "success",
-  Other: "action",
-};
+export const getExpenseCategoryChipSx = (category: ExpenseCategory) => ({
+  backgroundColor: EXPENSE_CATEGORY_COLORS[category],
+  color: getContrastColor(EXPENSE_CATEGORY_COLORS[category]),
+  fontWeight: 600,
+});
+
+/**
+ * Get icon color for expense category
+ */
+export const getExpenseCategoryIconColor = (category: ExpenseCategory) =>
+  EXPENSE_CATEGORY_COLORS[category];
 
 /**
  * Display labels for expense categories

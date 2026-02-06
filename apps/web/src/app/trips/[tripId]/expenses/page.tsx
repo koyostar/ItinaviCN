@@ -9,10 +9,10 @@ import {
 import { useDeleteConfirmation, useExpenses, useItineraryItems } from "@/hooks";
 import { api } from "@/lib/api";
 import {
-  EXPENSE_CATEGORY_COLORS,
-  EXPENSE_CATEGORY_ICON_COLORS,
   EXPENSE_CATEGORY_ICONS,
   EXPENSE_CATEGORY_LABELS,
+  getExpenseCategoryChipSx,
+  getExpenseCategoryIconColor,
 } from "@/lib/constants";
 import { formatUTCDate } from "@/lib/dateUtils";
 import type { ExpenseResponse } from "@itinavi/schema";
@@ -192,10 +192,12 @@ export default function ExpensesPage({
                               alignItems="center"
                             >
                               <Icon
-                                color={
-                                  EXPENSE_CATEGORY_ICON_COLORS[expense.category]
-                                }
-                                sx={{ fontSize: 32 }}
+                                sx={{
+                                  fontSize: 32,
+                                  color: getExpenseCategoryIconColor(
+                                    expense.category,
+                                  ),
+                                }}
                               />
                               <Box>
                                 <Typography variant="h6">
@@ -207,9 +209,9 @@ export default function ExpensesPage({
                                       EXPENSE_CATEGORY_LABELS[expense.category]
                                     }
                                     size="small"
-                                    color={
-                                      EXPENSE_CATEGORY_COLORS[expense.category]
-                                    }
+                                    sx={getExpenseCategoryChipSx(
+                                      expense.category,
+                                    )}
                                   />
                                   {linkedItem && (
                                     <Chip
