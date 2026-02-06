@@ -1,8 +1,20 @@
 "use client";
 
-import { use, useState } from "react";
-import { useRouter } from "next/navigation";
-import type { LocationResponse } from "@itinavi/schema";
+import {
+  ConfirmDialog,
+  EmptyState,
+  PageErrorState,
+  PageLoadingState,
+} from "@/components/ui";
+import { useDeleteConfirmation, useLocations } from "@/hooks";
+import { api } from "@/lib/api";
+import { LOCATION_CATEGORY_COLORS } from "@/lib/constants";
+import AddIcon from "@mui/icons-material/Add";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import PlaceIcon from "@mui/icons-material/Place";
+import SyncIcon from "@mui/icons-material/Sync";
 import {
   Box,
   Button,
@@ -14,22 +26,8 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import SyncIcon from "@mui/icons-material/Sync";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import PlaceIcon from "@mui/icons-material/Place";
-import { api } from "@/lib/api";
-import {
-  ConfirmDialog,
-  PageLoadingState,
-  PageErrorState,
-  EmptyState,
-  PageHeader,
-} from "@/components/ui";
-import { useDeleteConfirmation, useLocations } from "@/hooks";
-import { LOCATION_CATEGORY_COLORS } from "@/lib/constants";
+import { useRouter } from "next/navigation";
+import { use, useState } from "react";
 
 export default function LocationsPage({
   params,

@@ -1,7 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import type { CreateTripRequest } from '@itinavi/schema';
+import { useUserPreferences } from "@/contexts/UserPreferencesContext";
+import { localDateToUTC, utcToLocalDate } from "@/lib/dateUtils";
+import {
+  CITIES,
+  COUNTRIES,
+  findLocationKey,
+  getDisplayName,
+} from "@/lib/locations";
+import type { CreateTripRequest } from "@itinavi/schema";
+import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
@@ -11,16 +19,8 @@ import {
   Stack,
   TextField,
   Typography,
-} from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import {
-  COUNTRIES,
-  CITIES,
-  getDisplayName,
-  findLocationKey,
-} from '@/lib/locations';
-import { useUserPreferences } from '@/contexts/UserPreferencesContext';
-import { localDateToUTC, utcToLocalDate } from '@/lib/dateUtils';
+} from "@mui/material";
+import { useState } from "react";
 
 interface DestinationInput {
   country: string;
@@ -47,45 +47,29 @@ export function TripForm({
   initialData,
   onSubmit,
   onCancel,
-  submitLabel = 'Create Trip',
+  submitLabel = "Create Trip",
   loading = false,
 }: TripFormProps) {
   const { language } = useUserPreferences();
 
   const [destinations, setDestinations] = useState<DestinationInput[]>(
-    initialData?.destinations || [{ country: '', cities: [''] }]
+    initialData?.destinations || [{ country: "", cities: [""] }],
   );
   const [startDate, setStartDate] = useState<string>(
-    initialData?.startDate ? utcToLocalDate(initialData.startDate) : ''
+    initialData?.startDate ? utcToLocalDate(initialData.startDate) : "",
   );
   const [endDate, setEndDate] = useState<string>(
-    initialData?.endDate ? utcToLocalDate(initialData.endDate) : ''
+    initialData?.endDate ? utcToLocalDate(initialData.endDate) : "",
   );
   const [formData, setFormData] = useState<Partial<CreateTripRequest>>({
-    title: initialData?.title || '',
-    destinationCurrency: initialData?.destinationCurrency || 'CNY',
-    originCurrency: initialData?.originCurrency || 'SGD',
-    notes: initialData?.notes || '',
+    title: initialData?.title || "",
+    destinationCurrency: initialData?.destinationCurrency || "CNY",
+    originCurrency: initialData?.originCurrency || "SGD",
+    notes: initialData?.notes || "",
   });
 
-  useEffect(() => {
-    if (initialData) {
-      setFormData({
-        title: initialData.title,
-        destinationCurrency: initialData.destinationCurrency,
-        originCurrency: initialData.originCurrency,
-        notes: initialData.notes || '',
-      });
-      if (initialData.destinations) {
-        setDestinations(initialData.destinations);
-      }
-      setStartDate(utcToLocalDate(initialData.startDate));
-      setEndDate(utcToLocalDate(initialData.endDate));
-    }
-  }, [initialData]);
-
   const handleAddDestination = () => {
-    setDestinations([...destinations, { country: '', cities: [''] }]);
+    setDestinations([...destinations, { country: "", cities: [""] }]);
   };
 
   const handleRemoveDestination = (index: number) => {
@@ -102,7 +86,7 @@ export function TripForm({
 
   const handleAddCity = (destIndex: number) => {
     const updated = [...destinations];
-    updated[destIndex].cities.push('');
+    updated[destIndex].cities.push("");
     setDestinations(updated);
   };
 
@@ -110,7 +94,7 @@ export function TripForm({
     const updated = [...destinations];
     if (updated[destIndex].cities.length > 1) {
       updated[destIndex].cities = updated[destIndex].cities.filter(
-        (_, i) => i !== cityIndex
+        (_, i) => i !== cityIndex,
       );
       setDestinations(updated);
     }
@@ -119,7 +103,7 @@ export function TripForm({
   const handleCityChange = (
     destIndex: number,
     cityIndex: number,
-    value: string
+    value: string,
   ) => {
     const updated = [...destinations];
     updated[destIndex].cities[cityIndex] = value;
@@ -140,8 +124,12 @@ export function TripForm({
       ...(formData.title && { title: formData.title }),
       ...(startDate && { startDate: localDateToUTC(startDate, false) }),
       ...(endDate && { endDate: localDateToUTC(endDate, true) }),
-      ...(formData.destinationCurrency && { destinationCurrency: formData.destinationCurrency }),
-      ...(formData.originCurrency && { originCurrency: formData.originCurrency }),
+      ...(formData.destinationCurrency && {
+        destinationCurrency: formData.destinationCurrency,
+      }),
+      ...(formData.originCurrency && {
+        originCurrency: formData.originCurrency,
+      }),
       ...(validDestinations.length > 0 && {
         destinations: validDestinations,
       }),
@@ -159,9 +147,7 @@ export function TripForm({
           required
           fullWidth
           value={formData.title}
-          onChange={(e) =>
-            setFormData({ ...formData, title: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           placeholder="e.g., Beijing Adventure 2026"
         />
 
@@ -198,19 +184,19 @@ export function TripForm({
                         ? COUNTRIES[dest.country]
                           ? getDisplayName(COUNTRIES[dest.country], language)
                           : dest.country
-                        : ''
+                        : ""
                     }
                     onInputChange={(_, newInputValue, reason) => {
-                      if (reason === 'input') {
+                      if (reason === "input") {
                         handleCountryChange(destIndex, newInputValue);
-                      } else if (reason === 'clear') {
-                        handleCountryChange(destIndex, '');
+                      } else if (reason === "clear") {
+                        handleCountryChange(destIndex, "");
                       }
                     }}
                     onChange={(_, newValue) => {
                       const standardized = newValue
                         ? findLocationKey(newValue, COUNTRIES) || newValue
-                        : '';
+                        : "";
                       handleCountryChange(destIndex, standardized);
                     }}
                     filterOptions={(options, state) => {
@@ -286,12 +272,7 @@ export function TripForm({
                         : {};
 
                     return (
-                      <Stack
-                        key={cityIndex}
-                        direction="row"
-                        spacing={1}
-                        mb={1}
-                      >
+                      <Stack key={cityIndex} direction="row" spacing={1} mb={1}>
                         <Autocomplete
                           size="small"
                           fullWidth
@@ -300,33 +281,30 @@ export function TripForm({
                           inputValue={
                             city
                               ? countryCities[city]
-                                ? getDisplayName(
-                                    countryCities[city],
-                                    language
-                                  )
+                                ? getDisplayName(countryCities[city], language)
                                 : city
-                              : ''
+                              : ""
                           }
                           onInputChange={(_, newInputValue, reason) => {
-                            if (reason === 'input') {
+                            if (reason === "input") {
                               handleCityChange(
                                 destIndex,
                                 cityIndex,
-                                newInputValue
+                                newInputValue,
                               );
-                            } else if (reason === 'clear') {
-                              handleCityChange(destIndex, cityIndex, '');
+                            } else if (reason === "clear") {
+                              handleCityChange(destIndex, cityIndex, "");
                             }
                           }}
                           onChange={(_, newValue) => {
                             const standardized = newValue
                               ? findLocationKey(newValue, countryCities) ||
                                 newValue
-                              : '';
+                              : "";
                             handleCityChange(
                               destIndex,
                               cityIndex,
-                              standardized
+                              standardized,
                             );
                           }}
                           filterOptions={(options, state) => {
@@ -446,9 +424,7 @@ export function TripForm({
           multiline
           rows={4}
           value={formData.notes}
-          onChange={(e) =>
-            setFormData({ ...formData, notes: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
           placeholder="Any additional notes about your trip"
         />
 
@@ -464,7 +440,7 @@ export function TripForm({
             </Button>
           )}
           <Button type="submit" variant="contained" disabled={loading}>
-            {loading ? 'Saving...' : submitLabel}
+            {loading ? "Saving..." : submitLabel}
           </Button>
         </Stack>
       </Stack>

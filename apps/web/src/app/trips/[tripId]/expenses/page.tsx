@@ -1,8 +1,24 @@
 "use client";
 
-import { use, useState } from "react";
-import { useRouter } from "next/navigation";
-import type { ExpenseResponse, CreateExpenseRequest } from "@itinavi/schema";
+import {
+  ConfirmDialog,
+  PageErrorState,
+  PageHeader,
+  PageLoadingState,
+} from "@/components/ui";
+import { useDeleteConfirmation, useExpenses, useItineraryItems } from "@/hooks";
+import { api } from "@/lib/api";
+import {
+  EXPENSE_CATEGORY_COLORS,
+  EXPENSE_CATEGORY_ICON_COLORS,
+  EXPENSE_CATEGORY_ICONS,
+  EXPENSE_CATEGORY_LABELS,
+} from "@/lib/constants";
+import { formatUTCDate } from "@/lib/dateUtils";
+import type { ExpenseResponse } from "@itinavi/schema";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
   Button,
@@ -10,32 +26,16 @@ import {
   CardContent,
   Chip,
   Container,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import { api } from "@/lib/api";
-import {
-  ConfirmDialog,
-  PageLoadingState,
-  PageErrorState,
-  PageHeader,
-} from "@/components/ui";
-import { useDeleteConfirmation, useExpenses, useItineraryItems } from "@/hooks";
-import { formatUTCDate } from "@/lib/dateUtils";
-import {
-  EXPENSE_CATEGORY_ICONS,
-  EXPENSE_CATEGORY_COLORS,
-  EXPENSE_CATEGORY_LABELS,
-} from "@/lib/constants";
-import type { ExpenseCategory } from "@itinavi/schema";
+import { useRouter } from "next/navigation";
+import { use, useState } from "react";
 
 export default function ExpensesPage({
   params,
@@ -193,7 +193,7 @@ export default function ExpensesPage({
                             >
                               <Icon
                                 color={
-                                  EXPENSE_CATEGORY_COLORS[expense.category]
+                                  EXPENSE_CATEGORY_ICON_COLORS[expense.category]
                                 }
                                 sx={{ fontSize: 32 }}
                               />

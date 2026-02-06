@@ -1,8 +1,18 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import type { TripResponse, CreateTripRequest } from "@itinavi/schema";
+import { TripForm } from "@/components/forms";
+import { ConfirmDialog } from "@/components/ui";
+import { useUserPreferences } from "@/contexts/UserPreferencesContext";
+import { api } from "@/lib/api";
+import { calculateDays, formatUTCDate } from "@/lib/dateUtils";
+import { CITIES, COUNTRIES, getDisplayName } from "@/lib/locations";
+import type { CreateTripRequest, TripResponse } from "@itinavi/schema";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import EventIcon from "@mui/icons-material/Event";
+import PlaceIcon from "@mui/icons-material/Place";
 import {
   Box,
   Button,
@@ -11,25 +21,15 @@ import {
   Chip,
   Container,
   Dialog,
-  DialogTitle,
   DialogContent,
+  DialogTitle,
   Divider,
   IconButton,
   Stack,
   Typography,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import PlaceIcon from "@mui/icons-material/Place";
-import EventIcon from "@mui/icons-material/Event";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import { api } from "@/lib/api";
-import { COUNTRIES, CITIES, getDisplayName } from "@/lib/locations";
-import { useUserPreferences } from "@/contexts/UserPreferencesContext";
-import { TripForm } from "@/components/forms";
-import { ConfirmDialog } from "@/components/ui";
-import { formatUTCDate, calculateDays } from "@/lib/dateUtils";
+import { useRouter } from "next/navigation";
+import { use, useEffect, useState } from "react";
 
 export default function TripDetailPage({
   params,
@@ -50,6 +50,7 @@ export default function TripDetailPage({
 
   useEffect(() => {
     loadTrip();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripId]);
 
   async function loadTrip() {

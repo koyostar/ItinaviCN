@@ -1,7 +1,8 @@
 "use client";
 
-import { use, useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useFormSubmit, useItineraryItems, useTrip } from "@/hooks";
+import { api } from "@/lib/api";
+import { EXPENSE_CATEGORY_LABELS } from "@/lib/constants";
 import type { CreateExpenseRequest, ExpenseCategory } from "@itinavi/schema";
 import {
   Box,
@@ -10,17 +11,16 @@ import {
   CardContent,
   Container,
   FormControl,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
   Stack,
   TextField,
   Typography,
-  InputAdornment,
 } from "@mui/material";
-import { api } from "@/lib/api";
-import { EXPENSE_CATEGORY_LABELS } from "@/lib/constants";
-import { useFormSubmit, useTrip, useItineraryItems } from "@/hooks";
+import { useRouter, useSearchParams } from "next/navigation";
+import { use, useEffect, useState } from "react";
 
 export default function NewExpensePage({
   params,
@@ -47,6 +47,7 @@ export default function NewExpensePage({
   // Pre-select itinerary item from URL parameter
   useEffect(() => {
     const itineraryItemId = searchParams.get("itineraryItemId");
+
     if (itineraryItemId && itineraryItems.length > 0) {
       const selectedItem = itineraryItems.find(
         (item) => item.id === itineraryItemId,
@@ -62,6 +63,7 @@ export default function NewExpensePage({
         };
         const mappedCategory = categoryMap[selectedItem.type] || "Other";
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setFormData((prev) => ({
           ...prev,
           linkedItineraryItemId: itineraryItemId,

@@ -1,23 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import type {
-  CreateItineraryItemRequest,
-  ItineraryItemType,
-  TransportMode,
-  ItineraryItemResponse,
-} from "@itinavi/schema";
-import { ITINERARY_TYPES, ITINERARY_STATUSES } from "@/lib/constants";
+import { ITINERARY_STATUSES, ITINERARY_TYPES } from "@/lib/constants";
 import {
-  utcToDateTimeLocal,
   dateTimeLocalToUTC,
+  utcToDateTimeLocal,
   utcToDateTimeLocalInTimezone,
 } from "@/lib/dateUtils";
-import { FlightFields } from "../itinerary/fields/FlightFields";
-import { AccommodationFields } from "../itinerary/fields/AccommodationFields";
-import { TransportFields } from "../itinerary/fields/TransportFields";
-import { PlaceFields } from "../itinerary/fields/PlaceFields";
-import { FoodFields } from "../itinerary/fields/FoodFields";
+import type {
+  CreateItineraryItemRequest,
+  ItineraryItemResponse,
+  ItineraryItemType,
+  TransportMode,
+} from "@itinavi/schema";
 import {
   Box,
   Button,
@@ -32,6 +26,12 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
+import { useEffect, useState } from "react";
+import { AccommodationFields } from "../itinerary/fields/AccommodationFields";
+import { FlightFields } from "../itinerary/fields/FlightFields";
+import { FoodFields } from "../itinerary/fields/FoodFields";
+import { PlaceFields } from "../itinerary/fields/PlaceFields";
+import { TransportFields } from "../itinerary/fields/TransportFields";
 
 interface ItineraryFormProps {
   initialData?: ItineraryItemResponse;
@@ -79,14 +79,24 @@ export function ItineraryForm({
   const [flightDetails, setFlightDetails] = useState({
     departureCity: parsedFlightTitle[0] || "",
     arrivalCity: parsedFlightTitle[1] || "",
-    airline: (initialData?.details as any)?.airline || "",
-    flightNo: (initialData?.details as any)?.flightNo || "",
-    departureAirport: (initialData?.details as any)?.departureAirport || "",
-    arrivalAirport: (initialData?.details as any)?.arrivalAirport || "",
+    airline:
+      (initialData?.details as Record<string, string | undefined>)?.airline ||
+      "",
+    flightNo:
+      (initialData?.details as Record<string, string | undefined>)?.flightNo ||
+      "",
+    departureAirport:
+      (initialData?.details as Record<string, string | undefined>)
+        ?.departureAirport || "",
+    arrivalAirport:
+      (initialData?.details as Record<string, string | undefined>)
+        ?.arrivalAirport || "",
     departureAirportAddress:
-      (initialData?.details as any)?.departureAirportAddress || "",
+      (initialData?.details as Record<string, string | undefined>)
+        ?.departureAirportAddress || "",
     arrivalAirportAddress:
-      (initialData?.details as any)?.arrivalAirportAddress || "",
+      (initialData?.details as Record<string, string | undefined>)
+        ?.arrivalAirportAddress || "",
     startTimezone: initialData?.startTimezone || defaultTimezone,
     startDateTime:
       initialData?.startDateTime && initialData?.startTimezone
@@ -107,7 +117,8 @@ export function ItineraryForm({
 
   const [transportDetails, setTransportDetails] = useState({
     title: initialData?.type === "Transport" ? initialData.title : "",
-    mode: ((initialData?.details as any)?.mode || "Metro") as TransportMode,
+    mode: ((initialData?.details as Record<string, string | undefined>)?.mode ||
+      "Metro") as TransportMode,
     startTimezone: initialData?.startTimezone || defaultTimezone,
     startDateTime:
       initialData?.startDateTime && initialData?.startTimezone
@@ -128,8 +139,13 @@ export function ItineraryForm({
 
   const [accommodationDetails, setAccommodationDetails] = useState({
     hotelName: initialData?.type === "Accommodation" ? initialData.title : "",
-    address: (initialData?.details as any)?.address || "",
-    guests: (initialData?.details as any)?.guests?.toString() || "",
+    address:
+      (initialData?.details as Record<string, string | number | undefined>)
+        ?.address || "",
+    guests:
+      (
+        initialData?.details as Record<string, number | undefined>
+      )?.guests?.toString() || "",
     startTimezone: initialData?.startTimezone || defaultTimezone,
     startDateTime:
       initialData?.startDateTime && initialData?.startTimezone
@@ -150,10 +166,18 @@ export function ItineraryForm({
 
   const [placeDetails, setPlaceDetails] = useState({
     title: initialData?.type === "Place" ? initialData.title : "",
-    address: (initialData?.details as any)?.address || "",
-    ticketInfo: (initialData?.details as any)?.ticketInfo || "",
-    openingTime: (initialData?.details as any)?.openingTime || "",
-    closingTime: (initialData?.details as any)?.closingTime || "",
+    address:
+      (initialData?.details as Record<string, string | undefined>)?.address ||
+      "",
+    ticketInfo:
+      (initialData?.details as Record<string, string | undefined>)
+        ?.ticketInfo || "",
+    openingTime:
+      (initialData?.details as Record<string, string | undefined>)
+        ?.openingTime || "",
+    closingTime:
+      (initialData?.details as Record<string, string | undefined>)
+        ?.closingTime || "",
     startTimezone: initialData?.startTimezone || defaultTimezone,
     startDateTime:
       initialData?.startDateTime && initialData?.startTimezone
@@ -174,11 +198,21 @@ export function ItineraryForm({
 
   const [foodDetails, setFoodDetails] = useState({
     title: initialData?.type === "Food" ? initialData.title : "",
-    address: (initialData?.details as any)?.address || "",
-    cuisine: (initialData?.details as any)?.cuisine || "",
-    openingTime: (initialData?.details as any)?.openingTime || "",
-    closingTime: (initialData?.details as any)?.closingTime || "",
-    reservationInfo: (initialData?.details as any)?.reservationInfo || "",
+    address:
+      (initialData?.details as Record<string, string | undefined>)?.address ||
+      "",
+    cuisine:
+      (initialData?.details as Record<string, string | undefined>)?.cuisine ||
+      "",
+    openingTime:
+      (initialData?.details as Record<string, string | undefined>)
+        ?.openingTime || "",
+    closingTime:
+      (initialData?.details as Record<string, string | undefined>)
+        ?.closingTime || "",
+    reservationInfo:
+      (initialData?.details as Record<string, string | undefined>)
+        ?.reservationInfo || "",
     startTimezone: initialData?.startTimezone || defaultTimezone,
     startDateTime:
       initialData?.startDateTime && initialData?.startTimezone
@@ -199,6 +233,7 @@ export function ItineraryForm({
 
   useEffect(() => {
     if (!initialData && defaultTimezone) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData((prev) => ({
         ...prev,
         timezone: defaultTimezone,

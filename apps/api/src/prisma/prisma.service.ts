@@ -1,6 +1,6 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@prisma/client';
 import { Pool } from 'pg';
 
 /**
@@ -39,11 +39,14 @@ export class PrismaService
   constructor() {
     const connectionString = mustGetEnv('DATABASE_URL');
 
-    const pool = new Pool({ connectionString });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+    const pool: Pool = new Pool({ connectionString });
+
     const adapter = new PrismaPg(pool);
 
     super({ adapter });
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.pool = pool;
   }
 
@@ -61,6 +64,7 @@ export class PrismaService
    */
   async onModuleDestroy() {
     await this.$disconnect();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     await this.pool.end();
   }
 }

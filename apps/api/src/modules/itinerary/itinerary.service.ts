@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import type { Prisma, LocationCategory } from '@prisma/client';
+import type { LocationCategory, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 
 /**
@@ -52,13 +52,16 @@ export class ItineraryService {
     input: Omit<Prisma.ItineraryItemCreateInput, 'trip'>,
   ) {
     // Extract details to check for address
-    const details = input.details as any;
+    const details = input.details as Record<
+      string,
+      string | number | undefined
+    >;
     const type = input.type as string;
 
     // Auto-create location for items with addresses (only if no manual locationId provided)
     if (
       !input.location &&
-      details?.address &&
+      details.address &&
       (type === 'Accommodation' || type === 'Place' || type === 'Food')
     ) {
       const categoryMap: Record<string, LocationCategory> = {
@@ -69,15 +72,15 @@ export class ItineraryService {
 
       const locationName =
         type === 'Accommodation' && details.hotelName
-          ? details.hotelName
+          ? String(details.hotelName)
           : input.title;
 
       const location = await this.prisma.location.create({
         data: {
           tripId,
-          name: locationName as string,
+          name: locationName,
           category: categoryMap[type],
-          address: details.address,
+          address: String(details.address),
         },
       });
 
@@ -153,12 +156,15 @@ export class ItineraryService {
     let createdCount = 0;
 
     for (const item of items) {
-      const details = item.details as any;
-      
-      if (details?.address) {
+      const details = item.details as Record<
+        string,
+        string | number | undefined
+      >;
+
+      if (details.address) {
         const locationName =
           item.type === 'Accommodation' && details.hotelName
-            ? details.hotelName
+            ? String(details.hotelName)
             : item.title;
 
         const location = await this.prisma.location.create({
@@ -166,7 +172,7 @@ export class ItineraryService {
             tripId,
             name: locationName,
             category: categoryMap[item.type],
-            address: details.address,
+            address: String(details.address),
           },
         });
 

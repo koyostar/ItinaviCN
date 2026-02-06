@@ -1,8 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useUserPreferences } from "@/contexts/UserPreferencesContext";
+import { useFormSubmit } from "@/hooks";
+import { api } from "@/lib/api";
+import {
+  CITIES,
+  COUNTRIES,
+  findLocationKey,
+  getDisplayName,
+} from "@/lib/locations";
 import type { CreateTripRequest } from "@itinavi/schema";
+import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
@@ -10,26 +18,13 @@ import {
   Card,
   CardContent,
   Container,
-  FormControl,
   IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
-import { api } from "@/lib/api";
-import {
-  COUNTRIES,
-  CITIES,
-  searchLocations,
-  getDisplayName,
-  findLocationKey,
-} from "@/lib/locations";
-import { useUserPreferences } from "@/contexts/UserPreferencesContext";
-import { useFormSubmit } from "@/hooks";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface DestinationInput {
   country: string;
@@ -38,7 +33,7 @@ interface DestinationInput {
 
 export default function NewTripPage() {
   const router = useRouter();
-  const { language, setLanguage } = useUserPreferences();
+  const { language } = useUserPreferences();
   const [destinations, setDestinations] = useState<DestinationInput[]>([
     { country: "", cities: [""] },
   ]);
@@ -65,8 +60,8 @@ export default function NewTripPage() {
 
       const payload: CreateTripRequest = {
         title: formData.title!,
-        startDate: startDate + "T00:00:00Z",
-        endDate: endDate + "T23:59:59Z",
+        startDate: `${startDate}T00:00:00Z`,
+        endDate: `${endDate}T23:59:59Z`,
         destinationCurrency: formData.destinationCurrency!,
         originCurrency: formData.originCurrency!,
         ...(validDestinations.length > 0 && {

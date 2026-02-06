@@ -1,22 +1,12 @@
-import { Stack, Typography, Box } from "@mui/material";
-import { getUTCOffset } from "@/lib/utils/timezone";
 import { formatUTCTime } from "@/lib/dateUtils";
-
-interface TransportDetails {
-  mode?: string;
-  fromLocationId?: string;
-  toLocationId?: string;
-}
+import { getUTCOffset } from "@/lib/utils/timezone";
+import { Box, Typography } from "@mui/material";
 
 interface TransportCardProps {
   title: string;
   startDateTime: string;
   endDateTime?: string | null;
   startTimezone?: string | null;
-  status: string;
-  details: TransportDetails | null;
-  statusColor: "default" | "primary" | "success" | "error";
-  typeColor: "primary" | "secondary" | "success" | "error" | "warning" | "info";
 }
 
 export function TransportCard({
@@ -24,10 +14,6 @@ export function TransportCard({
   startDateTime,
   endDateTime,
   startTimezone,
-  status,
-  details,
-  statusColor,
-  typeColor,
 }: TransportCardProps) {
   return (
     <Box

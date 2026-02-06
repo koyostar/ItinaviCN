@@ -1,21 +1,21 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import type { TripResponse, CreateTripRequest } from "@itinavi/schema";
-import { Container, Stack } from "@mui/material";
-import { api } from "@/lib/api";
-import { useUserPreferences } from "@/contexts/UserPreferencesContext";
 import { TripForm } from "@/components/forms";
+import { TripCard } from "@/components/TripCard";
 import {
   ConfirmDialog,
-  PageLoadingState,
-  PageErrorState,
   EmptyState,
-  PageHeader,
   FormDialog,
+  PageErrorState,
+  PageHeader,
+  PageLoadingState,
 } from "@/components/ui";
-import { TripCard } from "@/components/TripCard";
+import { useUserPreferences } from "@/contexts/UserPreferencesContext";
 import { useDeleteConfirmation, useEditDialog, useTrips } from "@/hooks";
+import { api } from "@/lib/api";
+import type { TripResponse } from "@itinavi/schema";
+import { Container, Stack } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 export default function TripsPage() {
   const router = useRouter();
