@@ -58,7 +58,19 @@ async function fetchApi<T>(
     );
   }
 
-  return response.json();
+  // Handle empty responses (e.g., 204 No Content for DELETE operations)
+  const contentLength = response.headers.get("content-length");
+  if (contentLength === "0" || response.status === 204) {
+    return undefined as T;
+  }
+
+  // Check if response has content before parsing JSON
+  const text = await response.text();
+  if (!text) {
+    return undefined as T;
+  }
+
+  return JSON.parse(text);
 }
 
 /**
