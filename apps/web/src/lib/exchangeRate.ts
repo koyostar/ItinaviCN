@@ -1,7 +1,9 @@
-// Exchange rate API service using exchangerate-api.com (free tier)
-const EXCHANGE_RATE_API = 'https://api.exchangerate-api.com/v4';
+// Exchange rate API service using Frankfurter API (free, open-source, CORS-enabled)
+// https://www.frankfurter.app/
+const EXCHANGE_RATE_API = "https://api.frankfurter.app";
 
 export interface ExchangeRateResponse {
+  amount: number;
   base: string;
   date: string;
   rates: Record<string, number>;
@@ -21,25 +23,25 @@ export async function getExchangeRate(
 ): Promise<number | null> {
   try {
     // Use historical endpoint if date is provided, otherwise use latest
-    const endpoint = date 
-      ? `${EXCHANGE_RATE_API}/history/${date}/${baseCurrency}`
-      : `${EXCHANGE_RATE_API}/latest/${baseCurrency}`;
-    
+    const endpoint = date
+      ? `${EXCHANGE_RATE_API}/${date}?from=${baseCurrency}&to=${targetCurrency}`
+      : `${EXCHANGE_RATE_API}/latest?from=${baseCurrency}&to=${targetCurrency}`;
+
     const response = await fetch(endpoint);
-    
+
     if (!response.ok) {
-      throw new Error('Failed to fetch exchange rate');
+      throw new Error("Failed to fetch exchange rate");
     }
-    
+
     const data: ExchangeRateResponse = await response.json();
-    
+
     if (data.rates[targetCurrency]) {
       return data.rates[targetCurrency];
     }
-    
+
     return null;
   } catch (error) {
-    console.error('Error fetching exchange rate:', error);
+    console.error("Error fetching exchange rate:", error);
     return null;
   }
 }
