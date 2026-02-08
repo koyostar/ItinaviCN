@@ -71,10 +71,15 @@ model Location {
 
   name         String
   category     LocationCategory
+  city         String?
+  district     String?
+  province     String?
   address      String?
   latitude     Decimal?
   longitude    Decimal?
-  baiduPlaceId String?
+  adcode       String?
+  citycode     String?
+  amapPoiId    String?
   notes        String?
 
   itineraryItems ItineraryItem[]
