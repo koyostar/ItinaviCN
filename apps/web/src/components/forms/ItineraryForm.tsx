@@ -139,9 +139,25 @@ export function ItineraryForm({
 
   const [accommodationDetails, setAccommodationDetails] = useState({
     hotelName: initialData?.type === "Accommodation" ? initialData.title : "",
+    city:
+      (initialData?.details as Record<string, string | undefined>)?.city,
+    district:
+      (initialData?.details as Record<string, string | undefined>)?.district,
+    province:
+      (initialData?.details as Record<string, string | undefined>)?.province,
     address:
-      (initialData?.details as Record<string, string | number | undefined>)
-        ?.address || "",
+      String((initialData?.details as Record<string, string | number | undefined>)
+        ?.address || ""),
+    latitude:
+      (initialData?.details as Record<string, number | undefined>)?.latitude,
+    longitude:
+      (initialData?.details as Record<string, number | undefined>)?.longitude,
+    adcode:
+      (initialData?.details as Record<string, string | undefined>)?.adcode,
+    citycode:
+      (initialData?.details as Record<string, string | undefined>)?.citycode,
+    amapPoiId:
+      (initialData?.details as Record<string, string | undefined>)?.amapPoiId,
     guests:
       (
         initialData?.details as Record<string, number | undefined>
@@ -166,8 +182,30 @@ export function ItineraryForm({
 
   const [placeDetails, setPlaceDetails] = useState({
     title: initialData?.type === "Place" ? initialData.title : "",
+    city:
+      (initialData?.details as Record<string, string | undefined>)?.city ||
+      "",
+    district:
+      (initialData?.details as Record<string, string | undefined>)?.district ||
+      "",
+    province:
+      (initialData?.details as Record<string, string | undefined>)?.province ||
+      "",
     address:
       (initialData?.details as Record<string, string | undefined>)?.address ||
+      "",
+    latitude:
+      (initialData?.details as Record<string, number | undefined>)?.latitude,
+    longitude:
+      (initialData?.details as Record<string, number | undefined>)?.longitude,
+    adcode:
+      (initialData?.details as Record<string, string | undefined>)?.adcode ||
+      "",
+    citycode:
+      (initialData?.details as Record<string, string | undefined>)?.citycode ||
+      "",
+    amapPoiId:
+      (initialData?.details as Record<string, string | undefined>)?.amapPoiId ||
       "",
     ticketInfo:
       (initialData?.details as Record<string, string | undefined>)
@@ -198,8 +236,30 @@ export function ItineraryForm({
 
   const [foodDetails, setFoodDetails] = useState({
     title: initialData?.type === "Food" ? initialData.title : "",
+    city:
+      (initialData?.details as Record<string, string | undefined>)?.city ||
+      "",
+    district:
+      (initialData?.details as Record<string, string | undefined>)?.district ||
+      "",
+    province:
+      (initialData?.details as Record<string, string | undefined>)?.province ||
+      "",
     address:
       (initialData?.details as Record<string, string | undefined>)?.address ||
+      "",
+    latitude:
+      (initialData?.details as Record<string, number | undefined>)?.latitude,
+    longitude:
+      (initialData?.details as Record<string, number | undefined>)?.longitude,
+    adcode:
+      (initialData?.details as Record<string, string | undefined>)?.adcode ||
+      "",
+    citycode:
+      (initialData?.details as Record<string, string | undefined>)?.citycode ||
+      "",
+    amapPoiId:
+      (initialData?.details as Record<string, string | undefined>)?.amapPoiId ||
       "",
     cuisine:
       (initialData?.details as Record<string, string | undefined>)?.cuisine ||
@@ -312,6 +372,8 @@ export function ItineraryForm({
       details = Object.fromEntries(
         Object.entries({
           address: accommodationDetails.address,
+          latitude: accommodationDetails.latitude,
+          longitude: accommodationDetails.longitude,
           guests: accommodationDetails.guests
             ? parseInt(accommodationDetails.guests)
             : undefined,

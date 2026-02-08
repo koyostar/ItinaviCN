@@ -4,7 +4,15 @@ import { DateTimeFields } from "./DateTimeFields";
 
 interface FoodDetails {
   title: string;
+  city?: string;
+  district?: string;
+  province?: string;
   address: string;
+  latitude?: number;
+  longitude?: number;
+  adcode?: string;
+  citycode?: string;
+  amapPoiId?: string;
   cuisine: string;
   openingTime: string;
   closingTime: string;
@@ -33,6 +41,16 @@ export function FoodFields({
           onFoodDetailsChange({
             title: place.name,
             address: place.address,
+            city: place.city,
+            district: place.district,
+            province: place.province,
+            adcode: place.adcode,
+            citycode: place.citycode,
+            amapPoiId: place.amapPoiId,
+            ...(place.location && {
+              latitude: place.location.lat,
+              longitude: place.location.lng,
+            }),
           })
         }
         placeholder="Search for restaurant..."
