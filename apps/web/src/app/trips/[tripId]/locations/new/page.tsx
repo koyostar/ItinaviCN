@@ -20,6 +20,7 @@ import {
 import { api } from "@/lib/api";
 import { LOCATION_CATEGORIES } from "@/lib/constants";
 import { useFormSubmit } from "@/hooks";
+import { AmapPlaceAutocomplete } from "@/components/AmapPlaceAutocomplete";
 
 export default function NewLocationPage({
   params,
@@ -31,10 +32,15 @@ export default function NewLocationPage({
   const [formData, setFormData] = useState<CreateLocationRequest>({
     name: "",
     category: "Place",
+    city: "",
+    district: "",
+    province: "",
     address: "",
     latitude: undefined,
     longitude: undefined,
-    baiduPlaceId: "",
+    adcode: "",
+    citycode: "",
+    amapPoiId: "",
     notes: "",
   });
 
@@ -43,12 +49,17 @@ export default function NewLocationPage({
       const payload = {
         name: formData.name,
         category: formData.category,
+        ...(formData.city && { city: formData.city }),
+        ...(formData.district && { district: formData.district }),
+        ...(formData.province && { province: formData.province }),
         ...(formData.address && { address: formData.address }),
         ...(formData.latitude !== undefined && { latitude: formData.latitude }),
         ...(formData.longitude !== undefined && {
           longitude: formData.longitude,
         }),
-        ...(formData.baiduPlaceId && { baiduPlaceId: formData.baiduPlaceId }),
+        ...(formData.adcode && { adcode: formData.adcode }),
+        ...(formData.citycode && { citycode: formData.citycode }),
+        ...(formData.amapPoiId && { amapPoiId: formData.amapPoiId }),
         ...(formData.notes && { notes: formData.notes }),
       };
       await api.locations.create(tripId, payload);
@@ -71,15 +82,28 @@ export default function NewLocationPage({
         <CardContent>
           <Box component="form" onSubmit={handleSubmit}>
             <Stack spacing={3}>
-              <TextField
+              <AmapPlaceAutocomplete
                 label="Name"
-                required
-                fullWidth
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                placeholder="e.g., Great Wall of China"
+                onPlaceSelect={(place) => {
+                  setFormData({
+                    ...formData,
+                    name: place.name,
+                    city: place.city || formData.city,
+                    district: place.district || formData.district,
+                    province: place.province || formData.province,
+                    address: place.address || formData.address,
+                    adcode: place.adcode || formData.adcode,
+                    citycode: place.citycode || formData.citycode,
+                    amapPoiId: place.amapPoiId || formData.amapPoiId,
+                    ...(place.location && {
+                      latitude: place.location.lat,
+                      longitude: place.location.lng,
+                    }),
+                  });
+                }}
+                placeholder="Search for a place..."
+                required
               />
 
               <FormControl fullWidth required>
@@ -146,16 +170,6 @@ export default function NewLocationPage({
                   inputProps={{ step: "any" }}
                 />
               </Stack>
-
-              <TextField
-                label="Baidu Place ID"
-                fullWidth
-                value={formData.baiduPlaceId}
-                onChange={(e) =>
-                  setFormData({ ...formData, baiduPlaceId: e.target.value })
-                }
-                placeholder="Optional - Baidu Maps place identifier"
-              />
 
               <TextField
                 label="Notes"
