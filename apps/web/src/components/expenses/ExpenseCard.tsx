@@ -22,6 +22,7 @@ interface ExpenseCardProps {
   linkedItem?: ItineraryItemResponse;
   tripId: string;
   originCurrency?: string;
+  onEdit: (expense: ExpenseResponse) => void;
   onDelete: (id: string) => void;
 }
 
@@ -30,6 +31,7 @@ export function ExpenseCard({
   linkedItem,
   tripId,
   originCurrency,
+  onEdit,
   onDelete,
 }: ExpenseCardProps) {
   const Icon = EXPENSE_CATEGORY_ICONS[expense.category];
@@ -79,7 +81,7 @@ export function ExpenseCard({
             </Box>
           </Stack>
           <Stack direction="row" spacing={2} alignItems="center">
-            <Box textAlign="right">
+            <Stack spacing={0} textAlign="right">
               <Typography variant="h6">
                 {expense.destinationCurrency} {amount.toFixed(2)}
               </Typography>
@@ -93,17 +95,17 @@ export function ExpenseCard({
                 </Typography>
               )}
               {expense.exchangeRateUsed && (
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
                   {originCurrency} 1 = {expense.destinationCurrency}{" "}
                   {expense.exchangeRateUsed}
                 </Typography>
               )}
-            </Box>
+            </Stack>
             <Stack direction="row" spacing={1}>
               <IconButton
                 size="small"
                 color="primary"
-                href={`/trips/${tripId}/expenses/${expense.id}/edit`}
+                onClick={() => onEdit(expense)}
               >
                 <EditIcon />
               </IconButton>

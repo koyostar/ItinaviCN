@@ -1,6 +1,11 @@
 "use client";
 
-import { useFormSubmit, useItineraryItems, useTrip } from "@/hooks";
+import {
+  useExchangeRate,
+  useFormSubmit,
+  useItineraryItems,
+  useTrip,
+} from "@/hooks";
 import { api } from "@/lib/api";
 import { EXPENSE_CATEGORY_LABELS } from "@/lib/constants";
 import type { CreateExpenseRequest, ExpenseCategory } from "@itinavi/schema";
@@ -32,6 +37,12 @@ export default function NewExpensePage({
   const searchParams = useSearchParams();
   const { trip } = useTrip(tripId);
   const { items: itineraryItems } = useItineraryItems(tripId);
+  const {
+    rate,
+    loading: rateLoading,
+    error: rateError,
+    fetchRate,
+  } = useExchangeRate();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -50,7 +61,7 @@ export default function NewExpensePage({
 
     if (itineraryItemId && itineraryItems.length > 0) {
       const selectedItem = itineraryItems.find(
-        (item) => item.id === itineraryItemId,
+        (item) => item.id === itineraryItemId
       );
       if (selectedItem) {
         // Map itinerary type to expense category
@@ -77,6 +88,13 @@ export default function NewExpensePage({
     }
   }, [searchParams, itineraryItems]);
 
+  // Update form when rate is manually fetched
+  useEffect(() => {
+    if (rate !== null) {
+      setFormData((prev) => ({ ...prev, exchangeRateUsed: rate.toString() }));
+    }
+  }, [rate]);
+
   const {
     handleSubmit: submitForm,
     submitting,
@@ -93,15 +111,36 @@ export default function NewExpensePage({
         throw new Error("Please enter a valid amount");
       }
 
+      // Fetch exchange rate if empty and currencies are different
+      let exchangeRate = formData.exchangeRateUsed
+        ? parseFloat(formData.exchangeRateUsed)
+        : undefined;
+
+      if (
+        !exchangeRate &&
+        trip?.originCurrency &&
+        formData.destinationCurrency !== trip.originCurrency
+      ) {
+        const expenseDate = new Date(formData.expenseDateTime)
+          .toISOString()
+          .split("T")[0];
+        const fetchedRate = await fetchRate(
+          trip.originCurrency,
+          formData.destinationCurrency,
+          expenseDate,
+        );
+        if (fetchedRate !== null) {
+          exchangeRate = fetchedRate;
+        }
+      }
+
       const payload: CreateExpenseRequest = {
         title: formData.title,
         category: formData.category,
         expenseDateTime: new Date(formData.expenseDateTime).toISOString(),
         amountDestinationMinor: Math.round(amountValue * 100), // Convert to cents
         destinationCurrency: formData.destinationCurrency,
-        ...(formData.exchangeRateUsed && {
-          exchangeRateUsed: parseFloat(formData.exchangeRateUsed),
-        }),
+        ...(exchangeRate && { exchangeRateUsed: exchangeRate }),
         ...(formData.linkedItineraryItemId && {
           linkedItineraryItemId: formData.linkedItineraryItemId,
         }),
@@ -110,7 +149,7 @@ export default function NewExpensePage({
 
       await api.expenses.create(tripId, payload);
     },
-    { onSuccess: () => router.push(`/trips/${tripId}/expenses`) },
+    { onSuccess: () => router.push(`/trips/${tripId}/expenses`) }
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -122,7 +161,7 @@ export default function NewExpensePage({
     ([value, label]) => ({
       value: value as ExpenseCategory,
       label,
-    }),
+    })
   );
 
   return (
@@ -227,21 +266,55 @@ export default function NewExpensePage({
                 </FormControl>
               </Stack>
 
-              <TextField
-                label="Exchange Rate"
-                type="number"
-                fullWidth
-                value={formData.exchangeRateUsed}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    exchangeRateUsed: e.target.value,
-                  })
-                }
-                placeholder="Optional - e.g., 1.25"
-                inputProps={{ step: "0.000001", min: "0" }}
-                helperText="Exchange rate used for this transaction"
-              />
+              <Stack direction="row" spacing={2} alignItems="flex-start">
+                <TextField
+                  label="Exchange Rate"
+                  type="number"
+                  fullWidth
+                  value={formData.exchangeRateUsed}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      exchangeRateUsed: e.target.value,
+                    })
+                  }
+                  placeholder="Optional - e.g., 1.25"
+                  inputProps={{ step: "0.000001", min: "0" }}
+                  helperText={
+                    rateError
+                      ? rateError
+                      : "Fetched when saving if empty, or manually enter"
+                  }
+                  error={!!rateError}
+                />
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    if (
+                      formData.expenseDateTime &&
+                      formData.destinationCurrency &&
+                      trip?.originCurrency
+                    ) {
+                      const expenseDate = new Date(formData.expenseDateTime)
+                        .toISOString()
+                        .split("T")[0];
+                      fetchRate(
+                        trip.originCurrency,
+                        formData.destinationCurrency,
+                        expenseDate
+                      );
+                    }
+                  }}
+                  disabled={
+                    rateLoading ||
+                    !formData.expenseDateTime ||
+                    !trip?.originCurrency
+                  }
+                  sx={{ mt: 1, minWidth: 120 }}
+                >
+                  {rateLoading ? "Fetching..." : "Fetch Rate"}
+                </Button>
+              </Stack>
 
               <FormControl fullWidth>
                 <InputLabel>Link to Itinerary Item</InputLabel>

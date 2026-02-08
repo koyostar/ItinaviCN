@@ -1,41 +1,56 @@
 "use client";
 
 import {
+  ExpenseCard,
+  ExpenseCategoryFilter,
+  ExpenseSummaryCards,
+} from "@/components/expenses";
+import {
   ConfirmDialog,
+  FormDialog,
   PageErrorState,
   PageHeader,
   PageLoadingState,
 } from "@/components/ui";
-import { useDeleteConfirmation, useExpenses, useItineraryItems } from "@/hooks";
-import { api } from "@/lib/api";
 import {
-  EXPENSE_CATEGORY_ICONS,
-  EXPENSE_CATEGORY_LABELS,
-  getExpenseCategoryChipSx,
-  getExpenseCategoryIconColor,
-} from "@/lib/constants";
-import { formatUTCDate } from "@/lib/dateUtils";
-import type { ExpenseResponse } from "@itinavi/schema";
+  useDeleteConfirmation,
+  useEditDialog,
+  useExchangeRate,
+  useExpenses,
+  useFormSubmit,
+  useItineraryItems,
+  useTrip,
+} from "@/hooks";
+import { api } from "@/lib/api";
+import { EXPENSE_CATEGORY_LABELS } from "@/lib/constants";
+import {
+  calculateTotalsByCurrency,
+  groupExpensesByDate,
+} from "@/lib/utils/expenses";
+import type {
+  ExpenseCategory,
+  ExpenseResponse,
+  UpdateExpenseRequest,
+} from "@itinavi/schema";
 import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
   Button,
   Card,
   CardContent,
-  Chip,
+  CircularProgress,
   Container,
   FormControl,
-  IconButton,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 export default function ExpensesPage({
   params,
@@ -46,6 +61,7 @@ export default function ExpensesPage({
   const router = useRouter();
   const [filterCategory, setFilterCategory] = useState<string>("all");
 
+  const { trip, loading: tripLoading } = useTrip(tripId);
   const { expenses, loading, error, refetch } = useExpenses(tripId);
   const { items: itineraryItems } = useItineraryItems(tripId);
 
@@ -53,40 +69,128 @@ export default function ExpensesPage({
     await api.expenses.delete(tripId, id);
   }, refetch);
 
+  const editDialog = useEditDialog<ExpenseResponse>();
+  const {
+    rate,
+    loading: rateLoading,
+    error: rateError,
+    fetchRate,
+  } = useExchangeRate();
+
+  const [editFormData, setEditFormData] = useState({
+    title: "",
+    category: "Other" as ExpenseCategory,
+    expenseDateTime: "",
+    amount: "",
+    destinationCurrency: "",
+    exchangeRateUsed: "",
+    linkedItineraryItemId: "",
+    notes: "",
+  });
+
+  // Update form when editing an expense
+  useEffect(() => {
+    if (editDialog.item) {
+      const dateTime = new Date(editDialog.item.expenseDateTime);
+      const localDateTime = new Date(dateTime.getTime() - dateTime.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 16);
+      
+      setEditFormData({
+        title: editDialog.item.title,
+        category: editDialog.item.category,
+        expenseDateTime: localDateTime,
+        amount: (editDialog.item.amountDestinationMinor / 100).toString(),
+        destinationCurrency: editDialog.item.destinationCurrency,
+        exchangeRateUsed: editDialog.item.exchangeRateUsed?.toString() || "",
+        linkedItineraryItemId: editDialog.item.linkedItineraryItemId || "",
+        notes: editDialog.item.notes || "",
+      });
+    }
+  }, [editDialog.item]);
+
+  // Update form when rate is manually fetched
+  useEffect(() => {
+    if (rate !== null) {
+      setEditFormData((prev) => ({ ...prev, exchangeRateUsed: rate.toString() }));
+    }
+  }, [rate]);
+
+  const { handleSubmit: submitEdit, submitting, error: submitError } = useFormSubmit(
+    async (_: void) => {
+      if (!editDialog.item) return;
+
+      if (!editFormData.title || !editFormData.amount || !editFormData.expenseDateTime) {
+        throw new Error("Please fill in all required fields");
+      }
+
+      const amountValue = parseFloat(editFormData.amount);
+      if (isNaN(amountValue) || amountValue < 0) {
+        throw new Error("Please enter a valid amount");
+      }
+
+      let exchangeRate = editFormData.exchangeRateUsed
+        ? parseFloat(editFormData.exchangeRateUsed)
+        : undefined;
+
+      if (
+        !exchangeRate &&
+        trip?.originCurrency &&
+        editFormData.destinationCurrency !== trip.originCurrency
+      ) {
+        const expenseDate = new Date(editFormData.expenseDateTime)
+          .toISOString()
+          .split("T")[0];
+        const fetchedRate = await fetchRate(
+          trip.originCurrency,
+          editFormData.destinationCurrency,
+          expenseDate,
+        );
+        if (fetchedRate !== null) {
+          exchangeRate = fetchedRate;
+        }
+      }
+
+      const payload: UpdateExpenseRequest = {
+        title: editFormData.title,
+        category: editFormData.category,
+        expenseDateTime: new Date(editFormData.expenseDateTime).toISOString(),
+        amountDestinationMinor: Math.round(amountValue * 100),
+        destinationCurrency: editFormData.destinationCurrency,
+        ...(exchangeRate && { exchangeRateUsed: exchangeRate }),
+        linkedItineraryItemId: editFormData.linkedItineraryItemId || undefined,
+        notes: editFormData.notes || undefined,
+      };
+
+      await api.expenses.update(tripId, editDialog.item.id, payload);
+      await refetch();
+      editDialog.closeEdit();
+    },
+    { onSuccess: () => {} }
+  );
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submitEdit(undefined as void);
+  };
+
+  const categoryOptions = Object.entries(EXPENSE_CATEGORY_LABELS).map(
+    ([value, label]) => ({
+      value: value as ExpenseCategory,
+      label,
+    })
+  );
+
   const filteredExpenses = expenses.filter((expense) => {
     if (filterCategory !== "all" && expense.category !== filterCategory)
       return false;
     return true;
   });
 
-  // Group by date
-  const groupedByDate = filteredExpenses.reduce(
-    (acc, expense) => {
-      const date = formatUTCDate(expense.expenseDateTime, "en-US", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-      if (!acc[date]) acc[date] = [];
-      acc[date].push(expense);
-      return acc;
-    },
-    {} as Record<string, ExpenseResponse[]>,
-  );
+  const groupedByDate = groupExpensesByDate(filteredExpenses);
+  const totalsByCurrency = calculateTotalsByCurrency(expenses);
 
-  // Calculate total per currency
-  const totalsByurrency = expenses.reduce(
-    (acc, expense) => {
-      const currency = expense.destinationCurrency;
-      if (!acc[currency]) acc[currency] = 0;
-      acc[currency] += expense.amountDestinationMinor / 100; // Convert from minor units
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-
-  if (loading) {
+  if (loading || tripLoading) {
     return <PageLoadingState message="Loading expenses..." />;
   }
 
@@ -109,36 +213,13 @@ export default function ExpensesPage({
         />
 
         {/* Summary Cards */}
-        <Stack direction="row" spacing={2} flexWrap="wrap">
-          {Object.entries(totalsByurrency).map(([currency, total]) => (
-            <Card key={currency} sx={{ minWidth: 200 }}>
-              <CardContent>
-                <Typography variant="overline" color="text.secondary">
-                  Total ({currency})
-                </Typography>
-                <Typography variant="h4">{total.toFixed(2)}</Typography>
-              </CardContent>
-            </Card>
-          ))}
-        </Stack>
+        <ExpenseSummaryCards totalsByCurrency={totalsByCurrency} />
 
         {/* Filter */}
-        <FormControl size="small" sx={{ maxWidth: 200 }}>
-          <InputLabel>Category</InputLabel>
-          <Select
-            value={filterCategory}
-            label="Category"
-            onChange={(e) => setFilterCategory(e.target.value)}
-          >
-            <MenuItem value="all">All Categories</MenuItem>
-            <MenuItem value="Accommodation">Accommodation</MenuItem>
-            <MenuItem value="Transport">Transport</MenuItem>
-            <MenuItem value="Food">Food & Dining</MenuItem>
-            <MenuItem value="Shop">Shopping</MenuItem>
-            <MenuItem value="Attraction">Attractions</MenuItem>
-            <MenuItem value="Other">Other</MenuItem>
-          </Select>
-        </FormControl>
+        <ExpenseCategoryFilter
+          value={filterCategory}
+          onChange={setFilterCategory}
+        />
 
         {/* Expenses List */}
         {Object.keys(groupedByDate).length === 0 ? (
@@ -170,109 +251,22 @@ export default function ExpensesPage({
                 </Typography>
                 <Stack spacing={2}>
                   {dateExpenses.map((expense) => {
-                    const Icon = EXPENSE_CATEGORY_ICONS[expense.category];
-                    const amount = expense.amountDestinationMinor / 100;
                     const linkedItem = expense.linkedItineraryItemId
                       ? itineraryItems.find(
-                          (item) => item.id === expense.linkedItineraryItemId,
+                          (item) => item.id === expense.linkedItineraryItemId
                         )
-                      : null;
+                      : undefined;
 
                     return (
-                      <Card key={expense.id}>
-                        <CardContent>
-                          <Stack
-                            direction="row"
-                            justifyContent="space-between"
-                            alignItems="center"
-                          >
-                            <Stack
-                              direction="row"
-                              spacing={2}
-                              alignItems="center"
-                            >
-                              <Icon
-                                sx={{
-                                  fontSize: 32,
-                                  color: getExpenseCategoryIconColor(
-                                    expense.category,
-                                  ),
-                                }}
-                              />
-                              <Box>
-                                <Typography variant="h6">
-                                  {expense.title}
-                                </Typography>
-                                <Stack direction="row" spacing={1} mt={0.5}>
-                                  <Chip
-                                    label={
-                                      EXPENSE_CATEGORY_LABELS[expense.category]
-                                    }
-                                    size="small"
-                                    sx={getExpenseCategoryChipSx(
-                                      expense.category,
-                                    )}
-                                  />
-                                  {linkedItem && (
-                                    <Chip
-                                      label={`${linkedItem.type}: ${linkedItem.title}`}
-                                      size="small"
-                                      variant="outlined"
-                                      color="info"
-                                    />
-                                  )}
-                                  {expense.notes && (
-                                    <Typography
-                                      variant="caption"
-                                      color="text.secondary"
-                                    >
-                                      {expense.notes}
-                                    </Typography>
-                                  )}
-                                </Stack>
-                              </Box>
-                            </Stack>
-                            <Stack
-                              direction="row"
-                              spacing={2}
-                              alignItems="center"
-                            >
-                              <Box textAlign="right">
-                                <Typography variant="h6">
-                                  {expense.destinationCurrency}{" "}
-                                  {amount.toFixed(2)}
-                                </Typography>
-                                {expense.exchangeRateUsed && (
-                                  <Typography
-                                    variant="caption"
-                                    color="text.secondary"
-                                  >
-                                    Rate: {expense.exchangeRateUsed}
-                                  </Typography>
-                                )}
-                              </Box>
-                              <Stack direction="row" spacing={1}>
-                                <IconButton
-                                  size="small"
-                                  color="primary"
-                                  href={`/trips/${tripId}/expenses/${expense.id}/edit`}
-                                >
-                                  <EditIcon />
-                                </IconButton>
-                                <IconButton
-                                  size="small"
-                                  color="error"
-                                  onClick={() =>
-                                    deleteConfirmation.handleDelete(expense.id)
-                                  }
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              </Stack>
-                            </Stack>
-                          </Stack>
-                        </CardContent>
-                      </Card>
+                      <ExpenseCard
+                        key={expense.id}
+                        expense={expense}
+                        linkedItem={linkedItem}
+                        tripId={tripId}
+                        originCurrency={trip?.originCurrency}
+                        onEdit={editDialog.openEdit}
+                        onDelete={deleteConfirmation.handleDelete}
+                      />
                     );
                   })}
                 </Stack>
@@ -291,6 +285,206 @@ export default function ExpensesPage({
           confirmColor="error"
           loading={deleteConfirmation.loading}
         />
+
+        <FormDialog
+          open={editDialog.open}
+          title="Edit Expense"
+          onClose={editDialog.closeEdit}
+        >
+          <Box component="form" onSubmit={handleEditSubmit}>
+            <Stack spacing={3}>
+              {submitError && (
+                <Typography color="error" variant="body2">
+                  {submitError}
+                </Typography>
+              )}
+
+              <TextField
+                label="Title"
+                required
+                fullWidth
+                value={editFormData.title}
+                onChange={(e) =>
+                  setEditFormData({ ...editFormData, title: e.target.value })
+                }
+                placeholder="e.g., Hotel Stay, Taxi to Airport"
+              />
+
+              <FormControl fullWidth required>
+                <InputLabel>Category</InputLabel>
+                <Select
+                  value={editFormData.category}
+                  label="Category"
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      category: e.target.value as ExpenseCategory,
+                    })
+                  }
+                >
+                  {categoryOptions.map((cat) => (
+                    <MenuItem key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <TextField
+                label="Date & Time"
+                type="datetime-local"
+                required
+                fullWidth
+                value={editFormData.expenseDateTime}
+                onChange={(e) =>
+                  setEditFormData({ ...editFormData, expenseDateTime: e.target.value })
+                }
+                InputLabelProps={{ shrink: true }}
+              />
+
+              <Stack direction="row" spacing={2}>
+                <TextField
+                  label="Amount"
+                  type="number"
+                  required
+                  fullWidth
+                  value={editFormData.amount}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, amount: e.target.value })
+                  }
+                  placeholder="e.g., 150.50"
+                  inputProps={{ step: "0.01", min: "0" }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        {editFormData.destinationCurrency}
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+
+                <FormControl fullWidth required>
+                  <InputLabel>Currency</InputLabel>
+                  <Select
+                    value={editFormData.destinationCurrency}
+                    label="Currency"
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        destinationCurrency: e.target.value,
+                      })
+                    }
+                  >
+                    <MenuItem value={trip?.destinationCurrency || "CNY"}>
+                      {trip?.destinationCurrency || "CNY"} (Destination)
+                    </MenuItem>
+                    <MenuItem value={trip?.originCurrency || "SGD"}>
+                      {trip?.originCurrency || "SGD"} (Origin)
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="flex-start">
+                <TextField
+                  label="Exchange Rate"
+                  type="number"
+                  fullWidth
+                  value={editFormData.exchangeRateUsed}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      exchangeRateUsed: e.target.value,
+                    })
+                  }
+                  placeholder="Optional - e.g., 1.25"
+                  inputProps={{ step: "0.000001", min: "0" }}
+                  helperText={
+                    rateError
+                      ? rateError
+                      : "Fetched when saving if empty, or manually enter"
+                  }
+                  error={!!rateError}
+                />
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    if (
+                      editFormData.expenseDateTime &&
+                      editFormData.destinationCurrency &&
+                      trip?.originCurrency
+                    ) {
+                      const expenseDate = new Date(editFormData.expenseDateTime)
+                        .toISOString()
+                        .split("T")[0];
+                      fetchRate(
+                        trip.originCurrency,
+                        editFormData.destinationCurrency,
+                        expenseDate
+                      );
+                    }
+                  }}
+                  disabled={
+                    rateLoading ||
+                    !editFormData.expenseDateTime ||
+                    !trip?.originCurrency
+                  }
+                  sx={{ mt: 1, minWidth: 120 }}
+                >
+                  {rateLoading ? "Fetching..." : "Fetch Rate"}
+                </Button>
+              </Stack>
+
+              <FormControl fullWidth>
+                <InputLabel>Link to Itinerary Item</InputLabel>
+                <Select
+                  value={editFormData.linkedItineraryItemId}
+                  label="Link to Itinerary Item"
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      linkedItineraryItemId: e.target.value,
+                    })
+                  }
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {itineraryItems.map((item) => (
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.type}: {item.title}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <TextField
+                label="Notes"
+                fullWidth
+                multiline
+                rows={4}
+                value={editFormData.notes}
+                onChange={(e) =>
+                  setEditFormData({ ...editFormData, notes: e.target.value })
+                }
+                placeholder="Any additional details about this expense"
+              />
+
+              <Stack direction="row" spacing={2} justifyContent="flex-end">
+                <Button
+                  variant="outlined"
+                  onClick={editDialog.closeEdit}
+                  disabled={submitting}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" variant="contained" disabled={submitting}>
+                  {submitting ? "Saving..." : "Save Changes"}
+                </Button>
+              </Stack>
+            </Stack>
+          </Box>
+        </FormDialog>
       </Stack>
     </Container>
   );
