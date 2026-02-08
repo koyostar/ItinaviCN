@@ -54,7 +54,15 @@ export type TransportDetails = z.infer<typeof TransportDetailsSchema>;
 
 export const AccommodationDetailsSchema = z.object({
   hotelName: z.string().optional(),
+  city: z.string().optional(),
+  district: z.string().optional(),
+  province: z.string().optional(),
   address: z.string().optional(),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
+  adcode: z.string().optional(),
+  citycode: z.string().optional(),
+  amapPoiId: z.string().optional(),
   checkInDateTime: z.string().datetime().optional(),
   checkOutDateTime: z.string().datetime().optional(),
   guests: z.number().int().positive().optional(),
@@ -63,7 +71,15 @@ export const AccommodationDetailsSchema = z.object({
 export type AccommodationDetails = z.infer<typeof AccommodationDetailsSchema>;
 
 export const PlaceDetailsSchema = z.object({
+  city: z.string().optional(),
+  district: z.string().optional(),
+  province: z.string().optional(),
   address: z.string().optional(),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
+  adcode: z.string().optional(),
+  citycode: z.string().optional(),
+  amapPoiId: z.string().optional(),
   ticketInfo: z.string().optional(),
   openingTime: z.string().optional(),
   closingTime: z.string().optional(),
@@ -72,7 +88,15 @@ export const PlaceDetailsSchema = z.object({
 export type PlaceDetails = z.infer<typeof PlaceDetailsSchema>;
 
 export const FoodDetailsSchema = z.object({
+  city: z.string().optional(),
+  district: z.string().optional(),
+  province: z.string().optional(),
   address: z.string().optional(),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
+  adcode: z.string().optional(),
+  citycode: z.string().optional(),
+  amapPoiId: z.string().optional(),
   cuisine: z.string().optional(),
   openingTime: z.string().optional(),
   closingTime: z.string().optional(),

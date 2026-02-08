@@ -41,8 +41,7 @@ exports.CreateExpenseRequestSchema = zod_1.z.object({
     notes: zod_1.z.string().max(2000).optional(),
 });
 // Update expense request schema
-exports.UpdateExpenseRequestSchema = exports.CreateExpenseRequestSchema.partial()
-    .refine((v) => Object.keys(v).length > 0, {
+exports.UpdateExpenseRequestSchema = exports.CreateExpenseRequestSchema.partial().refine((v) => Object.keys(v).length > 0, {
     message: "At least one field is required",
 });
 // List expenses response

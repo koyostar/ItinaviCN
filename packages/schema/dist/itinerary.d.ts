@@ -44,55 +44,127 @@ export declare const TransportDetailsSchema: z.ZodObject<{
 export type TransportDetails = z.infer<typeof TransportDetailsSchema>;
 export declare const AccommodationDetailsSchema: z.ZodObject<{
     hotelName: z.ZodOptional<z.ZodString>;
+    city: z.ZodOptional<z.ZodString>;
+    district: z.ZodOptional<z.ZodString>;
+    province: z.ZodOptional<z.ZodString>;
     address: z.ZodOptional<z.ZodString>;
+    latitude: z.ZodOptional<z.ZodNumber>;
+    longitude: z.ZodOptional<z.ZodNumber>;
+    adcode: z.ZodOptional<z.ZodString>;
+    citycode: z.ZodOptional<z.ZodString>;
+    amapPoiId: z.ZodOptional<z.ZodString>;
     checkInDateTime: z.ZodOptional<z.ZodString>;
     checkOutDateTime: z.ZodOptional<z.ZodString>;
     guests: z.ZodOptional<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
     hotelName?: string | undefined;
+    city?: string | undefined;
+    district?: string | undefined;
+    province?: string | undefined;
     address?: string | undefined;
+    latitude?: number | undefined;
+    longitude?: number | undefined;
+    adcode?: string | undefined;
+    citycode?: string | undefined;
+    amapPoiId?: string | undefined;
     checkInDateTime?: string | undefined;
     checkOutDateTime?: string | undefined;
     guests?: number | undefined;
 }, {
     hotelName?: string | undefined;
+    city?: string | undefined;
+    district?: string | undefined;
+    province?: string | undefined;
     address?: string | undefined;
+    latitude?: number | undefined;
+    longitude?: number | undefined;
+    adcode?: string | undefined;
+    citycode?: string | undefined;
+    amapPoiId?: string | undefined;
     checkInDateTime?: string | undefined;
     checkOutDateTime?: string | undefined;
     guests?: number | undefined;
 }>;
 export type AccommodationDetails = z.infer<typeof AccommodationDetailsSchema>;
 export declare const PlaceDetailsSchema: z.ZodObject<{
+    city: z.ZodOptional<z.ZodString>;
+    district: z.ZodOptional<z.ZodString>;
+    province: z.ZodOptional<z.ZodString>;
     address: z.ZodOptional<z.ZodString>;
+    latitude: z.ZodOptional<z.ZodNumber>;
+    longitude: z.ZodOptional<z.ZodNumber>;
+    adcode: z.ZodOptional<z.ZodString>;
+    citycode: z.ZodOptional<z.ZodString>;
+    amapPoiId: z.ZodOptional<z.ZodString>;
     ticketInfo: z.ZodOptional<z.ZodString>;
     openingTime: z.ZodOptional<z.ZodString>;
     closingTime: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    city?: string | undefined;
+    district?: string | undefined;
+    province?: string | undefined;
     address?: string | undefined;
+    latitude?: number | undefined;
+    longitude?: number | undefined;
+    adcode?: string | undefined;
+    citycode?: string | undefined;
+    amapPoiId?: string | undefined;
     ticketInfo?: string | undefined;
     openingTime?: string | undefined;
     closingTime?: string | undefined;
 }, {
+    city?: string | undefined;
+    district?: string | undefined;
+    province?: string | undefined;
     address?: string | undefined;
+    latitude?: number | undefined;
+    longitude?: number | undefined;
+    adcode?: string | undefined;
+    citycode?: string | undefined;
+    amapPoiId?: string | undefined;
     ticketInfo?: string | undefined;
     openingTime?: string | undefined;
     closingTime?: string | undefined;
 }>;
 export type PlaceDetails = z.infer<typeof PlaceDetailsSchema>;
 export declare const FoodDetailsSchema: z.ZodObject<{
+    city: z.ZodOptional<z.ZodString>;
+    district: z.ZodOptional<z.ZodString>;
+    province: z.ZodOptional<z.ZodString>;
     address: z.ZodOptional<z.ZodString>;
+    latitude: z.ZodOptional<z.ZodNumber>;
+    longitude: z.ZodOptional<z.ZodNumber>;
+    adcode: z.ZodOptional<z.ZodString>;
+    citycode: z.ZodOptional<z.ZodString>;
+    amapPoiId: z.ZodOptional<z.ZodString>;
     cuisine: z.ZodOptional<z.ZodString>;
     openingTime: z.ZodOptional<z.ZodString>;
     closingTime: z.ZodOptional<z.ZodString>;
     reservationInfo: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    city?: string | undefined;
+    district?: string | undefined;
+    province?: string | undefined;
     address?: string | undefined;
+    latitude?: number | undefined;
+    longitude?: number | undefined;
+    adcode?: string | undefined;
+    citycode?: string | undefined;
+    amapPoiId?: string | undefined;
     openingTime?: string | undefined;
     closingTime?: string | undefined;
     cuisine?: string | undefined;
     reservationInfo?: string | undefined;
 }, {
+    city?: string | undefined;
+    district?: string | undefined;
+    province?: string | undefined;
     address?: string | undefined;
+    latitude?: number | undefined;
+    longitude?: number | undefined;
+    adcode?: string | undefined;
+    citycode?: string | undefined;
+    amapPoiId?: string | undefined;
     openingTime?: string | undefined;
     closingTime?: string | undefined;
     cuisine?: string | undefined;
@@ -258,19 +330,43 @@ export declare const CreateAccommodationRequestSchema: z.ZodObject<{
     type: z.ZodLiteral<"Accommodation">;
     details: z.ZodOptional<z.ZodObject<{
         hotelName: z.ZodOptional<z.ZodString>;
+        city: z.ZodOptional<z.ZodString>;
+        district: z.ZodOptional<z.ZodString>;
+        province: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodString>;
+        latitude: z.ZodOptional<z.ZodNumber>;
+        longitude: z.ZodOptional<z.ZodNumber>;
+        adcode: z.ZodOptional<z.ZodString>;
+        citycode: z.ZodOptional<z.ZodString>;
+        amapPoiId: z.ZodOptional<z.ZodString>;
         checkInDateTime: z.ZodOptional<z.ZodString>;
         checkOutDateTime: z.ZodOptional<z.ZodString>;
         guests: z.ZodOptional<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
     }, {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -290,7 +386,15 @@ export declare const CreateAccommodationRequestSchema: z.ZodObject<{
     url?: string | undefined;
     details?: {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -310,7 +414,15 @@ export declare const CreateAccommodationRequestSchema: z.ZodObject<{
     url?: string | undefined;
     details?: {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -331,17 +443,41 @@ export declare const CreatePlaceRequestSchema: z.ZodObject<{
 } & {
     type: z.ZodLiteral<"Place">;
     details: z.ZodOptional<z.ZodObject<{
+        city: z.ZodOptional<z.ZodString>;
+        district: z.ZodOptional<z.ZodString>;
+        province: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodString>;
+        latitude: z.ZodOptional<z.ZodNumber>;
+        longitude: z.ZodOptional<z.ZodNumber>;
+        adcode: z.ZodOptional<z.ZodString>;
+        citycode: z.ZodOptional<z.ZodString>;
+        amapPoiId: z.ZodOptional<z.ZodString>;
         ticketInfo: z.ZodOptional<z.ZodString>;
         openingTime: z.ZodOptional<z.ZodString>;
         closingTime: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
     }, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
@@ -360,7 +496,15 @@ export declare const CreatePlaceRequestSchema: z.ZodObject<{
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
@@ -379,7 +523,15 @@ export declare const CreatePlaceRequestSchema: z.ZodObject<{
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
@@ -400,19 +552,43 @@ export declare const CreateFoodRequestSchema: z.ZodObject<{
 } & {
     type: z.ZodLiteral<"Food">;
     details: z.ZodOptional<z.ZodObject<{
+        city: z.ZodOptional<z.ZodString>;
+        district: z.ZodOptional<z.ZodString>;
+        province: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodString>;
+        latitude: z.ZodOptional<z.ZodNumber>;
+        longitude: z.ZodOptional<z.ZodNumber>;
+        adcode: z.ZodOptional<z.ZodString>;
+        citycode: z.ZodOptional<z.ZodString>;
+        amapPoiId: z.ZodOptional<z.ZodString>;
         cuisine: z.ZodOptional<z.ZodString>;
         openingTime: z.ZodOptional<z.ZodString>;
         closingTime: z.ZodOptional<z.ZodString>;
         reservationInfo: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     }, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
@@ -432,7 +608,15 @@ export declare const CreateFoodRequestSchema: z.ZodObject<{
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
@@ -452,7 +636,15 @@ export declare const CreateFoodRequestSchema: z.ZodObject<{
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
@@ -616,19 +808,43 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     type: z.ZodLiteral<"Accommodation">;
     details: z.ZodOptional<z.ZodObject<{
         hotelName: z.ZodOptional<z.ZodString>;
+        city: z.ZodOptional<z.ZodString>;
+        district: z.ZodOptional<z.ZodString>;
+        province: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodString>;
+        latitude: z.ZodOptional<z.ZodNumber>;
+        longitude: z.ZodOptional<z.ZodNumber>;
+        adcode: z.ZodOptional<z.ZodString>;
+        citycode: z.ZodOptional<z.ZodString>;
+        amapPoiId: z.ZodOptional<z.ZodString>;
         checkInDateTime: z.ZodOptional<z.ZodString>;
         checkOutDateTime: z.ZodOptional<z.ZodString>;
         guests: z.ZodOptional<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
     }, {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -648,7 +864,15 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     url?: string | undefined;
     details?: {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -668,7 +892,15 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     url?: string | undefined;
     details?: {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -688,17 +920,41 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
 } & {
     type: z.ZodLiteral<"Place">;
     details: z.ZodOptional<z.ZodObject<{
+        city: z.ZodOptional<z.ZodString>;
+        district: z.ZodOptional<z.ZodString>;
+        province: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodString>;
+        latitude: z.ZodOptional<z.ZodNumber>;
+        longitude: z.ZodOptional<z.ZodNumber>;
+        adcode: z.ZodOptional<z.ZodString>;
+        citycode: z.ZodOptional<z.ZodString>;
+        amapPoiId: z.ZodOptional<z.ZodString>;
         ticketInfo: z.ZodOptional<z.ZodString>;
         openingTime: z.ZodOptional<z.ZodString>;
         closingTime: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
     }, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
@@ -717,7 +973,15 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
@@ -736,7 +1000,15 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
@@ -756,19 +1028,43 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
 } & {
     type: z.ZodLiteral<"Food">;
     details: z.ZodOptional<z.ZodObject<{
+        city: z.ZodOptional<z.ZodString>;
+        district: z.ZodOptional<z.ZodString>;
+        province: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodString>;
+        latitude: z.ZodOptional<z.ZodNumber>;
+        longitude: z.ZodOptional<z.ZodNumber>;
+        adcode: z.ZodOptional<z.ZodString>;
+        citycode: z.ZodOptional<z.ZodString>;
+        amapPoiId: z.ZodOptional<z.ZodString>;
         cuisine: z.ZodOptional<z.ZodString>;
         openingTime: z.ZodOptional<z.ZodString>;
         closingTime: z.ZodOptional<z.ZodString>;
         reservationInfo: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     }, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
@@ -788,7 +1084,15 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
@@ -808,7 +1112,15 @@ export declare const CreateItineraryItemRequestSchema: z.ZodDiscriminatedUnion<"
     bookingRef?: string | undefined;
     url?: string | undefined;
     details?: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
@@ -1076,19 +1388,43 @@ export declare const AccommodationResponseSchema: z.ZodObject<{
     type: z.ZodLiteral<"Accommodation">;
     details: z.ZodNullable<z.ZodObject<{
         hotelName: z.ZodOptional<z.ZodString>;
+        city: z.ZodOptional<z.ZodString>;
+        district: z.ZodOptional<z.ZodString>;
+        province: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodString>;
+        latitude: z.ZodOptional<z.ZodNumber>;
+        longitude: z.ZodOptional<z.ZodNumber>;
+        adcode: z.ZodOptional<z.ZodString>;
+        citycode: z.ZodOptional<z.ZodString>;
+        amapPoiId: z.ZodOptional<z.ZodString>;
         checkInDateTime: z.ZodOptional<z.ZodString>;
         checkOutDateTime: z.ZodOptional<z.ZodString>;
         guests: z.ZodOptional<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
     }, {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -1112,7 +1448,15 @@ export declare const AccommodationResponseSchema: z.ZodObject<{
     url: string | null;
     details: {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -1136,7 +1480,15 @@ export declare const AccommodationResponseSchema: z.ZodObject<{
     url: string | null;
     details: {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -1161,17 +1513,41 @@ export declare const PlaceResponseSchema: z.ZodObject<{
 } & {
     type: z.ZodLiteral<"Place">;
     details: z.ZodNullable<z.ZodObject<{
+        city: z.ZodOptional<z.ZodString>;
+        district: z.ZodOptional<z.ZodString>;
+        province: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodString>;
+        latitude: z.ZodOptional<z.ZodNumber>;
+        longitude: z.ZodOptional<z.ZodNumber>;
+        adcode: z.ZodOptional<z.ZodString>;
+        citycode: z.ZodOptional<z.ZodString>;
+        amapPoiId: z.ZodOptional<z.ZodString>;
         ticketInfo: z.ZodOptional<z.ZodString>;
         openingTime: z.ZodOptional<z.ZodString>;
         closingTime: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
     }, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
@@ -1194,7 +1570,15 @@ export declare const PlaceResponseSchema: z.ZodObject<{
     bookingRef: string | null;
     url: string | null;
     details: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
@@ -1217,7 +1601,15 @@ export declare const PlaceResponseSchema: z.ZodObject<{
     bookingRef: string | null;
     url: string | null;
     details: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
@@ -1242,19 +1634,43 @@ export declare const FoodResponseSchema: z.ZodObject<{
 } & {
     type: z.ZodLiteral<"Food">;
     details: z.ZodNullable<z.ZodObject<{
+        city: z.ZodOptional<z.ZodString>;
+        district: z.ZodOptional<z.ZodString>;
+        province: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodString>;
+        latitude: z.ZodOptional<z.ZodNumber>;
+        longitude: z.ZodOptional<z.ZodNumber>;
+        adcode: z.ZodOptional<z.ZodString>;
+        citycode: z.ZodOptional<z.ZodString>;
+        amapPoiId: z.ZodOptional<z.ZodString>;
         cuisine: z.ZodOptional<z.ZodString>;
         openingTime: z.ZodOptional<z.ZodString>;
         closingTime: z.ZodOptional<z.ZodString>;
         reservationInfo: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     }, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
@@ -1278,7 +1694,15 @@ export declare const FoodResponseSchema: z.ZodObject<{
     bookingRef: string | null;
     url: string | null;
     details: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
@@ -1302,7 +1726,15 @@ export declare const FoodResponseSchema: z.ZodObject<{
     bookingRef: string | null;
     url: string | null;
     details: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
@@ -1494,19 +1926,43 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     type: z.ZodLiteral<"Accommodation">;
     details: z.ZodNullable<z.ZodObject<{
         hotelName: z.ZodOptional<z.ZodString>;
+        city: z.ZodOptional<z.ZodString>;
+        district: z.ZodOptional<z.ZodString>;
+        province: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodString>;
+        latitude: z.ZodOptional<z.ZodNumber>;
+        longitude: z.ZodOptional<z.ZodNumber>;
+        adcode: z.ZodOptional<z.ZodString>;
+        citycode: z.ZodOptional<z.ZodString>;
+        amapPoiId: z.ZodOptional<z.ZodString>;
         checkInDateTime: z.ZodOptional<z.ZodString>;
         checkOutDateTime: z.ZodOptional<z.ZodString>;
         guests: z.ZodOptional<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
     }, {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -1530,7 +1986,15 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     url: string | null;
     details: {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -1554,7 +2018,15 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     url: string | null;
     details: {
         hotelName?: string | undefined;
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         checkInDateTime?: string | undefined;
         checkOutDateTime?: string | undefined;
         guests?: number | undefined;
@@ -1578,17 +2050,41 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
 } & {
     type: z.ZodLiteral<"Place">;
     details: z.ZodNullable<z.ZodObject<{
+        city: z.ZodOptional<z.ZodString>;
+        district: z.ZodOptional<z.ZodString>;
+        province: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodString>;
+        latitude: z.ZodOptional<z.ZodNumber>;
+        longitude: z.ZodOptional<z.ZodNumber>;
+        adcode: z.ZodOptional<z.ZodString>;
+        citycode: z.ZodOptional<z.ZodString>;
+        amapPoiId: z.ZodOptional<z.ZodString>;
         ticketInfo: z.ZodOptional<z.ZodString>;
         openingTime: z.ZodOptional<z.ZodString>;
         closingTime: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
     }, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
@@ -1611,7 +2107,15 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     bookingRef: string | null;
     url: string | null;
     details: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
@@ -1634,7 +2138,15 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     bookingRef: string | null;
     url: string | null;
     details: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         ticketInfo?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
@@ -1658,19 +2170,43 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
 } & {
     type: z.ZodLiteral<"Food">;
     details: z.ZodNullable<z.ZodObject<{
+        city: z.ZodOptional<z.ZodString>;
+        district: z.ZodOptional<z.ZodString>;
+        province: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodString>;
+        latitude: z.ZodOptional<z.ZodNumber>;
+        longitude: z.ZodOptional<z.ZodNumber>;
+        adcode: z.ZodOptional<z.ZodString>;
+        citycode: z.ZodOptional<z.ZodString>;
+        amapPoiId: z.ZodOptional<z.ZodString>;
         cuisine: z.ZodOptional<z.ZodString>;
         openingTime: z.ZodOptional<z.ZodString>;
         closingTime: z.ZodOptional<z.ZodString>;
         reservationInfo: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
         reservationInfo?: string | undefined;
     }, {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
@@ -1694,7 +2230,15 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     bookingRef: string | null;
     url: string | null;
     details: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
@@ -1718,7 +2262,15 @@ export declare const ItineraryItemResponseSchema: z.ZodDiscriminatedUnion<"type"
     bookingRef: string | null;
     url: string | null;
     details: {
+        city?: string | undefined;
+        district?: string | undefined;
+        province?: string | undefined;
         address?: string | undefined;
+        latitude?: number | undefined;
+        longitude?: number | undefined;
+        adcode?: string | undefined;
+        citycode?: string | undefined;
+        amapPoiId?: string | undefined;
         openingTime?: string | undefined;
         closingTime?: string | undefined;
         cuisine?: string | undefined;
@@ -1912,19 +2464,43 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         type: z.ZodLiteral<"Accommodation">;
         details: z.ZodNullable<z.ZodObject<{
             hotelName: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            district: z.ZodOptional<z.ZodString>;
+            province: z.ZodOptional<z.ZodString>;
             address: z.ZodOptional<z.ZodString>;
+            latitude: z.ZodOptional<z.ZodNumber>;
+            longitude: z.ZodOptional<z.ZodNumber>;
+            adcode: z.ZodOptional<z.ZodString>;
+            citycode: z.ZodOptional<z.ZodString>;
+            amapPoiId: z.ZodOptional<z.ZodString>;
             checkInDateTime: z.ZodOptional<z.ZodString>;
             checkOutDateTime: z.ZodOptional<z.ZodString>;
             guests: z.ZodOptional<z.ZodNumber>;
         }, "strip", z.ZodTypeAny, {
             hotelName?: string | undefined;
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             checkInDateTime?: string | undefined;
             checkOutDateTime?: string | undefined;
             guests?: number | undefined;
         }, {
             hotelName?: string | undefined;
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             checkInDateTime?: string | undefined;
             checkOutDateTime?: string | undefined;
             guests?: number | undefined;
@@ -1948,7 +2524,15 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         url: string | null;
         details: {
             hotelName?: string | undefined;
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             checkInDateTime?: string | undefined;
             checkOutDateTime?: string | undefined;
             guests?: number | undefined;
@@ -1972,7 +2556,15 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         url: string | null;
         details: {
             hotelName?: string | undefined;
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             checkInDateTime?: string | undefined;
             checkOutDateTime?: string | undefined;
             guests?: number | undefined;
@@ -1996,17 +2588,41 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
     } & {
         type: z.ZodLiteral<"Place">;
         details: z.ZodNullable<z.ZodObject<{
+            city: z.ZodOptional<z.ZodString>;
+            district: z.ZodOptional<z.ZodString>;
+            province: z.ZodOptional<z.ZodString>;
             address: z.ZodOptional<z.ZodString>;
+            latitude: z.ZodOptional<z.ZodNumber>;
+            longitude: z.ZodOptional<z.ZodNumber>;
+            adcode: z.ZodOptional<z.ZodString>;
+            citycode: z.ZodOptional<z.ZodString>;
+            amapPoiId: z.ZodOptional<z.ZodString>;
             ticketInfo: z.ZodOptional<z.ZodString>;
             openingTime: z.ZodOptional<z.ZodString>;
             closingTime: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             ticketInfo?: string | undefined;
             openingTime?: string | undefined;
             closingTime?: string | undefined;
         }, {
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             ticketInfo?: string | undefined;
             openingTime?: string | undefined;
             closingTime?: string | undefined;
@@ -2029,7 +2645,15 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             ticketInfo?: string | undefined;
             openingTime?: string | undefined;
             closingTime?: string | undefined;
@@ -2052,7 +2676,15 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             ticketInfo?: string | undefined;
             openingTime?: string | undefined;
             closingTime?: string | undefined;
@@ -2076,19 +2708,43 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
     } & {
         type: z.ZodLiteral<"Food">;
         details: z.ZodNullable<z.ZodObject<{
+            city: z.ZodOptional<z.ZodString>;
+            district: z.ZodOptional<z.ZodString>;
+            province: z.ZodOptional<z.ZodString>;
             address: z.ZodOptional<z.ZodString>;
+            latitude: z.ZodOptional<z.ZodNumber>;
+            longitude: z.ZodOptional<z.ZodNumber>;
+            adcode: z.ZodOptional<z.ZodString>;
+            citycode: z.ZodOptional<z.ZodString>;
+            amapPoiId: z.ZodOptional<z.ZodString>;
             cuisine: z.ZodOptional<z.ZodString>;
             openingTime: z.ZodOptional<z.ZodString>;
             closingTime: z.ZodOptional<z.ZodString>;
             reservationInfo: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             openingTime?: string | undefined;
             closingTime?: string | undefined;
             cuisine?: string | undefined;
             reservationInfo?: string | undefined;
         }, {
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             openingTime?: string | undefined;
             closingTime?: string | undefined;
             cuisine?: string | undefined;
@@ -2112,7 +2768,15 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             openingTime?: string | undefined;
             closingTime?: string | undefined;
             cuisine?: string | undefined;
@@ -2136,7 +2800,15 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             openingTime?: string | undefined;
             closingTime?: string | undefined;
             cuisine?: string | undefined;
@@ -2210,7 +2882,15 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         url: string | null;
         details: {
             hotelName?: string | undefined;
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             checkInDateTime?: string | undefined;
             checkOutDateTime?: string | undefined;
             guests?: number | undefined;
@@ -2233,7 +2913,15 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             ticketInfo?: string | undefined;
             openingTime?: string | undefined;
             closingTime?: string | undefined;
@@ -2256,7 +2944,15 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             openingTime?: string | undefined;
             closingTime?: string | undefined;
             cuisine?: string | undefined;
@@ -2330,7 +3026,15 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         url: string | null;
         details: {
             hotelName?: string | undefined;
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             checkInDateTime?: string | undefined;
             checkOutDateTime?: string | undefined;
             guests?: number | undefined;
@@ -2353,7 +3057,15 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             ticketInfo?: string | undefined;
             openingTime?: string | undefined;
             closingTime?: string | undefined;
@@ -2376,7 +3088,15 @@ export declare const ListItineraryItemsResponseSchema: z.ZodObject<{
         bookingRef: string | null;
         url: string | null;
         details: {
+            city?: string | undefined;
+            district?: string | undefined;
+            province?: string | undefined;
             address?: string | undefined;
+            latitude?: number | undefined;
+            longitude?: number | undefined;
+            adcode?: string | undefined;
+            citycode?: string | undefined;
+            amapPoiId?: string | undefined;
             openingTime?: string | undefined;
             closingTime?: string | undefined;
             cuisine?: string | undefined;
