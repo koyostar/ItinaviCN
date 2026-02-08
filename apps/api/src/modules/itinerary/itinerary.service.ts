@@ -167,13 +167,26 @@ export class ItineraryService {
             ? String(details.hotelName)
             : item.title;
 
+        const locationData = {
+          tripId,
+          name: locationName,
+          category: categoryMap[item.type],
+          ...(details.city && { city: String(details.city) }),
+          ...(details.district && { district: String(details.district) }),
+          ...(details.province && { province: String(details.province) }),
+          address: String(details.address),
+          ...(details.latitude !== undefined &&
+            details.longitude !== undefined && {
+              latitude: Number(details.latitude),
+              longitude: Number(details.longitude),
+            }),
+          ...(details.adcode && { adcode: String(details.adcode) }),
+          ...(details.citycode && { citycode: String(details.citycode) }),
+          ...(details.amapPoiId && { amapPoiId: String(details.amapPoiId) }),
+        };
+
         const location = await this.prisma.location.create({
-          data: {
-            tripId,
-            name: locationName,
-            category: categoryMap[item.type],
-            address: String(details.address),
-          },
+          data: locationData,
         });
 
         await this.prisma.itineraryItem.update({

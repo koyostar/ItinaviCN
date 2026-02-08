@@ -30,10 +30,15 @@ function toLocationResponse(location: {
   tripId: string;
   name: string;
   category: string;
+  city: string | null;
+  district: string | null;
+  province: string | null;
   address: string | null;
   latitude: { toNumber(): number } | null;
   longitude: { toNumber(): number } | null;
-  baiduPlaceId: string | null;
+  adcode: string | null;
+  citycode: string | null;
+  amapPoiId: string | null;
   notes: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -43,11 +48,16 @@ function toLocationResponse(location: {
     tripId: location.tripId,
     name: location.name,
     category: location.category,
+    city: location.city,
+    district: location.district,
+    province: location.province,
     address: location.address,
     latitude: location.latitude === null ? null : location.latitude.toNumber(),
     longitude:
       location.longitude === null ? null : location.longitude.toNumber(),
-    baiduPlaceId: location.baiduPlaceId,
+    adcode: location.adcode,
+    citycode: location.citycode,
+    amapPoiId: location.amapPoiId,
     notes: location.notes,
     createdAt: location.createdAt.toISOString(),
     updatedAt: location.updatedAt.toISOString(),
@@ -58,7 +68,7 @@ function toLocationResponse(location: {
  * REST controller for location management.
  * Handles HTTP requests for CRUD operations on locations associated with trips.
  * Supports categories like airports, attractions, restaurants, and accommodations
- * with optional geolocation data (latitude/longitude) and Baidu Maps integration.
+ * with optional geolocation data (latitude/longitude) and Amap integration.
  *
  * Base path: /api/trips/:tripId/locations
  */
@@ -116,10 +126,15 @@ export class LocationsController {
     const location = await this.locations.createLocation(tripId, {
       name: input.name,
       category: input.category,
+      city: input.city ?? null,
+      district: input.district ?? null,
+      province: input.province ?? null,
       address: input.address ?? null,
       latitude: input.latitude ?? null,
       longitude: input.longitude ?? null,
-      baiduPlaceId: input.baiduPlaceId ?? null,
+      adcode: input.adcode ?? null,
+      citycode: input.citycode ?? null,
+      amapPoiId: input.amapPoiId ?? null,
       notes: input.notes ?? null,
     });
 
@@ -145,6 +160,13 @@ export class LocationsController {
     const location = await this.locations.updateLocation(locationId, {
       ...(input.name !== undefined ? { name: input.name } : {}),
       ...(input.category !== undefined ? { category: input.category } : {}),
+      ...(input.city !== undefined ? { city: input.city ?? null } : {}),
+      ...(input.district !== undefined
+        ? { district: input.district ?? null }
+        : {}),
+      ...(input.province !== undefined
+        ? { province: input.province ?? null }
+        : {}),
       ...(input.address !== undefined
         ? { address: input.address ?? null }
         : {}),
@@ -154,8 +176,12 @@ export class LocationsController {
       ...(input.longitude !== undefined
         ? { longitude: input.longitude ?? null }
         : {}),
-      ...(input.baiduPlaceId !== undefined
-        ? { baiduPlaceId: input.baiduPlaceId ?? null }
+      ...(input.adcode !== undefined ? { adcode: input.adcode ?? null } : {}),
+      ...(input.citycode !== undefined
+        ? { citycode: input.citycode ?? null }
+        : {}),
+      ...(input.amapPoiId !== undefined
+        ? { amapPoiId: input.amapPoiId ?? null }
         : {}),
       ...(input.notes !== undefined ? { notes: input.notes ?? null } : {}),
     });
