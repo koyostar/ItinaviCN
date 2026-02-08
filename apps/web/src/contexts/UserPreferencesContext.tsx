@@ -11,7 +11,7 @@ interface UserPreferences {
 }
 
 const UserPreferencesContext = createContext<UserPreferences | undefined>(
-  undefined,
+  undefined
 );
 
 export function UserPreferencesProvider({ children }: { children: ReactNode }) {
@@ -21,6 +21,7 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const saved = localStorage.getItem("preferredLanguage");
     if (saved === "en" || saved === "zh") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLanguageState(saved);
     }
   }, []);
@@ -41,7 +42,7 @@ export function useUserPreferences() {
   const context = useContext(UserPreferencesContext);
   if (context === undefined) {
     throw new Error(
-      "useUserPreferences must be used within a UserPreferencesProvider",
+      "useUserPreferences must be used within a UserPreferencesProvider"
     );
   }
   return context;

@@ -15,7 +15,7 @@ interface AccommodationDetails {
 interface AccommodationFieldsProps {
   accommodationDetails: AccommodationDetails;
   onAccommodationDetailsChange: (
-    details: Partial<AccommodationDetails>,
+    details: Partial<AccommodationDetails>
   ) => void;
 }
 

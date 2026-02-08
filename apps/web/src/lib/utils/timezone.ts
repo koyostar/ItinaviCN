@@ -76,7 +76,7 @@ export function getUTCOffset(timezone: string): string {
     const date = new Date();
     const utcDate = new Date(date.toLocaleString("en-US", { timeZone: "UTC" }));
     const tzDate = new Date(
-      date.toLocaleString("en-US", { timeZone: timezone }),
+      date.toLocaleString("en-US", { timeZone: timezone })
     );
     const offset = (tzDate.getTime() - utcDate.getTime()) / (1000 * 60 * 60);
     const sign = offset >= 0 ? "+" : "";

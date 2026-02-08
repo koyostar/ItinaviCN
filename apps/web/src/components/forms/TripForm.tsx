@@ -53,13 +53,13 @@ export function TripForm({
   const { language } = useUserPreferences();
 
   const [destinations, setDestinations] = useState<DestinationInput[]>(
-    initialData?.destinations || [{ country: "", cities: [""] }],
+    initialData?.destinations || [{ country: "", cities: [""] }]
   );
   const [startDate, setStartDate] = useState<string>(
-    initialData?.startDate ? utcToLocalDate(initialData.startDate) : "",
+    initialData?.startDate ? utcToLocalDate(initialData.startDate) : ""
   );
   const [endDate, setEndDate] = useState<string>(
-    initialData?.endDate ? utcToLocalDate(initialData.endDate) : "",
+    initialData?.endDate ? utcToLocalDate(initialData.endDate) : ""
   );
   const [formData, setFormData] = useState<Partial<CreateTripRequest>>({
     title: initialData?.title || "",
@@ -94,7 +94,7 @@ export function TripForm({
     const updated = [...destinations];
     if (updated[destIndex].cities.length > 1) {
       updated[destIndex].cities = updated[destIndex].cities.filter(
-        (_, i) => i !== cityIndex,
+        (_, i) => i !== cityIndex
       );
       setDestinations(updated);
     }
@@ -103,7 +103,7 @@ export function TripForm({
   const handleCityChange = (
     destIndex: number,
     cityIndex: number,
-    value: string,
+    value: string
   ) => {
     const updated = [...destinations];
     updated[destIndex].cities[cityIndex] = value;
@@ -290,7 +290,7 @@ export function TripForm({
                               handleCityChange(
                                 destIndex,
                                 cityIndex,
-                                newInputValue,
+                                newInputValue
                               );
                             } else if (reason === "clear") {
                               handleCityChange(destIndex, cityIndex, "");
@@ -304,7 +304,7 @@ export function TripForm({
                             handleCityChange(
                               destIndex,
                               cityIndex,
-                              standardized,
+                              standardized
                             );
                           }}
                           filterOptions={(options, state) => {

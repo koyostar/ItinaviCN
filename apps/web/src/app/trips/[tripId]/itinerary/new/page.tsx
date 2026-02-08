@@ -21,7 +21,7 @@ export default function NewItineraryItemPage({
     async (data: CreateItineraryItemRequest) => {
       await api.itinerary.create(tripId, data);
     },
-    { onSuccess: () => router.push(`/trips/${tripId}/itinerary`) },
+    { onSuccess: () => router.push(`/trips/${tripId}/itinerary`) }
   );
 
   const handleCancel = () => {

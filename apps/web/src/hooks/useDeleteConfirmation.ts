@@ -58,7 +58,7 @@ interface UseDeleteConfirmationReturn {
  */
 export function useDeleteConfirmation(
   deleteFunction: (id: string) => Promise<void>,
-  onSuccess?: () => void,
+  onSuccess?: () => void
 ): UseDeleteConfirmationReturn {
   const [open, setOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);

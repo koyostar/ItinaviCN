@@ -50,7 +50,7 @@ export function formatUTCDate(
     year: "numeric",
     month: "short",
     day: "numeric",
-  },
+  }
 ): string {
   const date = new Date(utcDatetime);
   return date.toLocaleDateString(locale, options);
@@ -69,7 +69,7 @@ export function formatUTCTime(
   options: Intl.DateTimeFormatOptions = {
     hour: "2-digit",
     minute: "2-digit",
-  },
+  }
 ): string {
   const date = new Date(utcDatetime);
   return date.toLocaleTimeString(locale, options);
@@ -90,7 +90,7 @@ export function formatUTCDateTime(
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-  },
+  }
 ): string {
   const date = new Date(utcDatetime);
   return date.toLocaleString(locale, options);
@@ -113,7 +113,7 @@ export function utcToDateTimeLocal(utcDatetime: string): string {
  */
 export function utcToDateTimeLocalInTimezone(
   utcDatetime: string,
-  timezone: string,
+  timezone: string
 ): string {
   const date = new Date(utcDatetime);
 
@@ -162,7 +162,7 @@ export function dateTimeLocalToUTC(datetimeLocal: string): string {
  */
 export function calculateDuration(
   startDateTime: string,
-  endDateTime: string | null,
+  endDateTime: string | null
 ): string {
   if (!endDateTime) return "";
 

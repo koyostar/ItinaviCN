@@ -16,7 +16,7 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
-    public data?: unknown,
+    public data?: unknown
   ) {
     super(message);
     this.name = "ApiError";
@@ -37,7 +37,7 @@ export class ApiError extends Error {
  */
 async function fetchApi<T>(
   endpoint: string,
-  options?: RequestInit,
+  options?: RequestInit
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
 
@@ -54,7 +54,7 @@ async function fetchApi<T>(
     throw new ApiError(
       errorData.message || "An error occurred",
       response.status,
-      errorData,
+      errorData
     );
   }
 

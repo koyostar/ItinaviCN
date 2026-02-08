@@ -53,7 +53,7 @@ export function AmapPlaceAutocomplete({
 
       if (!apiKey) {
         console.warn(
-          "NEXT_PUBLIC_AMAP_WEB_SERVICE_KEY not configured. Please set it in your .env.local file",
+          "NEXT_PUBLIC_AMAP_WEB_SERVICE_KEY not configured. Please set it in your .env.local file"
         );
         // Fallback: mock data for development
         setTimeout(() => {
@@ -78,7 +78,7 @@ export function AmapPlaceAutocomplete({
       // Use Amap Input Tips API for autocomplete
       const cityParam = city ? `&city=${encodeURIComponent(city)}` : "";
       const response = await fetch(
-        `https://restapi.amap.com/v3/assistant/inputtips?key=${apiKey}&keywords=${encodeURIComponent(searchValue)}${cityParam}&type=&datatype=all`,
+        `https://restapi.amap.com/v3/assistant/inputtips?key=${apiKey}&keywords=${encodeURIComponent(searchValue)}${cityParam}&type=&datatype=all`
       );
 
       const data = await response.json();
@@ -115,7 +115,7 @@ export function AmapPlaceAutocomplete({
               '2. Check "应用管理" (Application Management)\n' +
               '3. Ensure your key has "Web服务" (Web Service) enabled\n' +
               "4. Add your domain to the whitelist if required\n" +
-              '5. Or create a new key specifically for "Web服务API"',
+              '5. Or create a new key specifically for "Web服务API"'
           );
         } else {
           console.warn("Amap API error:", data.info || data.infocode);

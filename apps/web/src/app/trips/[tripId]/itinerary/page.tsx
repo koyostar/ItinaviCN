@@ -112,12 +112,12 @@ export default function ItineraryPage({
         const startDateOnly = new Date(
           startDate.getFullYear(),
           startDate.getMonth(),
-          startDate.getDate(),
+          startDate.getDate()
         );
         const endDateOnly = new Date(
           endDate.getFullYear(),
           endDate.getMonth(),
-          endDate.getDate(),
+          endDate.getDate()
         );
 
         if (startDateOnly.getTime() !== endDateOnly.getTime()) {
@@ -146,7 +146,7 @@ export default function ItineraryPage({
                 year: "numeric",
                 month: "long",
                 day: "numeric",
-              },
+              }
             );
             if (!acc[intermediateDay]) acc[intermediateDay] = [];
             if (!acc[intermediateDay].find((i) => i.id === item.id)) {
@@ -159,7 +159,7 @@ export default function ItineraryPage({
 
       return acc;
     },
-    {} as Record<string, ItineraryItemResponse[]>,
+    {} as Record<string, ItineraryItemResponse[]>
   );
 
   if (loading) {
@@ -334,7 +334,7 @@ export default function ItineraryPage({
                                       color="success"
                                       onClick={() =>
                                         router.push(
-                                          `/trips/${tripId}/expenses/new?itineraryItemId=${item.id}`,
+                                          `/trips/${tripId}/expenses/new?itineraryItemId=${item.id}`
                                         )
                                       }
                                       title="Add expense for this item"

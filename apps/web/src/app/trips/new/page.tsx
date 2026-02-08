@@ -72,7 +72,7 @@ export default function NewTripPage() {
 
       await api.trips.create(payload);
     },
-    { onSuccess: () => router.push("/trips") },
+    { onSuccess: () => router.push("/trips") }
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -106,7 +106,7 @@ export default function NewTripPage() {
     const updated = [...destinations];
     if (updated[destIndex].cities.length > 1) {
       updated[destIndex].cities = updated[destIndex].cities.filter(
-        (_, i) => i !== cityIndex,
+        (_, i) => i !== cityIndex
       );
       setDestinations(updated);
     }
@@ -115,7 +115,7 @@ export default function NewTripPage() {
   const handleCityChange = (
     destIndex: number,
     cityIndex: number,
-    value: string,
+    value: string
   ) => {
     const updated = [...destinations];
     updated[destIndex].cities[cityIndex] = value;
@@ -175,7 +175,7 @@ export default function NewTripPage() {
                               ? COUNTRIES[dest.country]
                                 ? getDisplayName(
                                     COUNTRIES[dest.country],
-                                    language,
+                                    language
                                   )
                                 : dest.country
                               : ""
@@ -284,7 +284,7 @@ export default function NewTripPage() {
                                     ? countryCities[city]
                                       ? getDisplayName(
                                           countryCities[city],
-                                          language,
+                                          language
                                         )
                                       : city
                                     : ""
@@ -294,7 +294,7 @@ export default function NewTripPage() {
                                     handleCityChange(
                                       destIndex,
                                       cityIndex,
-                                      newInputValue,
+                                      newInputValue
                                     );
                                   } else if (reason === "clear") {
                                     handleCityChange(destIndex, cityIndex, "");
@@ -304,13 +304,13 @@ export default function NewTripPage() {
                                   const standardized = newValue
                                     ? findLocationKey(
                                         newValue,
-                                        countryCities,
+                                        countryCities
                                       ) || newValue
                                     : "";
                                   handleCityChange(
                                     destIndex,
                                     cityIndex,
-                                    standardized,
+                                    standardized
                                   );
                                 }}
                                 filterOptions={(options, state) => {

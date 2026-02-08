@@ -61,7 +61,7 @@ interface UseFormSubmitReturn<T> {
  */
 export function useFormSubmit<T>(
   submitFn: (data: T) => Promise<void>,
-  options?: UseFormSubmitOptions,
+  options?: UseFormSubmitOptions
 ): UseFormSubmitReturn<T> {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -82,7 +82,7 @@ export function useFormSubmit<T>(
         setSubmitting(false);
       }
     },
-    [submitFn, options],
+    [submitFn, options]
   );
 
   const clearError = useCallback(() => {

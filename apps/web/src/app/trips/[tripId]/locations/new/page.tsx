@@ -53,7 +53,7 @@ export default function NewLocationPage({
       };
       await api.locations.create(tripId, payload);
     },
-    { onSuccess: () => router.push(`/trips/${tripId}/locations`) },
+    { onSuccess: () => router.push(`/trips/${tripId}/locations`) }
   );
 
   const handleSubmit = (e: React.FormEvent) => {

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Button,
@@ -7,7 +7,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-} from '@mui/material';
+} from "@mui/material";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -18,22 +18,32 @@ interface ConfirmDialogProps {
   onConfirm: () => void;
   onCancel: () => void;
   loading?: boolean;
-  confirmColor?: 'error' | 'primary' | 'secondary' | 'success' | 'info' | 'warning';
+  confirmColor?:
+    | "error"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "info"
+    | "warning";
 }
 
 export function ConfirmDialog({
   open,
   title,
   message,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel = "Confirm",
+  cancelLabel = "Cancel",
   onConfirm,
   onCancel,
   loading = false,
-  confirmColor = 'primary',
+  confirmColor = "primary",
 }: ConfirmDialogProps) {
   return (
-    <Dialog open={open} onClose={onCancel} aria-labelledby="confirm-dialog-title">
+    <Dialog
+      open={open}
+      onClose={onCancel}
+      aria-labelledby="confirm-dialog-title"
+    >
       <DialogTitle id="confirm-dialog-title">{title}</DialogTitle>
       <DialogContent>
         <DialogContentText>{message}</DialogContentText>
@@ -48,7 +58,7 @@ export function ConfirmDialog({
           variant="contained"
           disabled={loading}
         >
-          {loading ? 'Processing...' : confirmLabel}
+          {loading ? "Processing..." : confirmLabel}
         </Button>
       </DialogActions>
     </Dialog>

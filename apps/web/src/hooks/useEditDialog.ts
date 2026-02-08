@@ -89,7 +89,7 @@ export function useEditDialog<T>(): UseEditDialogReturn<T> {
         setSubmitting(false);
       }
     },
-    [item],
+    [item]
   );
 
   return {
