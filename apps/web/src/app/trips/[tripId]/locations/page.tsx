@@ -1,33 +1,28 @@
 "use client";
 
+import { LocationCard } from "@/components/locations";
 import {
   ConfirmDialog,
   EmptyState,
   PageErrorState,
   PageLoadingState,
+  SyncMessageAlert,
 } from "@/components/ui";
-import { useDeleteConfirmation, useLocations } from "@/hooks";
+import { useDeleteConfirmation, useLocations, useSyncLocations } from "@/hooks";
 import { api } from "@/lib/api";
-import { getLocationCategoryChipSx } from "@/lib/constants";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import PlaceIcon from "@mui/icons-material/Place";
 import SyncIcon from "@mui/icons-material/Sync";
 import {
-  Box,
   Button,
-  Card,
-  CardContent,
-  Chip,
   Container,
   IconButton,
   Stack,
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { use, useState } from "react";
+import { use } from "react";
 
 export default function LocationsPage({
   params,
@@ -37,33 +32,14 @@ export default function LocationsPage({
   const { tripId } = use(params);
   const router = useRouter();
   const { locations, loading, error, refetch } = useLocations(tripId);
-  const [syncing, setSyncing] = useState(false);
-  const [syncMessage, setSyncMessage] = useState<string | null>(null);
+  const { syncing, syncMessage, handleSync } = useSyncLocations(
+    tripId,
+    refetch
+  );
 
   const deleteConfirmation = useDeleteConfirmation(async (id) => {
     await api.locations.delete(tripId, id);
   }, refetch);
-
-  const handleSyncLocations = async () => {
-    try {
-      setSyncing(true);
-      setSyncMessage(null);
-      const result = (await api.itinerary.syncLocations(tripId)) as {
-        created: number;
-      };
-      setSyncMessage(
-        `Synced successfully! ${result.created} location(s) created from itinerary.`,
-      );
-      await refetch();
-      setTimeout(() => setSyncMessage(null), 5000);
-    } catch (err) {
-      setSyncMessage(
-        err instanceof Error ? err.message : "Failed to sync locations",
-      );
-    } finally {
-      setSyncing(false);
-    }
-  };
 
   if (loading) {
     return <PageLoadingState message="Loading locations..." />;
@@ -76,13 +52,7 @@ export default function LocationsPage({
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Stack spacing={3}>
-        {syncMessage && (
-          <Card sx={{ bgcolor: "info.light" }}>
-            <CardContent>
-              <Typography color="info.contrastText">{syncMessage}</Typography>
-            </CardContent>
-          </Card>
-        )}
+        {syncMessage && <SyncMessageAlert message={syncMessage} />}
 
         <Stack
           direction="row"
@@ -101,7 +71,7 @@ export default function LocationsPage({
             <Button
               variant="outlined"
               startIcon={<SyncIcon />}
-              onClick={handleSyncLocations}
+              onClick={handleSync}
               disabled={syncing}
             >
               {syncing ? "Syncing..." : "Sync from Itinerary"}
@@ -129,78 +99,12 @@ export default function LocationsPage({
         ) : (
           <Stack spacing={2}>
             {locations.map((location) => (
-              <Card key={location.id}>
-                <CardContent>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="flex-start"
-                  >
-                    <Box flex={1}>
-                      <Stack
-                        direction="row"
-                        spacing={1}
-                        alignItems="center"
-                        mb={1}
-                      >
-                        <Typography variant="h6">{location.name}</Typography>
-                        <Chip
-                          label={location.category}
-                          size="small"
-                          sx={getLocationCategoryChipSx(location.category)}
-                        />
-                      </Stack>
-
-                      {location.address && (
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          mb={1}
-                        >
-                          📍 {location.address}
-                        </Typography>
-                      )}
-
-                      {location.latitude !== null &&
-                        location.longitude !== null && (
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            mb={1}
-                          >
-                            🗺️ {location.latitude.toFixed(6)},{" "}
-                            {location.longitude.toFixed(6)}
-                          </Typography>
-                        )}
-
-                      {location.notes && (
-                        <Typography variant="body2" color="text.secondary">
-                          {location.notes}
-                        </Typography>
-                      )}
-                    </Box>
-
-                    <Stack direction="row" spacing={1}>
-                      <IconButton
-                        size="small"
-                        color="primary"
-                        href={`/trips/${tripId}/locations/${location.id}/edit`}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() =>
-                          deleteConfirmation.handleDelete(location.id)
-                        }
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Stack>
-                  </Stack>
-                </CardContent>
-              </Card>
+              <LocationCard
+                key={location.id}
+                location={location}
+                tripId={tripId}
+                onDelete={deleteConfirmation.handleDelete}
+              />
             ))}
           </Stack>
         )}
