@@ -63,7 +63,7 @@ export const categoryColors = {
     place: "#b8624a", // burnt terracotta (cultural, earthy)
     restaurant: "#d99547", // amber gold (food warmth) - matches food
     accommodation: "#5da89b", // teal (restful, accommodation)
-    transportNode: "#4a7ba7", // medium blue (movement, travel) - matches transport
+    transport: "#4a7ba7", // medium blue (movement, travel) - matches transport
     shop: "#9a6c89", // deep mauve (shopping luxury)
     other: "#758a5f", // forest olive (neutral, versatile)
   },
@@ -249,7 +249,7 @@ declare module "@mui/material/styles" {
         place: string;
         restaurant: string;
         accommodation: string;
-        transportNode: string;
+        transport: string;
         shop: string;
         other: string;
       };
@@ -283,7 +283,7 @@ declare module "@mui/material/styles" {
         place?: string;
         restaurant?: string;
         accommodation?: string;
-        transportNode?: string;
+        transport?: string;
         shop?: string;
         other?: string;
       };

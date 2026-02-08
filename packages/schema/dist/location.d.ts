@@ -1,5 +1,5 @@
 import { z } from "zod";
-export declare const LocationCategorySchema: z.ZodEnum<["Place", "Restaurant", "Accommodation", "TransportNode", "Shop", "Other"]>;
+export declare const LocationCategorySchema: z.ZodEnum<["Place", "Restaurant", "Accommodation", "Transport", "Shop", "Other"]>;
 export type LocationCategory = z.infer<typeof LocationCategorySchema>;
 export declare const LocationIdParamSchema: z.ZodObject<{
     locationId: z.ZodString;
@@ -10,7 +10,7 @@ export declare const LocationIdParamSchema: z.ZodObject<{
 }>;
 export declare const CreateLocationRequestSchema: z.ZodObject<{
     name: z.ZodString;
-    category: z.ZodEnum<["Place", "Restaurant", "Accommodation", "TransportNode", "Shop", "Other"]>;
+    category: z.ZodEnum<["Place", "Restaurant", "Accommodation", "Transport", "Shop", "Other"]>;
     city: z.ZodOptional<z.ZodString>;
     district: z.ZodOptional<z.ZodString>;
     province: z.ZodOptional<z.ZodString>;
@@ -22,7 +22,7 @@ export declare const CreateLocationRequestSchema: z.ZodObject<{
     amapPoiId: z.ZodOptional<z.ZodString>;
     notes: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
+    category: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant";
     name: string;
     notes?: string | undefined;
     city?: string | undefined;
@@ -35,7 +35,7 @@ export declare const CreateLocationRequestSchema: z.ZodObject<{
     citycode?: string | undefined;
     amapPoiId?: string | undefined;
 }, {
-    category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
+    category: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant";
     name: string;
     notes?: string | undefined;
     city?: string | undefined;
@@ -51,7 +51,7 @@ export declare const CreateLocationRequestSchema: z.ZodObject<{
 export type CreateLocationRequest = z.infer<typeof CreateLocationRequestSchema>;
 export declare const UpdateLocationRequestSchema: z.ZodEffects<z.ZodObject<{
     name: z.ZodOptional<z.ZodString>;
-    category: z.ZodOptional<z.ZodEnum<["Place", "Restaurant", "Accommodation", "TransportNode", "Shop", "Other"]>>;
+    category: z.ZodOptional<z.ZodEnum<["Place", "Restaurant", "Accommodation", "Transport", "Shop", "Other"]>>;
     city: z.ZodOptional<z.ZodOptional<z.ZodString>>;
     district: z.ZodOptional<z.ZodOptional<z.ZodString>>;
     province: z.ZodOptional<z.ZodOptional<z.ZodString>>;
@@ -64,7 +64,7 @@ export declare const UpdateLocationRequestSchema: z.ZodEffects<z.ZodObject<{
     notes: z.ZodOptional<z.ZodOptional<z.ZodString>>;
 }, "strip", z.ZodTypeAny, {
     notes?: string | undefined;
-    category?: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode" | undefined;
+    category?: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant" | undefined;
     city?: string | undefined;
     district?: string | undefined;
     province?: string | undefined;
@@ -77,7 +77,7 @@ export declare const UpdateLocationRequestSchema: z.ZodEffects<z.ZodObject<{
     name?: string | undefined;
 }, {
     notes?: string | undefined;
-    category?: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode" | undefined;
+    category?: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant" | undefined;
     city?: string | undefined;
     district?: string | undefined;
     province?: string | undefined;
@@ -90,7 +90,7 @@ export declare const UpdateLocationRequestSchema: z.ZodEffects<z.ZodObject<{
     name?: string | undefined;
 }>, {
     notes?: string | undefined;
-    category?: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode" | undefined;
+    category?: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant" | undefined;
     city?: string | undefined;
     district?: string | undefined;
     province?: string | undefined;
@@ -103,7 +103,7 @@ export declare const UpdateLocationRequestSchema: z.ZodEffects<z.ZodObject<{
     name?: string | undefined;
 }, {
     notes?: string | undefined;
-    category?: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode" | undefined;
+    category?: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant" | undefined;
     city?: string | undefined;
     district?: string | undefined;
     province?: string | undefined;
@@ -120,7 +120,7 @@ export declare const LocationResponseSchema: z.ZodObject<{
     id: z.ZodString;
     tripId: z.ZodString;
     name: z.ZodString;
-    category: z.ZodEnum<["Place", "Restaurant", "Accommodation", "TransportNode", "Shop", "Other"]>;
+    category: z.ZodEnum<["Place", "Restaurant", "Accommodation", "Transport", "Shop", "Other"]>;
     city: z.ZodNullable<z.ZodString>;
     district: z.ZodNullable<z.ZodString>;
     province: z.ZodNullable<z.ZodString>;
@@ -139,7 +139,7 @@ export declare const LocationResponseSchema: z.ZodObject<{
     id: string;
     createdAt: string;
     updatedAt: string;
-    category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
+    category: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant";
     city: string | null;
     district: string | null;
     province: string | null;
@@ -156,7 +156,7 @@ export declare const LocationResponseSchema: z.ZodObject<{
     id: string;
     createdAt: string;
     updatedAt: string;
-    category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
+    category: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant";
     city: string | null;
     district: string | null;
     province: string | null;
@@ -174,7 +174,7 @@ export declare const ListLocationsResponseSchema: z.ZodObject<{
         id: z.ZodString;
         tripId: z.ZodString;
         name: z.ZodString;
-        category: z.ZodEnum<["Place", "Restaurant", "Accommodation", "TransportNode", "Shop", "Other"]>;
+        category: z.ZodEnum<["Place", "Restaurant", "Accommodation", "Transport", "Shop", "Other"]>;
         city: z.ZodNullable<z.ZodString>;
         district: z.ZodNullable<z.ZodString>;
         province: z.ZodNullable<z.ZodString>;
@@ -193,7 +193,7 @@ export declare const ListLocationsResponseSchema: z.ZodObject<{
         id: string;
         createdAt: string;
         updatedAt: string;
-        category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
+        category: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant";
         city: string | null;
         district: string | null;
         province: string | null;
@@ -210,7 +210,7 @@ export declare const ListLocationsResponseSchema: z.ZodObject<{
         id: string;
         createdAt: string;
         updatedAt: string;
-        category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
+        category: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant";
         city: string | null;
         district: string | null;
         province: string | null;
@@ -229,7 +229,7 @@ export declare const ListLocationsResponseSchema: z.ZodObject<{
         id: string;
         createdAt: string;
         updatedAt: string;
-        category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
+        category: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant";
         city: string | null;
         district: string | null;
         province: string | null;
@@ -248,7 +248,7 @@ export declare const ListLocationsResponseSchema: z.ZodObject<{
         id: string;
         createdAt: string;
         updatedAt: string;
-        category: "Accommodation" | "Shop" | "Other" | "Place" | "Restaurant" | "TransportNode";
+        category: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant";
         city: string | null;
         district: string | null;
         province: string | null;

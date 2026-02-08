@@ -13,7 +13,7 @@ export const LOCATION_CATEGORIES: LocationCategory[] = [
   "Place",
   "Restaurant",
   "Accommodation",
-  "TransportNode",
+  "Transport",
   "Shop",
   "Other",
 ];
@@ -26,7 +26,7 @@ export const LOCATION_CATEGORY_COLORS: Record<LocationCategory, string> = {
   Place: categoryColors.location.place,
   Restaurant: categoryColors.location.restaurant,
   Accommodation: categoryColors.location.accommodation,
-  TransportNode: categoryColors.location.transportNode,
+  Transport: categoryColors.location.transport,
   Shop: categoryColors.location.shop,
   Other: categoryColors.location.other,
 };

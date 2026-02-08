@@ -4,7 +4,7 @@ export const LocationCategorySchema = z.enum([
   "Place",
   "Restaurant",
   "Accommodation",
-  "TransportNode",
+  "Transport",
   "Shop",
   "Other",
 ]);
@@ -32,10 +32,11 @@ export const CreateLocationRequestSchema = z.object({
 
 export type CreateLocationRequest = z.infer<typeof CreateLocationRequestSchema>;
 
-export const UpdateLocationRequestSchema = CreateLocationRequestSchema.partial().refine(
-  (v) => Object.keys(v).length > 0,
-  { message: "At least one field is required" },
-);
+export const UpdateLocationRequestSchema =
+  CreateLocationRequestSchema.partial().refine(
+    (v) => Object.keys(v).length > 0,
+    { message: "At least one field is required" },
+  );
 
 export type UpdateLocationRequest = z.infer<typeof UpdateLocationRequestSchema>;
 

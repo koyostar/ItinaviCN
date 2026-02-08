@@ -10,7 +10,7 @@ enum LocationCategory {
   Place
   Restaurant
   Accommodation
-  TransportNode
+  Transport
   Shop
   Other
 }

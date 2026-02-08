@@ -6,7 +6,7 @@ exports.LocationCategorySchema = zod_1.z.enum([
     "Place",
     "Restaurant",
     "Accommodation",
-    "TransportNode",
+    "Transport",
     "Shop",
     "Other",
 ]);
