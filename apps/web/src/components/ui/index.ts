@@ -3,9 +3,10 @@
  * Shared primitives used across the application.
  */
 
-export { PageLoadingState } from "./PageLoadingState";
-export { PageErrorState } from "./PageErrorState";
-export { EmptyState } from "./EmptyState";
-export { PageHeader } from "./PageHeader";
-export { FormDialog } from "./FormDialog";
 export { ConfirmDialog } from "./ConfirmDialog";
+export { EmptyState } from "./EmptyState";
+export { FormDialog } from "./FormDialog";
+export { PageErrorState } from "./PageErrorState";
+export { PageHeader } from "./PageHeader";
+export { PageLoadingState } from "./PageLoadingState";
+export { SyncMessageAlert } from "./SyncMessageAlert";

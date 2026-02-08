@@ -4,17 +4,19 @@
  */
 
 // Data fetching hooks
-export { useTrips } from "./useTrips";
-export { useTrip } from "./useTrip";
+export { useExpenses } from "./useExpenses";
 export { useItineraryItems } from "./useItineraryItems";
 export { useLocations } from "./useLocations";
-export { useExpenses } from "./useExpenses";
+export { useTrip } from "./useTrip";
+export { useTrips } from "./useTrips";
 
 // Dialog management hooks
-export { useEditDialog } from "./useEditDialog";
-export { useDetailsDialog } from "./useDetailsDialog";
 export { useDeleteConfirmation } from "./useDeleteConfirmation";
+export { useDetailsDialog } from "./useDetailsDialog";
+export { useEditDialog } from "./useEditDialog";
 
 // Form and utility hooks
+export { useExchangeRate } from "./useExchangeRate";
 export { useFormSubmit } from "./useFormSubmit";
+export { useSyncLocations } from "./useSyncLocations";
 export { useTripTimezone } from "./useTripTimezone";
