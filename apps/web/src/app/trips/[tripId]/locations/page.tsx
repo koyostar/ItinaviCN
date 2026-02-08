@@ -1,6 +1,6 @@
 "use client";
 
-import { LocationCard } from "@/components/locations";
+import { LocationCard, LocationsMap } from "@/components/locations";
 import {
   ConfirmDialog,
   EmptyState,
@@ -15,14 +15,17 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PlaceIcon from "@mui/icons-material/Place";
 import SyncIcon from "@mui/icons-material/Sync";
 import {
+  Autocomplete,
+  Box,
   Button,
   Container,
   IconButton,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { use } from "react";
+import { use, useMemo, useState } from "react";
 
 export default function LocationsPage({
   params,
@@ -36,10 +39,28 @@ export default function LocationsPage({
     tripId,
     refetch
   );
+  const [selectedCity, setSelectedCity] = useState<string | null>(null);
 
   const deleteConfirmation = useDeleteConfirmation(async (id) => {
     await api.locations.delete(tripId, id);
   }, refetch);
+
+  // Extract unique cities from locations
+  const cities = useMemo(() => {
+    const uniqueCities = new Set<string>();
+    locations.forEach((location) => {
+      if (location.city) {
+        uniqueCities.add(location.city);
+      }
+    });
+    return Array.from(uniqueCities).sort();
+  }, [locations]);
+
+  // Filter locations by selected city
+  const filteredLocations = useMemo(() => {
+    if (!selectedCity) return locations;
+    return locations.filter((location) => location.city === selectedCity);
+  }, [locations, selectedCity]);
 
   if (loading) {
     return <PageLoadingState message="Loading locations..." />;
@@ -97,16 +118,41 @@ export default function LocationsPage({
             }}
           />
         ) : (
-          <Stack spacing={2}>
-            {locations.map((location) => (
-              <LocationCard
-                key={location.id}
-                location={location}
-                tripId={tripId}
-                onDelete={deleteConfirmation.handleDelete}
+          <>
+            {cities.length > 1 && (
+              <Autocomplete
+                options={cities}
+                value={selectedCity}
+                onChange={(event, newValue) => setSelectedCity(newValue)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Filter by City"
+                    placeholder="All cities"
+                  />
+                )}
+                sx={{ maxWidth: 300 }}
+                size="small"
               />
-            ))}
-          </Stack>
+            )}
+            <Box sx={{ display: "flex", gap: 3, height: "calc(100vh - 280px)" }}>
+              <Box sx={{ flex: "0 0 400px", overflowY: "auto", pr: 1 }}>
+                <Stack spacing={2}>
+                  {filteredLocations.map((location) => (
+                    <LocationCard
+                      key={location.id}
+                      location={location}
+                      tripId={tripId}
+                      onDelete={deleteConfirmation.handleDelete}
+                    />
+                  ))}
+                </Stack>
+              </Box>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <LocationsMap locations={filteredLocations} />
+              </Box>
+            </Box>
+          </>
         )}
 
         <ConfirmDialog
