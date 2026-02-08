@@ -10,13 +10,28 @@ interface PlaceSuggestion {
     lat: number;
     lng: number;
   };
-  id?: string;
+  city?: string;
+  district?: string;
+  province?: string;
+  adcode?: string;
+  citycode?: string;
+  amapPoiId?: string;
 }
 
 interface AmapPlaceAutocompleteProps {
   label: string;
   value: string;
-  onPlaceSelect: (place: { name: string; address: string }) => void;
+  onPlaceSelect: (place: {
+    name: string;
+    address: string;
+    location?: { lat: number; lng: number };
+    city?: string;
+    district?: string;
+    province?: string;
+    adcode?: string;
+    citycode?: string;
+    amapPoiId?: string;
+  }) => void;
   placeholder?: string;
   required?: boolean;
   city?: string;
@@ -61,12 +76,12 @@ export function AmapPlaceAutocomplete({
             {
               name: `${searchValue} 酒店`,
               address: `北京市朝阳区${searchValue}路123号`,
-              id: "mock-1",
+              amapPoiId: "mock-1",
             },
             {
               name: `${searchValue} 宾馆`,
               address: `北京市海淀区${searchValue}街456号`,
-              id: "mock-2",
+              amapPoiId: "mock-2",
             },
           ];
           setOptions(mockResults);
@@ -90,17 +105,32 @@ export function AmapPlaceAutocomplete({
             name: string;
             address?: string;
             district?: string;
-            id: string;
+            adcode?: string;
+            citycode?: string;
+            id?: string;
           }>
         )
           .filter((item) => item.location) // Only include results with location
           .map((item) => {
             const [lng, lat] = item.location!.split(",").map(Number);
+            
+            // Parse district to extract city and province
+            // Format is usually: "省份省市区" or "直辖市区"
+            const districtParts = item.district ? item.district.split(/省|市/) : [];
+            const province = districtParts[0] || undefined;
+            const city = districtParts[1] || districtParts[0] || undefined;
+            const district = item.district || undefined;
+            
             return {
               name: item.name,
               address: item.address || item.district || "",
               location: lng && lat ? { lat, lng } : undefined,
-              id: item.id,
+              city,
+              district,
+              province,
+              adcode: item.adcode,
+              citycode: item.citycode,
+              amapPoiId: item.id,
             };
           });
         setOptions(suggestions);
@@ -152,6 +182,13 @@ export function AmapPlaceAutocomplete({
           onPlaceSelect({
             name: newValue.name,
             address: newValue.address,
+            location: newValue.location,
+            city: newValue.city,
+            district: newValue.district,
+            province: newValue.province,
+            adcode: newValue.adcode,
+            citycode: newValue.citycode,
+            amapPoiId: newValue.amapPoiId,
           });
         } else if (typeof newValue === "string") {
           // Handle manual text input
@@ -177,7 +214,7 @@ export function AmapPlaceAutocomplete({
       renderOption={(props, option) => {
         if (typeof option === "string") return null;
         return (
-          <li {...props} key={option.id || option.name}>
+          <li {...props} key={option.amapPoiId || option.name}>
             <div>
               <div style={{ fontWeight: 500 }}>{option.name}</div>
               <div style={{ fontSize: "0.875rem", color: "gray" }}>
