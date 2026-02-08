@@ -27,12 +27,21 @@ export function LocationsMap({ locations }: LocationsMapProps) {
 
   // Filter locations that have valid coordinates - memoize to prevent recalculation
   const locationsWithCoords = useMemo(() => {
-    return locations.filter((loc) => {
+    console.log('[LocationsMap] Received locations:', locations);
+    const withCoords = locations.filter((loc) => {
+      console.log('[LocationsMap] Checking location:', {
+        name: loc.name,
+        latitude: loc.latitude,
+        longitude: loc.longitude,
+        city: loc.city,
+      });
       if (loc.latitude === null || loc.longitude === null) return false;
       const lat = Number(loc.latitude);
       const lng = Number(loc.longitude);
       return !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
     });
+    console.log('[LocationsMap] Locations with valid coordinates:', withCoords);
+    return withCoords;
   }, [locations]);
 
   const updateMarkers = useCallback(() => {
@@ -54,6 +63,7 @@ export function LocationsMap({ locations }: LocationsMapProps) {
       .map((location) => {
         const lng = Number(location.longitude);
         const lat = Number(location.latitude);
+        console.log('[LocationsMap] Creating marker for:', location.name, 'at', [lng, lat]);
         
         const marker = new window.AMap.Marker({
           position: [lng, lat],

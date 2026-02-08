@@ -25,7 +25,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { use, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 
 export default function LocationsPage({
   params,
@@ -40,27 +40,72 @@ export default function LocationsPage({
     refetch
   );
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const deleteConfirmation = useDeleteConfirmation(async (id) => {
     await api.locations.delete(tripId, id);
   }, refetch);
 
-  // Extract unique cities from locations
+  // Extract unique provinces from locations
+  const provinces = useMemo(() => {
+    const uniqueProvinces = new Set<string>();
+    locations.forEach((location) => {
+      if (location.province) {
+        uniqueProvinces.add(location.province);
+      }
+    });
+    return Array.from(uniqueProvinces).sort();
+  }, [locations]);
+
+  // Extract unique cities from locations (filtered by selected province)
   const cities = useMemo(() => {
+    console.log('[LocationsPage] All locations:', locations);
     const uniqueCities = new Set<string>();
     locations.forEach((location) => {
-      if (location.city) {
+      // Only include cities from selected province, or all if no province selected
+      if (location.city && (!selectedProvince || location.province === selectedProvince)) {
         uniqueCities.add(location.city);
       }
     });
-    return Array.from(uniqueCities).sort();
+    const citiesArray = Array.from(uniqueCities).sort();
+    console.log('[LocationsPage] Extracted cities for province', selectedProvince, ':', citiesArray);
+    return citiesArray;
+  }, [locations, selectedProvince]);
+
+  // Extract unique categories from locations
+  const categories = useMemo(() => {
+    const uniqueCategories = new Set<string>();
+    locations.forEach((location) => {
+      uniqueCategories.add(location.category);
+    });
+    return Array.from(uniqueCategories).sort();
   }, [locations]);
 
-  // Filter locations by selected city
+  // Clear child filters when parent filter changes
+  useEffect(() => {
+    // When province changes, clear city
+    setSelectedCity(null);
+  }, [selectedProvince]);
+
+  // Filter locations by selected city, province, and category
   const filteredLocations = useMemo(() => {
-    if (!selectedCity) return locations;
-    return locations.filter((location) => location.city === selectedCity);
-  }, [locations, selectedCity]);
+    console.log('[LocationsPage] Selected filters:', { city: selectedCity, province: selectedProvince, category: selectedCategory });
+    let filtered = locations;
+    
+    if (selectedProvince) {
+      filtered = filtered.filter((location) => location.province === selectedProvince);
+    }
+    if (selectedCity) {
+      filtered = filtered.filter((location) => location.city === selectedCity);
+    }
+    if (selectedCategory) {
+      filtered = filtered.filter((location) => location.category === selectedCategory);
+    }
+    
+    console.log('[LocationsPage] Filtered locations:', filtered);
+    return filtered;
+  }, [locations, selectedCity, selectedProvince, selectedCategory]);
 
   if (loading) {
     return <PageLoadingState message="Loading locations..." />;
@@ -119,21 +164,57 @@ export default function LocationsPage({
           />
         ) : (
           <>
-            {cities.length > 1 && (
-              <Autocomplete
-                options={cities}
-                value={selectedCity}
-                onChange={(event, newValue) => setSelectedCity(newValue)}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Filter by City"
-                    placeholder="All cities"
+            {(cities.length > 1 || categories.length > 1 || provinces.length > 1) && (
+              <Stack direction="row" spacing={2} flexWrap="wrap">
+                {provinces.length > 1 && (
+                  <Autocomplete
+                    options={provinces}
+                    value={selectedProvince}
+                    onChange={(event, newValue) => setSelectedProvince(newValue)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Filter by Province"
+                        placeholder="All provinces"
+                      />
+                    )}
+                    sx={{ minWidth: 200 }}
+                    size="small"
                   />
                 )}
-                sx={{ maxWidth: 300 }}
-                size="small"
-              />
+                {cities.length > 1 && (
+                  <Autocomplete
+                    options={cities}
+                    value={selectedCity}
+                    onChange={(event, newValue) => setSelectedCity(newValue)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Filter by City"
+                        placeholder="All cities"
+                      />
+                    )}
+                    sx={{ minWidth: 200 }}
+                    size="small"
+                  />
+                )}
+                {categories.length > 1 && (
+                  <Autocomplete
+                    options={categories}
+                    value={selectedCategory}
+                    onChange={(event, newValue) => setSelectedCategory(newValue)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Filter by Category"
+                        placeholder="All categories"
+                      />
+                    )}
+                    sx={{ minWidth: 200 }}
+                    size="small"
+                  />
+                )}
+              </Stack>
             )}
             <Box sx={{ display: "flex", gap: 3, height: "calc(100vh - 280px)" }}>
               <Box sx={{ flex: "0 0 400px", overflowY: "auto", pr: 1 }}>

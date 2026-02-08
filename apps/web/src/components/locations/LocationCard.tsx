@@ -42,13 +42,6 @@ export function LocationCard({
               </Typography>
             )}
 
-            {location.latitude !== null && location.longitude !== null && (
-              <Typography variant="body2" color="text.secondary" mb={1}>
-                🗺️ {location.latitude.toFixed(6)},{" "}
-                {location.longitude.toFixed(6)}
-              </Typography>
-            )}
-
             {location.notes && (
               <Typography variant="body2" color="text.secondary">
                 {location.notes}
