@@ -143,11 +143,13 @@ export class ItineraryService {
       where: {
         tripId,
         locationId: null,
-        type: { in: ['Accommodation', 'Place', 'Food'] },
+        type: { in: ['Flight', 'Transport', 'Accommodation', 'Place', 'Food'] },
       },
     });
 
     const categoryMap: Record<string, LocationCategory> = {
+      Flight: 'Transport',
+      Transport: 'Transport',
       Accommodation: 'Accommodation',
       Place: 'Place',
       Food: 'Restaurant',
@@ -161,7 +163,13 @@ export class ItineraryService {
         string | number | undefined
       >;
 
-      if (details.address) {
+      // For flights and transport, check for airport/station addresses
+      const hasLocation =
+        details.address ||
+        (item.type === 'Flight' &&
+          (details.departureAirportAddress || details.arrivalAirportAddress));
+
+      if (hasLocation) {
         const locationName =
           item.type === 'Accommodation' && details.hotelName
             ? String(details.hotelName)

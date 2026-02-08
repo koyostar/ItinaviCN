@@ -371,9 +371,15 @@ export function ItineraryForm({
         : undefined;
       details = Object.fromEntries(
         Object.entries({
+          city: accommodationDetails.city,
+          district: accommodationDetails.district,
+          province: accommodationDetails.province,
           address: accommodationDetails.address,
           latitude: accommodationDetails.latitude,
           longitude: accommodationDetails.longitude,
+          adcode: accommodationDetails.adcode,
+          citycode: accommodationDetails.citycode,
+          amapPoiId: accommodationDetails.amapPoiId,
           guests: accommodationDetails.guests
             ? parseInt(accommodationDetails.guests)
             : undefined,
