@@ -3,6 +3,7 @@
 import { TripForm } from "@/components/forms";
 import { TripCard } from "@/components/TripCard";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { ShareTripDialog } from "@/components/trips/ShareTripDialog";
 import {
   ConfirmDialog,
   EmptyState,
@@ -17,6 +18,7 @@ import { api } from "@/lib/api";
 import type { TripResponse } from "@itinavi/schema";
 import { Container, Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function TripsPage() {
   return (
@@ -30,6 +32,7 @@ function TripsPageContent() {
   const router = useRouter();
   const { language } = useUserPreferences();
   const { trips, loading, error, refetch } = useTrips();
+  const [shareTrip, setShareTrip] = useState<TripResponse | null>(null);
 
   const deleteConfirmation = useDeleteConfirmation(async (id) => {
     await api.trips.delete(id);
@@ -80,6 +83,10 @@ function TripsPageContent() {
                 e.stopPropagation();
                 deleteConfirmation.handleDelete(trip.id);
               }}
+              onShare={(e) => {
+                e.stopPropagation();
+                setShareTrip(trip);
+              }}
               onNavigateToItinerary={(e) => {
                 e.stopPropagation();
                 router.push(`/trips/${trip.id}/itinerary`);
@@ -87,6 +94,10 @@ function TripsPageContent() {
               onNavigateToLocations={(e) => {
                 e.stopPropagation();
                 router.push(`/trips/${trip.id}/locations`);
+              }}
+              onNavigateToExpenses={(e) => {
+                e.stopPropagation();
+                router.push(`/trips/${trip.id}/expenses`);
               }}
             />
           ))}
@@ -132,6 +143,16 @@ function TripsPageContent() {
         loading={deleteConfirmation.loading}
         confirmColor="error"
       />
+
+      {shareTrip && (
+        <ShareTripDialog
+          open={!!shareTrip}
+          onClose={() => setShareTrip(null)}
+          tripId={shareTrip.id}
+          tripTitle={shareTrip.title}
+          isOwner={true} // TODO: Get from trip owner check
+        />
+      )}
     </Container>
   );
 }

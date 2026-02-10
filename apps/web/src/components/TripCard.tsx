@@ -7,11 +7,11 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import type { TripResponse } from "@itinavi/schema";
-import { COUNTRIES, CITIES, getDisplayName } from "@itinavi/schema";
+
 import { formatUTCDate } from "@/lib/dateUtils";
+import type { TripResponse } from "@itinavi/schema";
+import { CITIES, COUNTRIES, getDisplayName } from "@itinavi/schema";
+import { MdDelete, MdEdit, MdPeople, MdEvent, MdPlace, MdAttachMoney } from "react-icons/md";
 
 interface TripCardProps {
   trip: TripResponse;
@@ -19,8 +19,10 @@ interface TripCardProps {
   onClick: () => void;
   onEdit: (e: React.MouseEvent) => void;
   onDelete: (e: React.MouseEvent) => void;
+  onShare: (e: React.MouseEvent) => void;
   onNavigateToItinerary: (e: React.MouseEvent) => void;
   onNavigateToLocations: (e: React.MouseEvent) => void;
+  onNavigateToExpenses: (e: React.MouseEvent) => void;
 }
 
 export function TripCard({
@@ -29,8 +31,10 @@ export function TripCard({
   onClick,
   onEdit,
   onDelete,
+  onShare,
   onNavigateToItinerary,
   onNavigateToLocations,
+  onNavigateToExpenses,
 }: TripCardProps) {
   return (
     <Card
@@ -90,10 +94,18 @@ export function TripCard({
               <IconButton
                 size="small"
                 color="primary"
+                onClick={onShare}
+                title="Share trip"
+              >
+                <MdPeople />
+              </IconButton>
+              <IconButton
+                size="small"
+                color="primary"
                 onClick={onEdit}
                 title="Edit trip"
               >
-                <EditIcon />
+                <MdEdit />
               </IconButton>
               <IconButton
                 size="small"
@@ -101,7 +113,7 @@ export function TripCard({
                 onClick={onDelete}
                 title="Delete trip"
               >
-                <DeleteIcon />
+                <MdDelete />
               </IconButton>
             </Stack>
           </Stack>
@@ -110,6 +122,7 @@ export function TripCard({
             <Button
               variant="outlined"
               size="small"
+              startIcon={<MdEvent />}
               onClick={onNavigateToItinerary}
             >
               Itinerary
@@ -117,9 +130,18 @@ export function TripCard({
             <Button
               variant="outlined"
               size="small"
+              startIcon={<MdPlace />}
               onClick={onNavigateToLocations}
             >
               Locations
+            </Button>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<MdAttachMoney />}
+              onClick={onNavigateToExpenses}
+            >
+              Expenses
             </Button>
           </Stack>
         </Stack>
