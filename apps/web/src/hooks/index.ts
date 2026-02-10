@@ -20,6 +20,7 @@ export { useExchangeRate } from "./useExchangeRate";
 export { useFormSubmit } from "./useFormSubmit";
 export { useItineraryFilters } from "./useItineraryFilters";
 export { useLocationFilters } from "./useLocationFilters";
+export { useLoginForm } from "./useLoginForm";
 export { usePasswordChange } from "./usePasswordChange";
 export { useProfileForm } from "./useProfileForm";
 export { useSnackbar } from "./useSnackbar";

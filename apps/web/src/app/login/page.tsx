@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   Box,
   Button,
@@ -15,35 +13,27 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLoginForm } from "@/hooks";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isAuthenticated } = useAuth();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const {
+    username,
+    setUsername,
+    password,
+    setPassword,
+    error,
+    loading,
+    handleSubmit,
+  } = useLoginForm();
 
   // Redirect if already authenticated
   if (isAuthenticated) {
     router.push("/trips");
     return null;
   }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      await login(username, password);
-      router.push("/trips");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <Container maxWidth="sm">
