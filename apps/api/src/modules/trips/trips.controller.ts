@@ -14,12 +14,13 @@ import {
   TripIdParamSchema,
   TripResponseSchema,
   UpdateTripRequestSchema,
+  AddTripMemberRequestSchema,
+  UpdateTripMemberRequestSchema,
 } from '@itinavi/schema';
 import { validate } from '../../common/validate';
 import { TripsService } from './trips.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { AddTripMemberDto, UpdateTripMemberDto, RemoveTripMemberDto } from './dto/trip-member.dto';
 
 /**
  * Transforms a database trip record to API response format.
@@ -217,12 +218,13 @@ export class TripsController {
   @Post(':tripId/members')
   async addMember(
     @Param() params: unknown,
-    @Body() body: AddTripMemberDto,
+    @Body() body: unknown,
     @CurrentUser() user: any,
   ) {
     const { tripId } = validate(TripIdParamSchema, params);
+    const input = validate(AddTripMemberRequestSchema, body);
     await this.trips.requireTripOwnership(tripId, user.id);
-    return this.trips.addTripMember(tripId, body.userId, body.role);
+    return this.trips.addTripMember(tripId, input.userId, input.role);
   }
 
   /**
@@ -238,11 +240,12 @@ export class TripsController {
   async updateMemberRole(
     @Param('tripId') tripId: string,
     @Param('userId') userId: string,
-    @Body() body: UpdateTripMemberDto,
+    @Body() body: unknown,
     @CurrentUser() user: any,
   ) {
+    const input = validate(UpdateTripMemberRequestSchema, body);
     await this.trips.requireTripOwnership(tripId, user.id);
-    return this.trips.updateTripMemberRole(tripId, userId, body.role);
+    return this.trips.updateTripMemberRole(tripId, userId, input.role);
   }
 
   /**

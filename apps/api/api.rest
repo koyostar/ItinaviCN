@@ -31,6 +31,26 @@ Content-Type: application/json
 GET {{baseUrl}}/auth/me
 Authorization: Bearer {{login.response.body.accessToken}}
 
+### Update user profile
+PATCH {{baseUrl}}/auth/profile
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "displayName": "Updated Test User",
+  "email": "newemail@example.com"
+}
+
+### Change password
+POST {{baseUrl}}/auth/change-password
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "currentPassword": "password123",
+  "newPassword": "newpassword123"
+}
+
 ### ============================================
 ### TRIPS
 ### ============================================
