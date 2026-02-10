@@ -1,0 +1,286 @@
+### ItinaviCN API Testing
+### Base URL (API runs on port 3001, frontend on 3000)
+@baseUrl = http://localhost:3001
+
+### ============================================
+### AUTHENTICATION
+### ============================================
+
+### Register a new user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password123",
+  "email": "testuser@example.com",
+  "displayName": "Test User"
+}
+
+### Login (run this first to get token)
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password123"
+}
+
+### Get current user profile (requires authentication)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### ============================================
+### TRIPS
+### ============================================
+
+### List all trips for current user
+GET {{baseUrl}}/api/trips
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get a specific trip
+GET {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Create a new trip
+# @name createTrip
+POST {{baseUrl}}/api/trips
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "title": "Sichuan Adventure 2026",
+  "destinations": [
+    {
+      "country": "China",
+      "cities": ["Chengdu", "Leshan", "Emeishan"]
+    }
+  ],
+  "startDate": "2026-03-01T00:00:00.000Z",
+  "endDate": "2026-03-10T00:00:00.000Z",
+  "destinationCurrency": "CNY",
+  "originCurrency": "SGD",
+  "notes": "Panda and hotpot adventure in Sichuan province"
+}
+
+### Update a trip
+PATCH {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "title": "Updated Sichuan Adventure 2026",
+  "notes": "Extended trip - added Jiuzhaigou Valley!",
+  "destinations": [
+    {
+      "country": "China",
+      "cities": ["Chengdu", "Leshan", "Emeishan", "Jiuzhaigou"]
+    }
+  ]
+}
+
+### Delete a trip (owner only)
+DELETE {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### ============================================
+### TRIP MEMBERS (Collaboration)
+### ============================================
+
+### List trip members
+GET {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/members
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Add a member to trip (owner only)
+POST {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/members
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "userId": "user-id-here",
+  "role": "EDITOR"
+}
+
+### Update member role (owner only)
+PATCH {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/members/user-id-here
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "role": "VIEWER"
+}
+
+### Remove member from trip (owner only)
+DELETE {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/members/user-id-here
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### ============================================
+### LOCATIONS
+### ============================================
+
+### List all locations for a trip
+GET {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/locations
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get a specific location
+GET {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/locations/09bda984-2ca0-4530-85c1-bbe8f5b50aa8
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Create a new location
+POST {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/locations
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Jinli Ancient Street",
+  "category": "Place",
+  "city": "Chengdu",
+  "district": "Wuhou District",
+  "province": "Sichuan",
+  "address": "231 Wuhou Shrine Street, Wuhou District, Chengdu",
+  "latitude": 30.644548,
+  "longitude": 104.055624,
+  "notes": "Famous ancient street with traditional Sichuan snacks and handicrafts"
+}
+
+### Update a location
+PATCH {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/locations/09bda984-2ca0-4530-85c1-bbe8f5b50aa8
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "notes": "Visit in the evening when the red lanterns are lit"
+}
+
+### Delete a location
+DELETE {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/locations/09bda984-2ca0-4530-85c1-bbe8f5b50aa8
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### ============================================
+### ITINERARY ITEMS
+### ============================================
+
+### List all itinerary items for a trip
+GET {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/itinerary
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get a specific itinerary item
+GET {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/itinerary/f5ea5fee-d5a5-4b20-ac4d-cd4db457f621
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Create a new itinerary item
+POST {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/itinerary
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "type": "Place",
+  "title": "Explore Jinli Ancient Street",
+  "startDateTime": "2026-03-02T10:00:00.000Z",
+  "endDateTime": "2026-03-02T12:00:00.000Z",
+  "timezone": "Asia/Shanghai",
+  "status": "Planned",
+  "locationId": "09bda984-2ca0-4530-85c1-bbe8f5b50aa8",
+  "notes": "Try the traditional snacks and take photos with traditional architecture"
+}
+
+### Update an itinerary item
+PATCH {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/itinerary/f5ea5fee-d5a5-4b20-ac4d-cd4db457f621
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "status": "Booked",
+  "bookingRef": "JL123456"
+}
+
+### Delete an itinerary item
+DELETE {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/itinerary/f5ea5fee-d5a5-4b20-ac4d-cd4db457f621
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### ============================================
+### EXPENSES
+### ============================================
+
+### List all expenses for a trip
+GET {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/expenses
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get a specific expense
+GET {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/expenses/52614027-5929-46c4-8d06-bb8c99758a0b
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Create a new expense with splits
+POST {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/expenses
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "title": "Sichuan Hotpot Dinner",
+  "category": "Food",
+  "expenseDateTime": "2026-03-02T19:00:00.000Z",
+  "amountDestinationMinor": 28000,
+  "destinationCurrency": "CNY",
+  "exchangeRateUsed": 0.19,
+  "notes": "Spicy and delicious hotpot!",
+  "linkedLocationId": "09bda984-2ca0-4530-85c1-bbe8f5b50aa8"
+}
+
+### Update an expense
+PATCH {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/expenses/52614027-5929-46c4-8d06-bb8c99758a0b
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "notes": "Best hotpot ever! Extra spicy level was perfect.",
+  "amountDestinationMinor": 30000
+}
+
+### Delete an expense
+DELETE {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/expenses/52614027-5929-46c4-8d06-bb8c99758a0b
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### ============================================
+### EXPENSE SPLITS & BALANCES
+### ============================================
+
+### Settle an expense split (mark as paid)
+POST {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/expenses/52614027-5929-46c4-8d06-bb8c99758a0b/settle/user-id-here
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get trip balances (who owes whom)
+GET {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/balances
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get my balance summary
+GET {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/my-balance
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### ============================================
+### EXCHANGE RATES
+### ============================================
+
+### List exchange rates for a trip
+GET {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/exchange-rates
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Create an exchange rate
+POST {{baseUrl}}/api/trips/b2c98b72-39ad-4f49-8cf0-23556ddf08da/exchange-rates
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "baseCurrency": "CNY",
+  "quoteCurrency": "SGD",
+  "rate": 0.19,
+  "rateDate": "2026-03-01T00:00:00.000Z",
+  "source": "Manual"
+}
+
+### ============================================
+### HEALTH CHECK
+### ============================================
+
+### Health check
+GET {{baseUrl}}/health
