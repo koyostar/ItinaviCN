@@ -2,8 +2,21 @@
 
 import { Box, Button, Container, Stack, Typography } from "@mui/material";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  // Redirect to trips if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/trips");
+    }
+  }, [isAuthenticated, router]);
+
   return (
     <Container maxWidth="md">
       <Stack
@@ -22,16 +35,24 @@ export default function Home() {
           Plan your China trip with itineraries, maps, and expense tracking
         </Typography>
 
-        <Box>
+        <Stack direction="row" spacing={2}>
+          <Button
+            variant="outlined"
+            size="large"
+            href="/login"
+            sx={{ px: 4, py: 1.5 }}
+          >
+            Login
+          </Button>
           <Button
             variant="contained"
             size="large"
-            href="/trips"
+            href="/register"
             sx={{ px: 4, py: 1.5 }}
           >
-            View My Trips
+            Get Started
           </Button>
-        </Box>
+        </Stack>
       </Stack>
     </Container>
   );

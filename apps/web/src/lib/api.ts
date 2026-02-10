@@ -4,6 +4,14 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 /**
+ * Get the authentication token from localStorage
+ */
+function getAuthToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("itinavi_token");
+}
+
+/**
  * Custom error class for API-related errors.
  * Extends the standard Error class with HTTP status code and response data.
  */
@@ -40,13 +48,21 @@ async function fetchApi<T>(
   options?: RequestInit
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
+  const token = getAuthToken();
+
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    ...options?.headers,
+  };
+
+  // Add Authorization header if token exists
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
 
   const response = await fetch(url, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
-    },
+    headers,
   });
 
   if (!response.ok) {
@@ -213,5 +229,13 @@ export const api = {
       fetchApi(`/api/trips/${tripId}/expenses/${expenseId}`, {
         method: "DELETE",
       }),
+  },
+
+  /**
+   * Authentication endpoints
+   */
+  auth: {
+    /** Get current user profile */
+    me: () => fetchApi("/auth/me"),
   },
 };

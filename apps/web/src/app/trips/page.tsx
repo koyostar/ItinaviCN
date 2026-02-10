@@ -2,6 +2,7 @@
 
 import { TripForm } from "@/components/forms";
 import { TripCard } from "@/components/TripCard";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import {
   ConfirmDialog,
   EmptyState,
@@ -18,6 +19,14 @@ import { Container, Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
 
 export default function TripsPage() {
+  return (
+    <ProtectedRoute>
+      <TripsPageContent />
+    </ProtectedRoute>
+  );
+}
+
+function TripsPageContent() {
   const router = useRouter();
   const { language } = useUserPreferences();
   const { trips, loading, error, refetch } = useTrips();

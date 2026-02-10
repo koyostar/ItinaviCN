@@ -5,6 +5,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { theme } from "@/lib/theme";
 import { UserPreferencesProvider } from "@/contexts/UserPreferencesContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { Navigation } from "@/components/Navigation";
 import "./globals.css";
 
@@ -37,15 +38,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <UserPreferencesProvider>
-          <AppRouterCacheProvider>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              <Navigation />
-              {children}
-            </ThemeProvider>
-          </AppRouterCacheProvider>
-        </UserPreferencesProvider>
+        <AuthProvider>
+          <UserPreferencesProvider>
+            <AppRouterCacheProvider>
+              <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <Navigation />
+                {children}
+              </ThemeProvider>
+            </AppRouterCacheProvider>
+          </UserPreferencesProvider>
+        </AuthProvider>
       </body>
     </html>
   );
