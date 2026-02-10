@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import { PrismaModule } from './prisma/prisma.module';
 import { HealthController } from './health.controller';
+import { AuthModule } from './modules/auth/auth.module';
 import { TripsModule } from './modules/trips/trips.module';
 import { LocationsModule } from './modules/locations/locations.module';
 import { ItineraryModule } from './modules/itinerary/itinerary.module';
@@ -15,6 +16,7 @@ import { ExpensesModule } from './modules/expenses/expenses.module';
       envFilePath: ['.env'],
     }),
     PrismaModule,
+    AuthModule,
     TripsModule,
     LocationsModule,
     ItineraryModule,
