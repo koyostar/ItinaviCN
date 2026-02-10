@@ -8,7 +8,7 @@ import {
   PageLoadingState,
   SyncMessageAlert,
 } from "@/components/ui";
-import { useDeleteConfirmation, useLocations, useSnackbar, useSyncLocations } from "@/hooks";
+import { useDeleteConfirmation, useLocationFilters, useLocations, useSnackbar, useSyncLocations } from "@/hooks";
 import { api } from "@/lib/api";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -29,7 +29,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { use, useEffect, useMemo, useState } from "react";
+import { use } from "react";
 
 export default function LocationsPage({
   params,
@@ -46,9 +46,18 @@ export default function LocationsPage({
     refetch
   );
   const { snackbar, showSuccess, showError, hideSnackbar } = useSnackbar();
-  const [selectedCity, setSelectedCity] = useState<string | null>(null);
-  const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const {
+    selectedCity,
+    selectedProvince,
+    selectedCategory,
+    setSelectedCity,
+    setSelectedProvince,
+    setSelectedCategory,
+    provinces,
+    cities,
+    categories,
+    filteredLocations,
+  } = useLocationFilters(locations);
 
   const deleteConfirmation = useDeleteConfirmation(async (id) => {
     await api.locations.delete(tripId, id);
@@ -85,81 +94,7 @@ export default function LocationsPage({
     }
   };
 
-  // Extract unique provinces from locations
-  const provinces = useMemo(() => {
-    const uniqueProvinces = new Set<string>();
-    locations.forEach((location) => {
-      if (location.province) {
-        uniqueProvinces.add(location.province);
-      }
-    });
-    return Array.from(uniqueProvinces).sort();
-  }, [locations]);
 
-  // Extract unique cities from locations (filtered by selected province)
-  const cities = useMemo(() => {
-    console.log("[LocationsPage] All locations:", locations);
-    const uniqueCities = new Set<string>();
-    locations.forEach((location) => {
-      // Only include cities from selected province, or all if no province selected
-      if (
-        location.city &&
-        (!selectedProvince || location.province === selectedProvince)
-      ) {
-        uniqueCities.add(location.city);
-      }
-    });
-    const citiesArray = Array.from(uniqueCities).sort();
-    console.log(
-      "[LocationsPage] Extracted cities for province",
-      selectedProvince,
-      ":",
-      citiesArray
-    );
-    return citiesArray;
-  }, [locations, selectedProvince]);
-
-  // Extract unique categories from locations
-  const categories = useMemo(() => {
-    const uniqueCategories = new Set<string>();
-    locations.forEach((location) => {
-      uniqueCategories.add(location.category);
-    });
-    return Array.from(uniqueCategories).sort();
-  }, [locations]);
-
-  // Clear child filters when parent filter changes
-  useEffect(() => {
-    // When province changes, clear city
-    setSelectedCity(null);
-  }, [selectedProvince]);
-
-  // Filter locations by selected city, province, and category
-  const filteredLocations = useMemo(() => {
-    console.log("[LocationsPage] Selected filters:", {
-      city: selectedCity,
-      province: selectedProvince,
-      category: selectedCategory,
-    });
-    let filtered = locations;
-
-    if (selectedProvince) {
-      filtered = filtered.filter(
-        (location) => location.province === selectedProvince
-      );
-    }
-    if (selectedCity) {
-      filtered = filtered.filter((location) => location.city === selectedCity);
-    }
-    if (selectedCategory) {
-      filtered = filtered.filter(
-        (location) => location.category === selectedCategory
-      );
-    }
-
-    console.log("[LocationsPage] Filtered locations:", filtered);
-    return filtered;
-  }, [locations, selectedCity, selectedProvince, selectedCategory]);
 
   if (loading) {
     return <PageLoadingState message="Loading locations..." />;
