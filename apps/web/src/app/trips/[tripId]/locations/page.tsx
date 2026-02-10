@@ -10,10 +10,6 @@ import {
 } from "@/components/ui";
 import { useDeleteConfirmation, useLocationFilters, useLocations, useSnackbar, useSyncLocations } from "@/hooks";
 import { api } from "@/lib/api";
-import AddIcon from "@mui/icons-material/Add";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import PlaceIcon from "@mui/icons-material/Place";
-import SyncIcon from "@mui/icons-material/Sync";
 import {
   Alert,
   Autocomplete,
@@ -30,6 +26,7 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { use } from "react";
+import { MdAdd, MdArrowBack, MdPlace, MdSync } from "react-icons/md";
 
 export default function LocationsPage({
   params,
@@ -123,7 +120,7 @@ export default function LocationsPage({
               onClick={() => router.push(`/trips/${tripId}`)}
               size="small"
             >
-              <ArrowBackIcon />
+              <MdArrowBack />
             </IconButton>
             <Typography
               variant="h4"
@@ -137,7 +134,7 @@ export default function LocationsPage({
             {isMobile ? (
               <Button
                 variant="outlined"
-                startIcon={<SyncIcon />}
+                startIcon={<MdSync />}
                 onClick={handleSync}
                 disabled={syncing}
                 size="small"
@@ -148,7 +145,7 @@ export default function LocationsPage({
             ) : (
               <Button
                 variant="outlined"
-                startIcon={<SyncIcon />}
+                startIcon={<MdSync />}
                 onClick={handleSync}
                 disabled={syncing}
                 size="small"
@@ -159,7 +156,7 @@ export default function LocationsPage({
             {isMobile ? (
               <Button
                 variant="contained"
-                startIcon={<AddIcon />}
+                startIcon={<MdAdd />}
                 href={`/trips/${tripId}/locations/new`}
                 size="small"
                 sx={{ borderRadius: "8px", px: 1, py: 0.5 }}
@@ -169,7 +166,7 @@ export default function LocationsPage({
             ) : (
               <Button
                 variant="contained"
-                startIcon={<AddIcon />}
+                startIcon={<MdAdd />}
                 href={`/trips/${tripId}/locations/new`}
                 size="small"
               >
@@ -181,7 +178,7 @@ export default function LocationsPage({
 
         {locations.length === 0 ? (
           <EmptyState
-            icon={<PlaceIcon sx={{ fontSize: 64, color: "text.secondary" }} />}
+            icon={<MdPlace size={64} style={{ opacity: 0.6 }} />}
             title="No locations yet"
             description="Add your first location to start planning your trip"
             action={{

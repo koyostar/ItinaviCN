@@ -39,10 +39,6 @@ import {
 } from "@/lib/constants";
 import { formatUTCDate } from "@/lib/dateUtils";
 import type { ItineraryItemResponse } from "@itinavi/schema";
-import AddIcon from "@mui/icons-material/Add";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
   Button,
@@ -63,6 +59,7 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { use } from "react";
+import { MdAdd, MdAttachMoney, MdDelete, MdEdit } from "react-icons/md";
 
 export default function ItineraryPage({
   params,
@@ -232,7 +229,7 @@ export default function ItineraryPage({
                 </Typography>
                 <Button
                   variant="contained"
-                  startIcon={<AddIcon />}
+                  startIcon={<MdAdd />}
                   href={`/trips/${tripId}/itinerary/new`}
                 >
                   Add
@@ -333,14 +330,14 @@ export default function ItineraryPage({
                                       }
                                       title="Add expense for this item"
                                     >
-                                      <AttachMoneyIcon />
+                                      <MdAttachMoney />
                                     </IconButton>
                                     <IconButton
                                       size="small"
                                       color="primary"
                                       onClick={() => editDialog.openEdit(item)}
                                     >
-                                      <EditIcon />
+                                      <MdEdit />
                                     </IconButton>
                                     <IconButton
                                       size="small"
@@ -349,7 +346,7 @@ export default function ItineraryPage({
                                         deleteConfirmation.handleDelete(item.id)
                                       }
                                     >
-                                      <DeleteIcon />
+                                      <MdDelete />
                                     </IconButton>
                                   </Stack>
                                 </Stack>
