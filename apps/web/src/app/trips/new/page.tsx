@@ -1,7 +1,7 @@
 "use client";
 
 import { useUserPreferences } from "@/contexts/UserPreferencesContext";
-import { useFormSubmit } from "@/hooks";
+import { useDestinationManager, useFormSubmit } from "@/hooks";
 import { api } from "@/lib/api";
 import {
   CITIES,
@@ -26,17 +26,19 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-interface DestinationInput {
-  country: string;
-  cities: string[];
-}
-
 export default function NewTripPage() {
   const router = useRouter();
   const { language } = useUserPreferences();
-  const [destinations, setDestinations] = useState<DestinationInput[]>([
-    { country: "", cities: [""] },
-  ]);
+  const {
+    destinations,
+    handleAddDestination,
+    handleRemoveDestination,
+    handleCountryChange,
+    handleAddCity,
+    handleRemoveCity,
+    handleCityChange,
+    getValidDestinations,
+  } = useDestinationManager();
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [formData, setFormData] = useState<Partial<CreateTripRequest>>({
@@ -50,13 +52,7 @@ export default function NewTripPage() {
 
   const { handleSubmit: submitForm, submitting } = useFormSubmit(
     async (_: void) => {
-      // Filter out empty destinations
-      const validDestinations = destinations
-        .filter((d) => d.country.trim() && d.cities.some((c) => c.trim()))
-        .map((d) => ({
-          country: d.country.trim(),
-          cities: d.cities.filter((c) => c.trim()).map((c) => c.trim()),
-        }));
+      const validDestinations = getValidDestinations();
 
       const payload: CreateTripRequest = {
         title: formData.title!,
@@ -78,48 +74,6 @@ export default function NewTripPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     submitForm(undefined as void);
-  };
-
-  const handleAddDestination = () => {
-    setDestinations([...destinations, { country: "", cities: [""] }]);
-  };
-
-  const handleRemoveDestination = (index: number) => {
-    if (destinations.length > 1) {
-      setDestinations(destinations.filter((_, i) => i !== index));
-    }
-  };
-
-  const handleCountryChange = (index: number, value: string) => {
-    const updated = [...destinations];
-    updated[index].country = value;
-    setDestinations(updated);
-  };
-
-  const handleAddCity = (destIndex: number) => {
-    const updated = [...destinations];
-    updated[destIndex].cities.push("");
-    setDestinations(updated);
-  };
-
-  const handleRemoveCity = (destIndex: number, cityIndex: number) => {
-    const updated = [...destinations];
-    if (updated[destIndex].cities.length > 1) {
-      updated[destIndex].cities = updated[destIndex].cities.filter(
-        (_, i) => i !== cityIndex
-      );
-      setDestinations(updated);
-    }
-  };
-
-  const handleCityChange = (
-    destIndex: number,
-    cityIndex: number,
-    value: string
-  ) => {
-    const updated = [...destinations];
-    updated[destIndex].cities[cityIndex] = value;
-    setDestinations(updated);
   };
 
   return (

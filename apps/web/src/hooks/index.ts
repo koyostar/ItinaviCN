@@ -12,6 +12,7 @@ export { useTrips } from "./useTrips";
 
 // Dialog management hooks
 export { useDeleteConfirmation } from "./useDeleteConfirmation";
+export { useDestinationManager } from "./useDestinationManager";
 export { useDetailsDialog } from "./useDetailsDialog";
 export { useEditDialog } from "./useEditDialog";
 
