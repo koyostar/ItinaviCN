@@ -38,7 +38,6 @@ import {
   Button,
   Card,
   CardContent,
-  CircularProgress,
   Container,
   FormControl,
   InputAdornment,
@@ -92,10 +91,12 @@ export default function ExpensesPage({
   useEffect(() => {
     if (editDialog.item) {
       const dateTime = new Date(editDialog.item.expenseDateTime);
-      const localDateTime = new Date(dateTime.getTime() - dateTime.getTimezoneOffset() * 60000)
+      const localDateTime = new Date(
+        dateTime.getTime() - dateTime.getTimezoneOffset() * 60000
+      )
         .toISOString()
         .slice(0, 16);
-      
+
       setEditFormData({
         title: editDialog.item.title,
         category: editDialog.item.category,
@@ -112,15 +113,26 @@ export default function ExpensesPage({
   // Update form when rate is manually fetched
   useEffect(() => {
     if (rate !== null) {
-      setEditFormData((prev) => ({ ...prev, exchangeRateUsed: rate.toString() }));
+      setEditFormData((prev) => ({
+        ...prev,
+        exchangeRateUsed: rate.toString(),
+      }));
     }
   }, [rate]);
 
-  const { handleSubmit: submitEdit, submitting, error: submitError } = useFormSubmit(
+  const {
+    handleSubmit: submitEdit,
+    submitting,
+    error: submitError,
+  } = useFormSubmit(
     async (_: void) => {
       if (!editDialog.item) return;
 
-      if (!editFormData.title || !editFormData.amount || !editFormData.expenseDateTime) {
+      if (
+        !editFormData.title ||
+        !editFormData.amount ||
+        !editFormData.expenseDateTime
+      ) {
         throw new Error("Please fill in all required fields");
       }
 
@@ -144,7 +156,7 @@ export default function ExpensesPage({
         const fetchedRate = await fetchRate(
           trip.originCurrency,
           editFormData.destinationCurrency,
-          expenseDate,
+          expenseDate
         );
         if (fetchedRate !== null) {
           exchangeRate = fetchedRate;
@@ -337,7 +349,10 @@ export default function ExpensesPage({
                 fullWidth
                 value={editFormData.expenseDateTime}
                 onChange={(e) =>
-                  setEditFormData({ ...editFormData, expenseDateTime: e.target.value })
+                  setEditFormData({
+                    ...editFormData,
+                    expenseDateTime: e.target.value,
+                  })
                 }
                 InputLabelProps={{ shrink: true }}
               />
