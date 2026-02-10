@@ -63,3 +63,30 @@ export const ListTripsResponseSchema = z.object({
 });
 
 export type ListTripsResponse = z.infer<typeof ListTripsResponseSchema>;
+
+// ========================================
+// Trip Member / Collaboration
+// ========================================
+
+export const TripRoleSchema = z.enum(["OWNER", "EDITOR", "VIEWER"]);
+
+export type TripRole = z.infer<typeof TripRoleSchema>;
+
+export const AddTripMemberRequestSchema = z.object({
+  userId: z.string().uuid(),
+  role: TripRoleSchema,
+});
+
+export type AddTripMemberRequest = z.infer<typeof AddTripMemberRequestSchema>;
+
+export const UpdateTripMemberRequestSchema = z.object({
+  role: TripRoleSchema,
+});
+
+export type UpdateTripMemberRequest = z.infer<typeof UpdateTripMemberRequestSchema>;
+
+export const RemoveTripMemberRequestSchema = z.object({
+  userId: z.string().uuid(),
+});
+
+export type RemoveTripMemberRequest = z.infer<typeof RemoveTripMemberRequestSchema>;

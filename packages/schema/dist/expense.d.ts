@@ -16,11 +16,11 @@ export declare const ExpenseResponseSchema: z.ZodObject<{
     createdAt: z.ZodString;
     updatedAt: z.ZodString;
 }, "strip", z.ZodTypeAny, {
+    id: string;
     tripId: string;
     title: string;
     destinationCurrency: string;
     notes: string | null;
-    id: string;
     createdAt: string;
     updatedAt: string;
     category: "Accommodation" | "Transport" | "Food" | "Shop" | "Attraction" | "Other";
@@ -30,11 +30,11 @@ export declare const ExpenseResponseSchema: z.ZodObject<{
     linkedLocationId: string | null;
     exchangeRateUsed?: number | undefined;
 }, {
+    id: string;
     tripId: string;
     title: string;
     destinationCurrency: string;
     notes: string | null;
-    id: string;
     createdAt: string;
     updatedAt: string;
     category: "Accommodation" | "Transport" | "Food" | "Shop" | "Attraction" | "Other";
@@ -145,11 +145,11 @@ export declare const ListExpensesResponseSchema: z.ZodObject<{
         createdAt: z.ZodString;
         updatedAt: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        id: string;
         tripId: string;
         title: string;
         destinationCurrency: string;
         notes: string | null;
-        id: string;
         createdAt: string;
         updatedAt: string;
         category: "Accommodation" | "Transport" | "Food" | "Shop" | "Attraction" | "Other";
@@ -159,11 +159,11 @@ export declare const ListExpensesResponseSchema: z.ZodObject<{
         linkedLocationId: string | null;
         exchangeRateUsed?: number | undefined;
     }, {
+        id: string;
         tripId: string;
         title: string;
         destinationCurrency: string;
         notes: string | null;
-        id: string;
         createdAt: string;
         updatedAt: string;
         category: "Accommodation" | "Transport" | "Food" | "Shop" | "Attraction" | "Other";
@@ -175,11 +175,11 @@ export declare const ListExpensesResponseSchema: z.ZodObject<{
     }>, "many">;
 }, "strip", z.ZodTypeAny, {
     items: {
+        id: string;
         tripId: string;
         title: string;
         destinationCurrency: string;
         notes: string | null;
-        id: string;
         createdAt: string;
         updatedAt: string;
         category: "Accommodation" | "Transport" | "Food" | "Shop" | "Attraction" | "Other";
@@ -191,11 +191,11 @@ export declare const ListExpensesResponseSchema: z.ZodObject<{
     }[];
 }, {
     items: {
+        id: string;
         tripId: string;
         title: string;
         destinationCurrency: string;
         notes: string | null;
-        id: string;
         createdAt: string;
         updatedAt: string;
         category: "Accommodation" | "Transport" | "Food" | "Shop" | "Attraction" | "Other";

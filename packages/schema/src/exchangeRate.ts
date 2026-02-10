@@ -18,3 +18,18 @@ export const CreateExchangeRateInputSchema = ExchangeRateSchema.omit({
 export type CreateExchangeRateInput = z.infer<
   typeof CreateExchangeRateInputSchema
 >;
+
+// ========================================
+// External API Response Types
+// ========================================
+
+/**
+ * Response from Frankfurter API (https://www.frankfurter.app/)
+ * Used for fetching real-time exchange rates
+ */
+export interface ExchangeRateApiResponse {
+  amount: number;
+  base: string;
+  date: string;
+  rates: Record<string, number>;
+}

@@ -7,16 +7,16 @@ export declare const ExchangeRateSchema: z.ZodObject<{
     rate: z.ZodNumber;
     date: z.ZodString;
 }, "strip", z.ZodTypeAny, {
+    id: string;
     date: string;
     tripId: string;
-    id: string;
     fromCurrency: string;
     toCurrency: string;
     rate: number;
 }, {
+    id: string;
     date: string;
     tripId: string;
-    id: string;
     fromCurrency: string;
     toCurrency: string;
     rate: number;
@@ -43,3 +43,13 @@ export declare const CreateExchangeRateInputSchema: z.ZodObject<Omit<{
     rate: number;
 }>;
 export type CreateExchangeRateInput = z.infer<typeof CreateExchangeRateInputSchema>;
+/**
+ * Response from Frankfurter API (https://www.frankfurter.app/)
+ * Used for fetching real-time exchange rates
+ */
+export interface ExchangeRateApiResponse {
+    amount: number;
+    base: string;
+    date: string;
+    rates: Record<string, number>;
+}

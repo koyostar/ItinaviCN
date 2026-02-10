@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ListTripsResponseSchema = exports.TripResponseSchema = exports.UpdateTripRequestSchema = exports.CreateTripRequestSchema = exports.TripIdParamSchema = exports.DestinationSchema = exports.CurrencyCodeSchema = void 0;
+exports.RemoveTripMemberRequestSchema = exports.UpdateTripMemberRequestSchema = exports.AddTripMemberRequestSchema = exports.TripRoleSchema = exports.ListTripsResponseSchema = exports.TripResponseSchema = exports.UpdateTripRequestSchema = exports.CreateTripRequestSchema = exports.TripIdParamSchema = exports.DestinationSchema = exports.CurrencyCodeSchema = void 0;
 const zod_1 = require("zod");
 exports.CurrencyCodeSchema = zod_1.z
     .string()
@@ -38,4 +38,18 @@ exports.TripResponseSchema = zod_1.z.object({
 });
 exports.ListTripsResponseSchema = zod_1.z.object({
     items: zod_1.z.array(exports.TripResponseSchema),
+});
+// ========================================
+// Trip Member / Collaboration
+// ========================================
+exports.TripRoleSchema = zod_1.z.enum(["OWNER", "EDITOR", "VIEWER"]);
+exports.AddTripMemberRequestSchema = zod_1.z.object({
+    userId: zod_1.z.string().uuid(),
+    role: exports.TripRoleSchema,
+});
+exports.UpdateTripMemberRequestSchema = zod_1.z.object({
+    role: exports.TripRoleSchema,
+});
+exports.RemoveTripMemberRequestSchema = zod_1.z.object({
+    userId: zod_1.z.string().uuid(),
 });

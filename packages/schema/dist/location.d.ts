@@ -134,9 +134,9 @@ export declare const LocationResponseSchema: z.ZodObject<{
     createdAt: z.ZodString;
     updatedAt: z.ZodString;
 }, "strip", z.ZodTypeAny, {
+    id: string;
     tripId: string;
     notes: string | null;
-    id: string;
     createdAt: string;
     updatedAt: string;
     category: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant";
@@ -151,9 +151,9 @@ export declare const LocationResponseSchema: z.ZodObject<{
     amapPoiId: string | null;
     name: string;
 }, {
+    id: string;
     tripId: string;
     notes: string | null;
-    id: string;
     createdAt: string;
     updatedAt: string;
     category: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant";
@@ -188,9 +188,9 @@ export declare const ListLocationsResponseSchema: z.ZodObject<{
         createdAt: z.ZodString;
         updatedAt: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        id: string;
         tripId: string;
         notes: string | null;
-        id: string;
         createdAt: string;
         updatedAt: string;
         category: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant";
@@ -205,9 +205,9 @@ export declare const ListLocationsResponseSchema: z.ZodObject<{
         amapPoiId: string | null;
         name: string;
     }, {
+        id: string;
         tripId: string;
         notes: string | null;
-        id: string;
         createdAt: string;
         updatedAt: string;
         category: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant";
@@ -224,9 +224,9 @@ export declare const ListLocationsResponseSchema: z.ZodObject<{
     }>, "many">;
 }, "strip", z.ZodTypeAny, {
     items: {
+        id: string;
         tripId: string;
         notes: string | null;
-        id: string;
         createdAt: string;
         updatedAt: string;
         category: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant";
@@ -243,9 +243,9 @@ export declare const ListLocationsResponseSchema: z.ZodObject<{
     }[];
 }, {
     items: {
+        id: string;
         tripId: string;
         notes: string | null;
-        id: string;
         createdAt: string;
         updatedAt: string;
         category: "Accommodation" | "Transport" | "Shop" | "Other" | "Place" | "Restaurant";

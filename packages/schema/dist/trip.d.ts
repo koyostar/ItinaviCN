@@ -143,6 +143,7 @@ export declare const TripResponseSchema: z.ZodObject<{
     createdAt: z.ZodString;
     updatedAt: z.ZodString;
 }, "strip", z.ZodTypeAny, {
+    id: string;
     title: string;
     destinations: {
         country: string;
@@ -153,10 +154,10 @@ export declare const TripResponseSchema: z.ZodObject<{
     destinationCurrency: string;
     originCurrency: string;
     notes: string | null;
-    id: string;
     createdAt: string;
     updatedAt: string;
 }, {
+    id: string;
     title: string;
     destinations: {
         country: string;
@@ -167,7 +168,6 @@ export declare const TripResponseSchema: z.ZodObject<{
     destinationCurrency: string;
     originCurrency: string;
     notes: string | null;
-    id: string;
     createdAt: string;
     updatedAt: string;
 }>;
@@ -194,6 +194,7 @@ export declare const ListTripsResponseSchema: z.ZodObject<{
         createdAt: z.ZodString;
         updatedAt: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        id: string;
         title: string;
         destinations: {
             country: string;
@@ -204,10 +205,10 @@ export declare const ListTripsResponseSchema: z.ZodObject<{
         destinationCurrency: string;
         originCurrency: string;
         notes: string | null;
-        id: string;
         createdAt: string;
         updatedAt: string;
     }, {
+        id: string;
         title: string;
         destinations: {
             country: string;
@@ -218,12 +219,12 @@ export declare const ListTripsResponseSchema: z.ZodObject<{
         destinationCurrency: string;
         originCurrency: string;
         notes: string | null;
-        id: string;
         createdAt: string;
         updatedAt: string;
     }>, "many">;
 }, "strip", z.ZodTypeAny, {
     items: {
+        id: string;
         title: string;
         destinations: {
             country: string;
@@ -234,12 +235,12 @@ export declare const ListTripsResponseSchema: z.ZodObject<{
         destinationCurrency: string;
         originCurrency: string;
         notes: string | null;
-        id: string;
         createdAt: string;
         updatedAt: string;
     }[];
 }, {
     items: {
+        id: string;
         title: string;
         destinations: {
             country: string;
@@ -250,9 +251,37 @@ export declare const ListTripsResponseSchema: z.ZodObject<{
         destinationCurrency: string;
         originCurrency: string;
         notes: string | null;
-        id: string;
         createdAt: string;
         updatedAt: string;
     }[];
 }>;
 export type ListTripsResponse = z.infer<typeof ListTripsResponseSchema>;
+export declare const TripRoleSchema: z.ZodEnum<["OWNER", "EDITOR", "VIEWER"]>;
+export type TripRole = z.infer<typeof TripRoleSchema>;
+export declare const AddTripMemberRequestSchema: z.ZodObject<{
+    userId: z.ZodString;
+    role: z.ZodEnum<["OWNER", "EDITOR", "VIEWER"]>;
+}, "strip", z.ZodTypeAny, {
+    userId: string;
+    role: "OWNER" | "EDITOR" | "VIEWER";
+}, {
+    userId: string;
+    role: "OWNER" | "EDITOR" | "VIEWER";
+}>;
+export type AddTripMemberRequest = z.infer<typeof AddTripMemberRequestSchema>;
+export declare const UpdateTripMemberRequestSchema: z.ZodObject<{
+    role: z.ZodEnum<["OWNER", "EDITOR", "VIEWER"]>;
+}, "strip", z.ZodTypeAny, {
+    role: "OWNER" | "EDITOR" | "VIEWER";
+}, {
+    role: "OWNER" | "EDITOR" | "VIEWER";
+}>;
+export type UpdateTripMemberRequest = z.infer<typeof UpdateTripMemberRequestSchema>;
+export declare const RemoveTripMemberRequestSchema: z.ZodObject<{
+    userId: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    userId: string;
+}, {
+    userId: string;
+}>;
+export type RemoveTripMemberRequest = z.infer<typeof RemoveTripMemberRequestSchema>;
