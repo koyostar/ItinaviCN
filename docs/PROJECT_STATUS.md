@@ -1,10 +1,33 @@
 # Project Status - ItinaviCN
 
-**Last Updated**: February 6, 2026
+**Last Updated**: February 10, 2026
 
 ## Overview
 
 ItinaviCN is a travel itinerary planning application with a focus on China travel, featuring bilingual support (Chinese/English) and integration with Chinese mapping services.
+
+## 🎉 Recent Updates (February 10, 2026)
+
+### Mobile Optimization
+- ✅ Fully responsive locations page with conditional map rendering
+- ✅ Compact mobile buttons with 8px border radius
+- ✅ Horizontal scrollable filters (Province + Category on mobile)
+- ✅ Single-row header layout with responsive spacing
+
+### Location-Itinerary Integration  
+- ✅ "Add to Itinerary" button on location cards
+- ✅ Snackbar feedback for user actions
+- ✅ Auto-link to existing locations using amapPoiId
+- ✅ Auto-create locations with full Amap geographic data
+- ✅ Prevent duplicate locations when creating/syncing
+
+### Enhanced Map Features
+- ✅ POI markers with Amap PlaceSearch API
+- ✅ Rich info windows with photos, ratings, cost, hours
+- ✅ Deep links to open locations in Amap app
+- ✅ Click handlers for map-card interaction
+- ✅ Coordinate validation to prevent NaN errors
+- ✅ Mobile-friendly conditional rendering
 
 ## ✅ Completed Features
 
@@ -131,6 +154,10 @@ ItinaviCN is a travel itinerary planning application with a focus on China trave
 - [x] URL for booking/confirmation
 - [x] Linked to locations
 - [x] Linked to expenses
+- [x] Auto-link to existing locations by amapPoiId
+- [x] Auto-create locations with full Amap data
+- [x] Geographic data merge in API responses
+- [x] Duplicate location prevention
 
 **Files**:
 
@@ -148,17 +175,26 @@ ItinaviCN is a travel itinerary planning application with a focus on China trave
 - [x] Amap place ID integration
 - [x] Notes field
 - [x] Link to itinerary items and expenses
+- [x] Add to itinerary with one click
+- [x] Interactive map with POI markers
+- [x] Click to pan/zoom on map from location cards
+- [x] Sync locations from itinerary items
+- [x] Auto-deduplicate using amapPoiId
+- [x] Mobile-responsive UI with horizontal filters
+- [x] Province and category filtering
 
 **Files**:
 
 - Backend: `apps/api/src/modules/locations/`
 - Frontend: `apps/web/src/app/trips/[tripId]/locations/`
-- Hook: `apps/web/src/hooks/useLocations.ts`
+- Components: `apps/web/src/components/locations/`
+- Hook: `apps/web/src/hooks/useLocations.ts`, `apps/web/src/hooks/useSyncLocations.ts`
 
 ### 5. Amap (高德地图) Integration
 
-**Status**: ✅ Web Service API Implemented
+**Status**: ✅ Fully Implemented (Web Service + JS API)
 
+**Web Service API**:
 - [x] Web Service API key configuration
 - [x] Place autocomplete component
 - [x] Hotel/accommodation search
@@ -166,9 +202,22 @@ ItinaviCN is a travel itinerary planning application with a focus on China trave
 - [x] Mock data fallback for development
 - [x] Error handling and validation
 
+**JavaScript API (Map Display)**:
+- [x] Interactive map component with security configuration
+- [x] POI search and resolution using PlaceSearch plugin
+- [x] Native Amap POI markers with rich info windows
+- [x] Photos, ratings, cost, opening hours display
+- [x] Deep links to open locations in Amap app
+- [x] Click handlers for map-card interaction
+- [x] Coordinate validation and NaN error prevention
+- [x] Conditional rendering for mobile optimization
+- [x] Support for both coordinates and amapPoiId
+
 **Documentation**: `docs/AMAP_INTEGRATION.md`
 
-**Component**: `apps/web/src/components/AmapPlaceAutocomplete.tsx`
+**Components**: 
+- `apps/web/src/components/AmapPlaceAutocomplete.tsx`
+- `apps/web/src/components/locations/LocationsMap.tsx`
 
 ### 6. Database Schema
 
@@ -206,11 +255,14 @@ ItinaviCN is a travel itinerary planning application with a focus on China trave
 - [x] `useTrip` - Single trip fetching and updates
 - [x] `useItineraryItems` - Itinerary item management
 - [x] `useLocations` - Location management
+- [x] `useSyncLocations` - Sync locations from itinerary
 - [x] `useTripTimezone` - Timezone handling
 - [x] `useFormSubmit` - Form submission with loading states
 - [x] `useDeleteConfirmation` - Delete confirmation dialogs
 - [x] `useDetailsDialog` - Details view dialogs
 - [x] `useEditDialog` - Edit form dialogs
+- [x] `useExchangeRate` - Exchange rate calculations
+- [x] `useExpenses` - Expense management
 
 **Directory**: `apps/web/src/hooks/`
 
@@ -299,11 +351,14 @@ ItinaviCN is a travel itinerary planning application with a focus on China trave
 
 ### Priority 2: Medium
 
-- [ ] **Amap JavaScript API Integration**
-  - Interactive map display
-  - Show itinerary items on map
-  - Route visualization
-  - Location picker with map interface
+- [x] **Amap JavaScript API Integration** ✅
+  - ✅ Interactive map display
+  - ✅ Show locations on map with POI markers
+  - ✅ Rich info windows with photos and details
+  - ✅ Deep links to Amap app
+  - [ ] Show itinerary items on map (timeline view)
+  - [ ] Route visualization
+  - [ ] Location picker with map interface
 
 - [ ] **Advanced Search and Filtering**
   - Search across trips
@@ -350,6 +405,11 @@ ItinaviCN is a travel itinerary planning application with a focus on China trave
 
 **None currently reported** ✨
 
+### Recently Fixed
+- ✅ Map initialization errors on mobile (fixed with conditional rendering)
+- ✅ Invalid LngLat(NaN, NaN) errors (fixed with coordinate validation)
+- ✅ Duplicate locations when syncing (fixed with amapPoiId matching)
+
 ## 📊 Code Quality
 
 - ✅ No TypeScript errors
@@ -357,6 +417,9 @@ ItinaviCN is a travel itinerary planning application with a focus on China trave
 - ✅ Consistent code style
 - ✅ Type-safe API communication
 - ✅ Proper error handling
+- ✅ Mobile responsive design
+- ✅ Coordinate validation and NaN prevention
+- ✅ Duplicate data prevention
 
 ## 🎯 Next Steps (Recommended)
 
@@ -375,10 +438,10 @@ ItinaviCN is a travel itinerary planning application with a focus on China trave
    - Add visual itinerary cards
    - Implement drag-and-drop
 
-4. **Integrate Amap JavaScript API** (2-3 days)
-   - Set up map component
-   - Display locations on map
-   - Add route visualization
+4. **Enhance Amap Map Features** (1-2 days)
+   - Show itinerary items on timeline map
+   - Add route visualization between locations
+   - Add location picker with map interface
 
 5. **Add Export Features** (2 days)
    - PDF export with trip details
@@ -389,12 +452,13 @@ ItinaviCN is a travel itinerary planning application with a focus on China trave
 - **Backend Modules**: 3 (trips, itinerary, locations)
 - **Frontend Pages**: 8+
 - **Database Models**: 5
-- **Custom Hooks**: 10
-- **Reusable Components**: 30+
+- **Custom Hooks**: 12
+- **Reusable Components**: 35+
 - **Itinerary Types**: 5 (all implemented)
 - **Supported Languages**: 2 (Chinese, English)
 - **Countries in Dictionary**: 8
-- **Lines of Code**: ~5,000+ (estimated)
+- **Map Integration**: 2 APIs (Web Service + JavaScript)
+- **Lines of Code**: ~6,500+ (estimated)
 
 ## 🛠️ Technology Decisions
 

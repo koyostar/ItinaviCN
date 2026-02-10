@@ -1,0 +1,747 @@
+# Implementation Plan: Multi-User Collaboration & Expense Management
+
+**Created**: February 10, 2026  
+**Status**: Planning Phase  
+**Priority**: High
+
+## 📋 Overview
+
+Transform ItinaviCN from a single-user application to a collaborative trip planning platform with user authentication, trip sharing, and advanced expense management including receipt uploads and expense splitting.
+
+## 🎯 Core Features
+
+### 1. User Authentication & Management ✨
+- User registration and login
+- Password reset and email verification
+- User profile management
+- Session management with JWT tokens
+
+### 2. Trip Collaboration 👥
+- Add buddies/collaborators to trips
+- Role-based permissions (Owner, Editor, Viewer)
+- All buddies can edit itinerary, locations, and expenses
+- Real-time updates for collaborative editing
+
+### 3. Expense Splitting 💰
+- Split expenses equally among buddies
+- Custom split amounts per person
+- Track who paid and who owes
+- Settlement tracking and reminders
+
+### 4. Receipt & Image Management 📸
+- Upload receipt images to expenses
+- Support multiple images per expense
+- Image preview and download
+- OCR for automatic expense amount detection (future)
+
+## 🏗️ Technical Architecture
+
+### Tech Stack Additions
+
+**Backend**:
+- **Authentication**: Passport.js with JWT strategy
+- **File Upload**: Multer + Cloud Storage (AWS S3 / Cloudflare R2 / local storage)
+- **Email**: Nodemailer for notifications
+- **Real-time** (optional): Socket.io for live updates
+
+**Frontend**:
+- **Auth State**: Context API or Zustand for global auth state
+- **File Upload**: React Dropzone for drag-and-drop
+- **Image Preview**: react-image-lightbox or similar
+- **Notifications**: Material-UI Snackbar + push notifications
+
+**Database**:
+- New tables: User, TripMember, ExpenseSplit, Receipt
+- Updated tables: Trip, Expense with ownership fields
+
+### Security Considerations
+
+- **Password**: bcrypt hashing (salt rounds: 10)
+- **JWT**: Short-lived access tokens (15min) + refresh tokens (7 days)
+- **CORS**: Restricted to frontend domain
+- **File Upload**: File type validation, size limits (5MB per image)
+- **API**: Rate limiting with express-rate-limit
+- **Authorization**: Row-level security checks
+
+## 📊 Database Schema Changes
+
+### New Tables
+
+#### User
+```prisma
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  name          String?
+  avatar        String?  // URL to avatar image
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  ownedTrips    Trip[]   @relation("TripOwner")
+  tripMembers   TripMember[]
+  expenses      Expense[] @relation("ExpensePaidBy")
+  expenseSplits ExpenseSplit[]
+  
+  @@index([email])
+}
+```
+
+#### TripMember
+```prisma
+model TripMember {
+  id        String   @id @default(cuid())
+  tripId    String
+  userId    String
+  role      TripRole @default(EDITOR) // OWNER, EDITOR, VIEWER
+  joinedAt  DateTime @default(now())
+  
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([tripId, userId])
+  @@index([tripId])
+  @@index([userId])
+}
+
+enum TripRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+```
+
+#### ExpenseSplit
+```prisma
+model ExpenseSplit {
+  id         String   @id @default(cuid())
+  expenseId  String
+  userId     String
+  amount     Decimal  @db.Decimal(10, 2)
+  isPaid     Boolean  @default(false)
+  paidAt     DateTime?
+  
+  expense    Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([expenseId, userId])
+  @@index([expenseId])
+  @@index([userId])
+}
+```
+
+#### Receipt
+```prisma
+model Receipt {
+  id          String   @id @default(cuid())
+  expenseId   String
+  filename    String
+  originalName String
+  mimeType    String
+  size        Int      // bytes
+  url         String   // S3/R2 URL or local path
+  uploadedAt  DateTime @default(now())
+  uploadedBy  String?  // userId
+  
+  expense     Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  
+  @@index([expenseId])
+}
+```
+
+### Updated Tables
+
+#### Trip
+```prisma
+model Trip {
+  // ... existing fields
+  ownerId     String   // Add owner reference
+  owner       User     @relation("TripOwner", fields: [ownerId], references: [id])
+  members     TripMember[]
+  isShared    Boolean  @default(false)
+  
+  @@index([ownerId])
+}
+```
+
+#### Expense
+```prisma
+model Expense {
+  // ... existing fields
+  paidBy      String?  // userId who paid
+  paidByUser  User?    @relation("ExpensePaidBy", fields: [paidBy], references: [id])
+  splits      ExpenseSplit[]
+  receipts    Receipt[]
+  
+  @@index([paidBy])
+}
+```
+
+#### ItineraryItem
+```prisma
+model ItineraryItem {
+  // ... existing fields
+  createdBy   String?  // userId who created
+  updatedBy   String?  // userId who last updated
+  
+  @@index([createdBy])
+}
+```
+
+#### Location
+```prisma
+model Location {
+  // ... existing fields
+  createdBy   String?  // userId who created
+  updatedBy   String?  // userId who last updated
+  
+  @@index([createdBy])
+}
+```
+
+## 🚀 Implementation Phases
+
+### Phase 1: User Authentication (5-7 days)
+
+**Priority**: Critical  
+**Dependencies**: None
+
+#### Backend Tasks
+- [x] Install dependencies: `passport`, `passport-jwt`, `bcrypt`, `jsonwebtoken`
+- [ ] Create User model and migration
+- [ ] Implement AuthService (register, login, verify, refresh token)
+- [ ] Create AuthController with endpoints
+- [ ] Implement JWT strategy with Passport
+- [ ] Add authentication guards/middleware
+- [ ] Add password reset flow with email
+
+**API Endpoints**:
+```typescript
+POST   /api/auth/register        // Register new user
+POST   /api/auth/login           // Login (returns access + refresh tokens)
+POST   /api/auth/refresh         // Refresh access token
+POST   /api/auth/logout          // Invalidate refresh token
+GET    /api/auth/me              // Get current user
+PATCH  /api/auth/profile         // Update profile
+POST   /api/auth/forgot-password // Request password reset
+POST   /api/auth/reset-password  // Reset password with token
+```
+
+#### Frontend Tasks
+- [ ] Create auth context/provider
+- [ ] Build login page
+- [ ] Build registration page
+- [ ] Build forgot password page
+- [ ] Implement token storage (localStorage/cookies)
+- [ ] Add auth interceptor to API client
+- [ ] Create ProtectedRoute component
+- [ ] Add logout functionality
+- [ ] Build user profile page
+
+**Files to Create**:
+```
+Backend:
+  apps/api/src/modules/auth/
+    ├── auth.module.ts
+    ├── auth.controller.ts
+    ├── auth.service.ts
+    ├── strategies/jwt.strategy.ts
+    ├── guards/jwt-auth.guard.ts
+    ├── decorators/current-user.decorator.ts
+    └── dto/auth.dto.ts
+
+Frontend:
+  apps/web/src/contexts/AuthContext.tsx
+  apps/web/src/app/auth/
+    ├── login/page.tsx
+    ├── register/page.tsx
+    └── forgot-password/page.tsx
+  apps/web/src/components/auth/
+    ├── LoginForm.tsx
+    ├── RegisterForm.tsx
+    └── ProtectedRoute.tsx
+```
+
+**Estimated Time**: 5-7 days
+
+---
+
+### Phase 2: Trip Collaboration (7-10 days)
+
+**Priority**: High  
+**Dependencies**: Phase 1 (Authentication)
+
+#### Backend Tasks
+- [ ] Create TripMember model and migration
+- [ ] Add ownerId to Trip model
+- [ ] Implement TripMemberService (add, remove, update role)
+- [ ] Add authorization checks to all trip endpoints
+- [ ] Add member list endpoint
+- [ ] Send email invitations to buddies
+- [ ] Add activity log for collaborative changes (optional)
+
+**API Endpoints**:
+```typescript
+// Trip Member Management
+POST   /api/trips/:tripId/members        // Add member to trip
+GET    /api/trips/:tripId/members        // List all members
+PATCH  /api/trips/:tripId/members/:userId // Update member role
+DELETE /api/trips/:tripId/members/:userId // Remove member
+POST   /api/trips/:tripId/invite         // Send email invitation
+
+// Updated Authorization
+// All existing trip endpoints check user is owner or member with appropriate role
+```
+
+#### Frontend Tasks
+- [ ] Add "Share Trip" button to trip page
+- [ ] Build member management dialog
+- [ ] Add member invitation form (email input)
+- [ ] Display member list with role badges
+- [ ] Add role change dropdown (owner only)
+- [ ] Add remove member button (owner only)
+- [ ] Show collaborator avatars on trip card
+- [ ] Add "Shared with X people" indicator
+- [ ] Update all forms to show created/updated by info
+
+**Authorization Logic**:
+```typescript
+// Example: Who can do what?
+- OWNER: Full control (delete trip, manage members, all edits)
+- EDITOR: Add/edit/delete itinerary, locations, expenses
+- VIEWER: View only, no modifications
+```
+
+**Files to Create**:
+```
+Backend:
+  apps/api/src/modules/trip-members/
+    ├── trip-member.module.ts
+    ├── trip-member.service.ts
+    ├── trip-member.controller.ts
+    └── guards/trip-authorization.guard.ts
+
+Frontend:
+  apps/web/src/components/trips/
+    ├── ShareTripDialog.tsx
+    ├── MemberList.tsx
+    ├── MemberInviteForm.tsx
+    └── MemberCard.tsx
+```
+
+**Estimated Time**: 7-10 days
+
+---
+
+### Phase 3: Expense Splitting (5-7 days)
+
+**Priority**: High  
+**Dependencies**: Phase 2 (Trip Collaboration)
+
+#### Backend Tasks
+- [ ] Create ExpenseSplit model and migration
+- [ ] Update Expense model with paidBy field
+- [ ] Implement ExpenseSplitService (create, update, delete splits)
+- [ ] Add auto-split calculation (equal, custom, percentage)
+- [ ] Add settlement calculation endpoints
+- [ ] Update expense response to include splits
+
+**API Endpoints**:
+```typescript
+// Expense Split Management
+POST   /api/trips/:tripId/expenses/:expenseId/splits  // Create/update splits
+GET    /api/trips/:tripId/expenses/:expenseId/splits  // Get expense splits
+DELETE /api/trips/:tripId/expenses/:expenseId/splits/:userId // Remove split
+POST   /api/trips/:tripId/expenses/:expenseId/auto-split // Auto split equally
+
+// Settlement
+GET    /api/trips/:tripId/settlements    // Get who owes whom
+POST   /api/trips/:tripId/settle          // Mark settlements as paid
+```
+
+#### Frontend Tasks
+- [ ] Update expense form to include "Paid by" dropdown
+- [ ] Add expense split section to form
+- [ ] Build split calculator (equal/custom/percentage)
+- [ ] Show split breakdown on expense card
+- [ ] Create settlement summary page
+- [ ] Build "Who owes whom" visualization
+- [ ] Add "Mark as settled" functionality
+- [ ] Add split expense badge/indicator
+
+**Split Calculation Examples**:
+```typescript
+// Example: Dinner for 3 people, total 300 CNY
+// Equal split:
+Person A (paid): 300 CNY → owes 0, receives 200
+Person B: owes 100
+Person C: owes 100
+
+// Custom split:
+Person A (paid): 300 CNY → owes 0, receives 220
+Person B: owes 120 (had dessert)
+Person C: owes 80 (just main)
+```
+
+**Files to Create**:
+```
+Backend:
+  apps/api/src/modules/expense-splits/
+    ├── expense-split.service.ts
+    └── dto/split.dto.ts
+
+Frontend:
+  apps/web/src/components/expenses/
+    ├── ExpenseSplitForm.tsx
+    ├── SplitCalculator.tsx
+    ├── SettlementSummary.tsx
+    └── SettlementCard.tsx
+  apps/web/src/app/trips/[tripId]/settlements/
+    └── page.tsx
+```
+
+**Estimated Time**: 5-7 days
+
+---
+
+### Phase 4: Receipt Image Upload (4-6 days)
+
+**Priority**: Medium  
+**Dependencies**: Phase 1 (Authentication)
+
+#### Backend Tasks
+- [ ] Install dependencies: `multer`, `@aws-sdk/client-s3` (or local storage)
+- [ ] Create Receipt model and migration
+- [ ] Implement FileUploadService (upload, delete, get URL)
+- [ ] Add receipt upload endpoint with file validation
+- [ ] Configure storage (S3/R2 or local uploads folder)
+- [ ] Add image compression/optimization (optional)
+- [ ] Implement delete receipt endpoint
+
+**Storage Options**:
+1. **AWS S3** (production recommended)
+   - Pros: Scalable, reliable, CDN integration
+   - Cons: Costs money
+   
+2. **Cloudflare R2** (cost-effective alternative)
+   - Pros: S3-compatible, free egress, cheaper
+   - Cons: Newer service
+   
+3. **Local Storage** (development/small deployments)
+   - Pros: Free, simple
+   - Cons: Not scalable, no CDN
+
+**API Endpoints**:
+```typescript
+POST   /api/trips/:tripId/expenses/:expenseId/receipts      // Upload receipt
+GET    /api/trips/:tripId/expenses/:expenseId/receipts      // List receipts
+DELETE /api/trips/:tripId/expenses/:expenseId/receipts/:id  // Delete receipt
+GET    /api/receipts/:id/download                          // Download receipt
+```
+
+#### Frontend Tasks
+- [ ] Install react-dropzone
+- [ ] Build receipt upload component with drag-and-drop
+- [ ] Add image preview in expense form
+- [ ] Display receipt thumbnails on expense cards
+- [ ] Build receipt lightbox/gallery view
+- [ ] Add delete receipt button
+- [ ] Show upload progress indicator
+- [ ] Add file size and type validation
+- [ ] Support multiple image uploads
+
+**File Upload Constraints**:
+```typescript
+- Max file size: 5MB per image
+- Allowed formats: JPEG, PNG, PDF
+- Max receipts per expense: 10
+- File naming: {expenseId}_{timestamp}_{random}.{ext}
+```
+
+**Files to Create**:
+```
+Backend:
+  apps/api/src/modules/receipts/
+    ├── receipt.module.ts
+    ├── receipt.controller.ts
+    ├── receipt.service.ts
+    └── upload.config.ts
+
+Frontend:
+  apps/web/src/components/expenses/
+    ├── ReceiptUpload.tsx
+    ├── ReceiptGallery.tsx
+    ├── ReceiptPreview.tsx
+    └── ReceiptLightbox.tsx
+```
+
+**Estimated Time**: 4-6 days
+
+---
+
+## 🎨 Additional Features (Lower Priority)
+
+### 5. Real-time Collaboration (Optional, 7-10 days)
+
+**Why**: See changes from other users live without refreshing
+
+**Implementation**:
+- Install Socket.io on backend and frontend
+- Emit events on create/update/delete operations
+- Listen for events and update UI in real-time
+- Show "User X is editing..." indicators
+- Optimistic UI updates
+
+**Events**:
+```typescript
+// Socket events
+'itinerary:created'
+'itinerary:updated'
+'itinerary:deleted'
+'location:created'
+'expense:created'
+'member:joined'
+```
+
+### 6. Notifications & Activity Feed (5-7 days)
+
+**Why**: Keep users informed of trip changes
+
+**Features**:
+- In-app notification center
+- Email notifications for important events
+- Activity feed on trip dashboard
+- Notification preferences per user
+
+**Events to Notify**:
+- New member added to trip
+- Expense added/split created
+- Itinerary item changed
+- Someone settled their expenses
+
+### 7. Mobile App (30-60 days)
+
+**Why**: Better mobile experience, offline access
+
+**Technology**: React Native or Expo
+
+**Features**:
+- Same features as web app
+- Camera integration for receipts
+- Offline mode with sync
+- Push notifications
+- Location tracking for auto-check-in
+
+### 8. Advanced Expense Features (7-10 days)
+
+**Features**:
+- OCR for receipt scanning (Tesseract.js or cloud OCR)
+- Multi-currency expense tracking per item
+- Budget alerts and tracking
+- Expense categories with icons
+- Export expenses to Excel/CSV
+- Expense approval workflow (optional)
+
+### 9. Trip Templates & Cloning (3-5 days)
+
+**Why**: Save time for similar trips
+
+**Features**:
+- Save trip as template
+- Browse public templates
+- Clone past trips
+- Copy itinerary between trips
+
+### 10. Social Features (10-15 days)
+
+**Features**:
+- Public trip sharing (read-only link)
+- Trip reviews and ratings
+- Photo gallery per trip
+- Comments on itinerary items
+- Like/reaction system
+
+### 11. AI-Powered Features (15-30 days)
+
+**Features**:
+- AI itinerary suggestions based on destination
+- Budget recommendations
+- Weather-aware packing lists
+- Optimal route planning
+- Translation integration
+
+## 📅 Recommended Timeline
+
+### Immediate Priority (Weeks 1-4)
+1. **Week 1-2**: Phase 1 - User Authentication
+2. **Week 3-4**: Phase 2 - Trip Collaboration  
+   **Milestone**: Users can invite buddies and collaborate
+
+### Short-term (Weeks 5-8)
+3. **Week 5-6**: Phase 3 - Expense Splitting
+4. **Week 7-8**: Phase 4 - Receipt Upload  
+   **Milestone**: Full expense management with splitting
+
+### Medium-term (Months 3-4)
+5. Notifications & Activity Feed
+6. Advanced Expense Features (OCR)
+7. Mobile responsiveness polish  
+   **Milestone**: Production-ready collaborative app
+
+### Long-term (Months 5-6+)
+8. Real-time Collaboration
+9. Mobile App (React Native)
+10. AI-Powered Features
+11. Social Features
+
+## 🔧 Development Setup Changes
+
+### Environment Variables (.env)
+
+```bash
+# Authentication
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+JWT_REFRESH_SECRET=your-refresh-token-secret
+JWT_ACCESS_EXPIRY=15m
+JWT_REFRESH_EXPIRY=7d
+
+# Email (for invitations and notifications)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+
+# File Upload
+UPLOAD_STORAGE=local  # or 's3' or 'r2'
+UPLOAD_MAX_SIZE=5242880  # 5MB in bytes
+UPLOAD_DIR=./uploads  # for local storage
+
+# AWS S3 (if using S3)
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret-key
+AWS_S3_BUCKET=itinavi-receipts
+
+# Cloudflare R2 (if using R2)
+R2_ACCOUNT_ID=your-account-id
+R2_ACCESS_KEY_ID=your-access-key
+R2_SECRET_ACCESS_KEY=your-secret-key
+R2_BUCKET_NAME=itinavi-receipts
+
+# Frontend
+NEXT_PUBLIC_API_URL=http://localhost:3001
+```
+
+### Package Dependencies
+
+**Backend** (`apps/api/package.json`):
+```json
+{
+  "dependencies": {
+    "@nestjs/passport": "^10.0.0",
+    "@nestjs/jwt": "^10.0.0",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.0",
+    "bcrypt": "^5.1.0",
+    "@types/bcrypt": "^5.0.0",
+    "@aws-sdk/client-s3": "^3.400.0",
+    "multer": "^1.4.5-lts.1",
+    "@types/multer": "^1.4.7",
+    "nodemailer": "^6.9.0",
+    "@types/nodemailer": "^6.4.0",
+    "socket.io": "^4.6.0" // optional for real-time
+  }
+}
+```
+
+**Frontend** (`apps/web/package.json`):
+```json
+{
+  "dependencies": {
+    "react-dropzone": "^14.2.3",
+    "react-image-lightbox": "^5.1.4",
+    "socket.io-client": "^4.6.0", // optional for real-time
+    "zustand": "^4.4.0" // optional, alternative to Context API
+  }
+}
+```
+
+### Schema Package Updates
+
+Add new Zod schemas in `packages/schema/src/`:
+- `user.ts` - User schemas
+- `tripMember.ts` - Trip member schemas
+- `expenseSplit.ts` - Expense split schemas
+- `receipt.ts` - Receipt schemas
+- Update `expense.ts` with paidBy and splits
+
+## 🧪 Testing Strategy
+
+### Unit Tests
+- Auth service: registration, login, token validation
+- Authorization guards: role checks
+- Expense split calculations
+- File upload validation
+
+### Integration Tests
+- End-to-end auth flow
+- Trip member invitation and acceptance
+- Expense creation with splits
+- Receipt upload and retrieval
+
+### E2E Tests
+- User registration → create trip → invite buddy → add expense → split
+- Receipt upload and deletion
+
+## 📊 Success Metrics
+
+### Phase 1-2 Success Criteria
+- [ ] Users can register and login
+- [ ] Users can invite buddies via email
+- [ ] Multiple users can edit same trip
+- [ ] Changes are immediately visible to all members
+
+### Phase 3-4 Success Criteria
+- [ ] Expenses can be split among members
+- [ ] Settlement calculations are accurate
+- [ ] Receipts can be uploaded and viewed
+- [ ] Image uploads work reliably
+
+### Overall Success Metrics
+- User retention rate > 60% after 1 month
+- Average trip has 2+ collaborators
+- 80%+ of expenses include receipt images
+- Load time < 2 seconds for all pages
+
+## 🚨 Risks & Mitigation
+
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| Complex auth implementation | High | Use well-tested libraries (Passport.js), follow security best practices |
+| File storage costs | Medium | Start with local storage, migrate to R2 (cheaper than S3) |
+| Concurrent editing conflicts | Medium | Implement optimistic locking or real-time sync |
+| Email delivery issues | Low | Use reliable SMTP service (SendGrid, AWS SES) |
+| Performance with many members | Medium | Add pagination, implement caching |
+
+## 📚 Resources & References
+
+- [Passport.js Documentation](http://www.passportjs.org/)
+- [JWT Best Practices](https://tools.ietf.org/html/rfc8725)
+- [NestJS Authentication](https://docs.nestjs.com/security/authentication)
+- [Multer Documentation](https://github.com/expressjs/multer)
+- [AWS S3 SDK for JavaScript v3](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/s3-example-creating-buckets.html)
+- [React Dropzone](https://react-dropzone.js.org/)
+- [Socket.io Documentation](https://socket.io/docs/v4/)
+
+## 🎯 Next Steps
+
+1. **Review this plan** with team/stakeholders
+2. **Prioritize phases** based on business needs
+3. **Set up development timeline** and assign tasks
+4. **Create GitHub issues** for each major task
+5. **Begin Phase 1** implementation
+
+---
+
+**Questions or feedback?** Update this document as the project evolves.
