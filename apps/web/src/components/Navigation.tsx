@@ -98,6 +98,9 @@ export function Navigation() {
                       {user?.displayName || user?.username}
                     </Typography>
                   </MenuItem>
+                  <MenuItem onClick={() => { handleMenuClose(); router.push("/profile"); }}>
+                    Profile
+                  </MenuItem>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
               </>

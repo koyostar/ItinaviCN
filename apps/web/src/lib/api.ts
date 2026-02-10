@@ -50,9 +50,9 @@ async function fetchApi<T>(
   const url = `${API_BASE_URL}${endpoint}`;
   const token = getAuthToken();
 
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...options?.headers,
+    ...(options?.headers as Record<string, string>),
   };
 
   // Add Authorization header if token exists
@@ -237,5 +237,25 @@ export const api = {
   auth: {
     /** Get current user profile */
     me: () => fetchApi("/auth/me"),
+    /** Update user profile */
+    updateProfile: (data: unknown) =>
+      fetchApi("/auth/profile", {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }),
+    /** Change password */
+    changePassword: (data: unknown) =>
+      fetchApi("/auth/change-password", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    /** Get all users (dev only) */
+    getAllUsers: () => fetchApi("/auth/users"),
+    /** Reset user password to default (dev only) */
+    devResetPassword: (userId: string) =>
+      fetchApi("/auth/dev-reset-password", {
+        method: "POST",
+        body: JSON.stringify({ userId }),
+      }),
   },
 };
