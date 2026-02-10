@@ -18,5 +18,6 @@ export { useEditDialog } from "./useEditDialog";
 // Form and utility hooks
 export { useExchangeRate } from "./useExchangeRate";
 export { useFormSubmit } from "./useFormSubmit";
+export { useSnackbar } from "./useSnackbar";
 export { useSyncLocations } from "./useSyncLocations";
 export { useTripTimezone } from "./useTripTimezone";

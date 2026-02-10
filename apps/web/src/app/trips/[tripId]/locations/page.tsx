@@ -8,7 +8,7 @@ import {
   PageLoadingState,
   SyncMessageAlert,
 } from "@/components/ui";
-import { useDeleteConfirmation, useLocations, useSyncLocations } from "@/hooks";
+import { useDeleteConfirmation, useLocations, useSnackbar, useSyncLocations } from "@/hooks";
 import { api } from "@/lib/api";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -45,14 +45,10 @@ export default function LocationsPage({
     tripId,
     refetch
   );
+  const { snackbar, showSuccess, showError, hideSnackbar } = useSnackbar();
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-    severity: "success" | "error";
-  }>({ open: false, message: "", severity: "success" });
 
   const deleteConfirmation = useDeleteConfirmation(async (id) => {
     await api.locations.delete(tripId, id);
@@ -81,17 +77,11 @@ export default function LocationsPage({
         notes: location.notes || undefined,
       });
 
-      setSnackbar({
-        open: true,
-        message: `Added "${location.name}" to itinerary`,
-        severity: "success",
-      });
+      showSuccess(`Added "${location.name}" to itinerary`);
     } catch (error) {
-      setSnackbar({
-        open: true,
-        message: `Failed to add to itinerary: ${error instanceof Error ? error.message : "Unknown error"}`,
-        severity: "error",
-      });
+      showError(
+        `Failed to add to itinerary: ${error instanceof Error ? error.message : "Unknown error"}`
+      );
     }
   };
 
@@ -395,11 +385,11 @@ export default function LocationsPage({
         <Snackbar
           open={snackbar.open}
           autoHideDuration={4000}
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          onClose={hideSnackbar}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         >
           <Alert
-            onClose={() => setSnackbar({ ...snackbar, open: false })}
+            onClose={hideSnackbar}
             severity={snackbar.severity}
             sx={{ width: "100%" }}
           >
