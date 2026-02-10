@@ -1,18 +1,13 @@
 "use client";
 
 import { TripForm } from "@/components/forms";
+import { ShareTripDialog } from "@/components/trips/ShareTripDialog";
 import { ConfirmDialog } from "@/components/ui";
 import { useUserPreferences } from "@/contexts/UserPreferencesContext";
 import { api } from "@/lib/api";
 import { calculateDays, formatUTCDate } from "@/lib/dateUtils";
-import { CITIES, COUNTRIES, getDisplayName } from "@itinavi/schema";
 import type { CreateTripRequest, TripResponse } from "@itinavi/schema";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import EventIcon from "@mui/icons-material/Event";
-import PlaceIcon from "@mui/icons-material/Place";
+import { CITIES, COUNTRIES, getDisplayName } from "@itinavi/schema";
 import {
   Box,
   Button,
@@ -30,6 +25,16 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
+import {
+  MdAttachMoney,
+  MdCalendarMonth,
+  MdDelete,
+  MdEdit,
+  MdEvent,
+  MdPeople,
+  MdPlace,
+  MdReceipt,
+} from "react-icons/md";
 
 export default function TripDetailPage({
   params,
@@ -45,11 +50,22 @@ export default function TripDetailPage({
   const [error, setError] = useState<string | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  
+  // Summary counts
+  const [counts, setCounts] = useState({
+    locations: 0,
+    itinerary: 0,
+    expenses: 0,
+    totalAmount: 0,
+  });
+  const [loadingCounts, setLoadingCounts] = useState(false);
 
   useEffect(() => {
     loadTrip();
+    loadCounts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripId]);
 
@@ -63,6 +79,30 @@ export default function TripDetailPage({
       setError(err instanceof Error ? err.message : "Failed to load trip");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function loadCounts() {
+    try {
+      setLoadingCounts(true);
+      const [locationsRes, itineraryRes, expensesRes] = await Promise.all([
+        api.locations.list(tripId) as Promise<{ items: unknown[] }>,
+        api.itinerary.list(tripId) as Promise<{ items: unknown[] }>,
+        api.expenses.list(tripId) as Promise<{ items: { amount: number }[] }>,
+      ]);
+      
+      const totalAmount = expensesRes.items.reduce((sum, exp) => sum + (exp.amount || 0), 0);
+      
+      setCounts({
+        locations: locationsRes.items.length,
+        itinerary: itineraryRes.items.length,
+        expenses: expensesRes.items.length,
+        totalAmount,
+      });
+    } catch (err) {
+      console.error("Failed to load counts:", err);
+    } finally {
+      setLoadingCounts(false);
     }
   }
 
@@ -81,6 +121,9 @@ export default function TripDetailPage({
     } finally {
       setUpdating(false);
     }
+    
+    // Reload counts after update in case dates changed
+    loadCounts();
   }
 
   function handleCancelEdit() {
@@ -158,7 +201,7 @@ export default function TripDetailPage({
                   return (
                     <Chip
                       key={idx}
-                      icon={<PlaceIcon />}
+                      icon={<MdPlace />}
                       label={`${countryName} (${cityNames})`}
                       variant="outlined"
                     />
@@ -170,17 +213,24 @@ export default function TripDetailPage({
           <Stack direction="row" spacing={1}>
             <IconButton
               color="primary"
+              onClick={() => setShareDialogOpen(true)}
+              title="Share trip"
+            >
+              <MdPeople />
+            </IconButton>
+            <IconButton
+              color="primary"
               onClick={handleEditClick}
               title="Edit trip"
             >
-              <EditIcon />
+              <MdEdit />
             </IconButton>
             <IconButton
               color="error"
               onClick={handleDeleteClick}
               title="Delete trip"
             >
-              <DeleteIcon />
+              <MdDelete />
             </IconButton>
           </Stack>
         </Stack>
@@ -200,7 +250,7 @@ export default function TripDetailPage({
                       Start Date
                     </Typography>
                     <Stack direction="row" spacing={1} alignItems="center">
-                      <CalendarMonthIcon fontSize="small" color="action" />
+                      <MdCalendarMonth size={20} style={{ opacity: 0.6 }} />
                       <Typography>{formatUTCDate(trip.startDate)}</Typography>
                     </Stack>
                   </Box>
@@ -209,7 +259,7 @@ export default function TripDetailPage({
                       End Date
                     </Typography>
                     <Stack direction="row" spacing={1} alignItems="center">
-                      <CalendarMonthIcon fontSize="small" color="action" />
+                      <MdCalendarMonth size={20} style={{ opacity: 0.6 }} />
                       <Typography>{formatUTCDate(trip.endDate)}</Typography>
                     </Stack>
                   </Box>
@@ -218,7 +268,7 @@ export default function TripDetailPage({
                       Duration
                     </Typography>
                     <Stack direction="row" spacing={1} alignItems="center">
-                      <EventIcon fontSize="small" color="action" />
+                      <MdEvent size={20} style={{ opacity: 0.6 }} />
                       <Typography>
                         {duration} {duration === 1 ? "day" : "days"}
                       </Typography>
@@ -233,7 +283,7 @@ export default function TripDetailPage({
                       Destination Currency
                     </Typography>
                     <Stack direction="row" spacing={1} alignItems="center">
-                      <AttachMoneyIcon fontSize="small" color="action" />
+                      <MdAttachMoney size={20} style={{ opacity: 0.6 }} />
                       <Typography>{trip.destinationCurrency}</Typography>
                     </Stack>
                   </Box>
@@ -242,7 +292,7 @@ export default function TripDetailPage({
                       Origin Currency
                     </Typography>
                     <Stack direction="row" spacing={1} alignItems="center">
-                      <AttachMoneyIcon fontSize="small" color="action" />
+                      <MdAttachMoney size={20} style={{ opacity: 0.6 }} />
                       <Typography>{trip.originCurrency}</Typography>
                     </Stack>
                   </Box>
@@ -254,6 +304,68 @@ export default function TripDetailPage({
                       <Typography variant="body2">{trip.notes}</Typography>
                     </Box>
                   )}
+                </Stack>
+              </Box>
+            </Stack>
+            
+            {/* Summary Counts */}
+            <Divider sx={{ my: 2 }} />
+            <Typography variant="h6" gutterBottom>
+              Summary
+            </Typography>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
+              <Box sx={{ flex: 1 }}>
+                <Stack spacing={2}>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      Locations
+                    </Typography>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <MdPlace size={20} style={{ opacity: 0.6 }} />
+                      <Typography>
+                        {loadingCounts ? "..." : counts.locations}
+                      </Typography>
+                    </Stack>
+                  </Box>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      Itinerary Items
+                    </Typography>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <MdEvent size={20} style={{ opacity: 0.6 }} />
+                      <Typography>
+                        {loadingCounts ? "..." : counts.itinerary}
+                      </Typography>
+                    </Stack>
+                  </Box>
+                </Stack>
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <Stack spacing={2}>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      Expenses
+                    </Typography>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <MdReceipt size={20} style={{ opacity: 0.6 }} />
+                      <Typography>
+                        {loadingCounts ? "..." : counts.expenses}
+                      </Typography>
+                    </Stack>
+                  </Box>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      Total Amount
+                    </Typography>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <MdAttachMoney size={20} style={{ opacity: 0.6 }} />
+                      <Typography>
+                        {loadingCounts
+                          ? "..."
+                          : `${trip.destinationCurrency} ${counts.totalAmount.toFixed(2)}`}
+                      </Typography>
+                    </Stack>
+                  </Box>
                 </Stack>
               </Box>
             </Stack>
@@ -269,7 +381,7 @@ export default function TripDetailPage({
           <Card sx={{ flex: { sm: "1 1 45%", md: "1 1 22%" } }}>
             <CardContent>
               <Stack spacing={2} alignItems="center">
-                <PlaceIcon sx={{ fontSize: 48 }} color="primary" />
+                <MdPlace size={48} color="#1976d2" />
                 <Typography variant="h6" textAlign="center">
                   Locations
                 </Typography>
@@ -286,7 +398,7 @@ export default function TripDetailPage({
           <Card sx={{ flex: { sm: "1 1 45%", md: "1 1 22%" } }}>
             <CardContent>
               <Stack spacing={2} alignItems="center">
-                <EventIcon sx={{ fontSize: 48 }} color="primary" />
+                <MdEvent size={48} color="#1976d2" />
                 <Typography variant="h6" textAlign="center">
                   Itinerary
                 </Typography>
@@ -303,7 +415,7 @@ export default function TripDetailPage({
           <Card sx={{ flex: { sm: "1 1 45%", md: "1 1 22%" } }}>
             <CardContent>
               <Stack spacing={2} alignItems="center">
-                <AttachMoneyIcon sx={{ fontSize: 48 }} color="primary" />
+                <MdAttachMoney size={48} color="#1976d2" />
                 <Typography variant="h6" textAlign="center">
                   Expenses
                 </Typography>
@@ -320,7 +432,7 @@ export default function TripDetailPage({
           <Card sx={{ flex: { sm: "1 1 45%", md: "1 1 22%" } }}>
             <CardContent>
               <Stack spacing={2} alignItems="center">
-                <PlaceIcon sx={{ fontSize: 48 }} color="action" />
+                <MdPlace size={48} style={{ opacity: 0.6 }} />
                 <Typography variant="h6" textAlign="center">
                   Maps
                 </Typography>
@@ -379,6 +491,15 @@ export default function TripDetailPage({
         onCancel={handleCancelDelete}
         loading={deleting}
         confirmColor="error"
+      />
+
+      {/* Share Dialog */}
+      <ShareTripDialog
+        open={shareDialogOpen}
+        onClose={() => setShareDialogOpen(false)}
+        tripId={tripId}
+        tripTitle={trip.title}
+        isOwner={true} // TODO: Get from trip owner check
       />
     </Container>
   );
