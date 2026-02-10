@@ -3,22 +3,14 @@
 import { useUserPreferences } from "@/contexts/UserPreferencesContext";
 import { useDestinationManager, useFormSubmit } from "@/hooks";
 import { api } from "@/lib/api";
-import {
-  CITIES,
-  COUNTRIES,
-  findLocationKey,
-  getDisplayName,
-} from "@itinavi/schema";
 import type { CreateTripRequest } from "@itinavi/schema";
-import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { DestinationFields } from "@/components/trips/DestinationFields";
 import {
-  Autocomplete,
   Box,
   Button,
   Card,
   CardContent,
   Container,
-  IconButton,
   Stack,
   TextField,
   Typography,
@@ -97,235 +89,16 @@ export default function NewTripPage() {
                 placeholder="e.g., Beijing Adventure 2026"
               />
 
-              <Box>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  mb={2}
-                >
-                  <Typography variant="subtitle2" color="text.secondary">
-                    Destinations
-                  </Typography>
-                  <Button
-                    size="small"
-                    startIcon={<AddIcon />}
-                    onClick={handleAddDestination}
-                  >
-                    Add Destination
-                  </Button>
-                </Stack>
-
-                {destinations.map((dest, destIndex) => (
-                  <Card key={destIndex} variant="outlined" sx={{ mb: 2, p: 2 }}>
-                    <Stack spacing={2}>
-                      <Stack direction="row" spacing={2} alignItems="center">
-                        <Autocomplete
-                          fullWidth
-                          options={Object.keys(COUNTRIES)}
-                          value={dest.country}
-                          inputValue={
-                            dest.country
-                              ? COUNTRIES[dest.country]
-                                ? getDisplayName(
-                                    COUNTRIES[dest.country],
-                                    language
-                                  )
-                                : dest.country
-                              : ""
-                          }
-                          onInputChange={(_, newInputValue, reason) => {
-                            if (reason === "input") {
-                              // Allow typing
-                              handleCountryChange(destIndex, newInputValue);
-                            } else if (reason === "clear") {
-                              handleCountryChange(destIndex, "");
-                            }
-                          }}
-                          onChange={(_, newValue) => {
-                            // Store standardized English key
-                            const standardized = newValue
-                              ? findLocationKey(newValue, COUNTRIES) || newValue
-                              : "";
-                            handleCountryChange(destIndex, standardized);
-                          }}
-                          filterOptions={(options, state) => {
-                            const inputValue = state.inputValue.toLowerCase();
-                            return options.filter((option) => {
-                              const countryData = COUNTRIES[option];
-                              return (
-                                option.toLowerCase().includes(inputValue) ||
-                                countryData.en
-                                  .toLowerCase()
-                                  .includes(inputValue) ||
-                                countryData.zh.includes(state.inputValue)
-                              );
-                            });
-                          }}
-                          getOptionLabel={(option) => {
-                            const countryData = COUNTRIES[option];
-                            return countryData
-                              ? getDisplayName(countryData, language)
-                              : option;
-                          }}
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              label="Country"
-                              placeholder="Search country..."
-                            />
-                          )}
-                          renderOption={(props, option) => {
-                            const countryData = COUNTRIES[option];
-                            return (
-                              <li {...props} key={option}>
-                                {countryData
-                                  ? `${countryData.zh} / ${countryData.en}`
-                                  : option}
-                              </li>
-                            );
-                          }}
-                        />
-                        {destinations.length > 1 && (
-                          <IconButton
-                            color="error"
-                            onClick={() => handleRemoveDestination(destIndex)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        )}
-                      </Stack>
-
-                      <Box>
-                        <Stack
-                          direction="row"
-                          alignItems="center"
-                          justifyContent="space-between"
-                          mb={1}
-                        >
-                          <Typography variant="caption" color="text.secondary">
-                            Cities
-                          </Typography>
-                          <Button
-                            size="small"
-                            startIcon={<AddIcon />}
-                            onClick={() => handleAddCity(destIndex)}
-                          >
-                            Add City
-                          </Button>
-                        </Stack>
-
-                        {dest.cities.map((city, cityIndex) => {
-                          const countryCities =
-                            dest.country && CITIES[dest.country]
-                              ? CITIES[dest.country]
-                              : {};
-
-                          return (
-                            <Stack
-                              key={cityIndex}
-                              direction="row"
-                              spacing={1}
-                              mb={1}
-                            >
-                              <Autocomplete
-                                size="small"
-                                fullWidth
-                                options={Object.keys(countryCities)}
-                                value={city}
-                                inputValue={
-                                  city
-                                    ? countryCities[city]
-                                      ? getDisplayName(
-                                          countryCities[city],
-                                          language
-                                        )
-                                      : city
-                                    : ""
-                                }
-                                onInputChange={(_, newInputValue, reason) => {
-                                  if (reason === "input") {
-                                    handleCityChange(
-                                      destIndex,
-                                      cityIndex,
-                                      newInputValue
-                                    );
-                                  } else if (reason === "clear") {
-                                    handleCityChange(destIndex, cityIndex, "");
-                                  }
-                                }}
-                                onChange={(_, newValue) => {
-                                  const standardized = newValue
-                                    ? findLocationKey(
-                                        newValue,
-                                        countryCities
-                                      ) || newValue
-                                    : "";
-                                  handleCityChange(
-                                    destIndex,
-                                    cityIndex,
-                                    standardized
-                                  );
-                                }}
-                                filterOptions={(options, state) => {
-                                  const inputValue =
-                                    state.inputValue.toLowerCase();
-                                  return options.filter((option) => {
-                                    const cityData = countryCities[option];
-                                    return (
-                                      option
-                                        .toLowerCase()
-                                        .includes(inputValue) ||
-                                      cityData.en
-                                        .toLowerCase()
-                                        .includes(inputValue) ||
-                                      cityData.zh.includes(state.inputValue)
-                                    );
-                                  });
-                                }}
-                                getOptionLabel={(option) => {
-                                  const cityData = countryCities[option];
-                                  return cityData
-                                    ? getDisplayName(cityData, language)
-                                    : option;
-                                }}
-                                renderInput={(params) => (
-                                  <TextField
-                                    {...params}
-                                    size="small"
-                                    placeholder="Search city..."
-                                  />
-                                )}
-                                renderOption={(props, option) => {
-                                  const cityData = countryCities[option];
-                                  return (
-                                    <li {...props} key={option}>
-                                      {cityData
-                                        ? `${cityData.zh} / ${cityData.en}`
-                                        : option}
-                                    </li>
-                                  );
-                                }}
-                              />
-                              {dest.cities.length > 1 && (
-                                <IconButton
-                                  size="small"
-                                  color="error"
-                                  onClick={() =>
-                                    handleRemoveCity(destIndex, cityIndex)
-                                  }
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              )}
-                            </Stack>
-                          );
-                        })}
-                      </Box>
-                    </Stack>
-                  </Card>
-                ))}
-              </Box>
+              <DestinationFields
+                destinations={destinations}
+                language={language}
+                onAddDestination={handleAddDestination}
+                onRemoveDestination={handleRemoveDestination}
+                onCountryChange={handleCountryChange}
+                onAddCity={handleAddCity}
+                onRemoveCity={handleRemoveCity}
+                onCityChange={handleCityChange}
+              />
 
               <Stack direction="row" spacing={2}>
                 <TextField
