@@ -10,7 +10,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { TripResponse } from "@itinavi/schema";
-import { COUNTRIES, CITIES, getDisplayName } from "@/lib/locations";
+import { COUNTRIES, CITIES, getDisplayName } from "@itinavi/schema";
 import { formatUTCDate } from "@/lib/dateUtils";
 
 interface TripCardProps {

@@ -8,7 +8,7 @@ import {
   COUNTRIES,
   findLocationKey,
   getDisplayName,
-} from "@/lib/locations";
+} from "@itinavi/schema";
 import type { CreateTripRequest } from "@itinavi/schema";
 import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import {

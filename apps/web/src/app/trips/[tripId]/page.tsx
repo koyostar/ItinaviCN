@@ -5,7 +5,7 @@ import { ConfirmDialog } from "@/components/ui";
 import { useUserPreferences } from "@/contexts/UserPreferencesContext";
 import { api } from "@/lib/api";
 import { calculateDays, formatUTCDate } from "@/lib/dateUtils";
-import { CITIES, COUNTRIES, getDisplayName } from "@/lib/locations";
+import { CITIES, COUNTRIES, getDisplayName } from "@itinavi/schema";
 import type { CreateTripRequest, TripResponse } from "@itinavi/schema";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";

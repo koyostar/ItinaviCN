@@ -1,5 +1,5 @@
 import { Box, Stack, Typography, Divider } from "@mui/material";
-import { getUTCOffset } from "@/lib/utils/timezone";
+import { getUTCOffset } from "@itinavi/schema";
 import { formatUTCDateTime, formatUTCDate } from "@/lib/dateUtils";
 
 interface AccommodationDetails {

@@ -1,5 +1,5 @@
 import { formatUTCTime } from "@/lib/dateUtils";
-import { getUTCOffset } from "@/lib/utils/timezone";
+import { getUTCOffset } from "@itinavi/schema";
 import { Box, Typography } from "@mui/material";
 
 interface TransportCardProps {

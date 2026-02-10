@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import type { TripResponse } from "@itinavi/schema";
-import { getTimezoneForCountry } from "@/lib/utils/timezone";
+import { getTimezoneForCountry } from "@itinavi/schema";
 
 /**
  * Return type for the useTripTimezone hook

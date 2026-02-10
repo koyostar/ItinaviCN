@@ -6,7 +6,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { COMMON_TIMEZONES } from "@/lib/utils/timezone";
+import { COMMON_TIMEZONES } from "@itinavi/schema";
 
 interface DateTimeFieldsProps {
   label: string;

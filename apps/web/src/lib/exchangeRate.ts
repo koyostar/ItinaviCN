@@ -1,13 +1,8 @@
 // Exchange rate API service using Frankfurter API (free, open-source, CORS-enabled)
 // https://www.frankfurter.app/
-const EXCHANGE_RATE_API = "https://api.frankfurter.app";
+import type { ExchangeRateApiResponse } from '@itinavi/schema';
 
-export interface ExchangeRateResponse {
-  amount: number;
-  base: string;
-  date: string;
-  rates: Record<string, number>;
-}
+const EXCHANGE_RATE_API = "https://api.frankfurter.app";
 
 /**
  * Fetch exchange rate for a specific date
@@ -33,7 +28,7 @@ export async function getExchangeRate(
       throw new Error("Failed to fetch exchange rate");
     }
 
-    const data: ExchangeRateResponse = await response.json();
+    const data: ExchangeRateApiResponse = await response.json();
 
     if (data.rates[targetCurrency]) {
       return data.rates[targetCurrency];

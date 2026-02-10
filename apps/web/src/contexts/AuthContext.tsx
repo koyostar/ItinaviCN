@@ -7,17 +7,10 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
+import type { User } from "@itinavi/schema";
 
-/**
- * User data returned from authentication endpoints
- */
-export interface User {
-  id: string;
-  username: string;
-  email?: string;
-  displayName?: string;
-  userType: "Dev" | "User";
-}
+// Re-export User type for convenience
+export type { User };
 
 /**
  * Authentication context value
@@ -40,6 +33,8 @@ interface AuthContextValue {
   ) => Promise<void>;
   /** Logout current user */
   logout: () => void;
+  /** Update user profile data */
+  updateUser: (user: User) => void;
   /** Check if user is authenticated */
   isAuthenticated: boolean;
 }
@@ -146,6 +141,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   }, []);
 
+  const updateUser = useCallback((updatedUser: User) => {
+    setUser(updatedUser);
+    localStorage.setItem(USER_KEY, JSON.stringify(updatedUser));
+  }, []);
+
   const value: AuthContextValue = {
     user,
     token,
@@ -153,6 +153,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     login,
     register,
     logout,
+    updateUser,
     isAuthenticated: !!user && !!token,
   };
 
