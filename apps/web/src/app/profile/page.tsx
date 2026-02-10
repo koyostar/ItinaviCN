@@ -2,27 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Box,
-  Button,
-  Container,
-  Paper,
-  Stack,
-  TextField,
-  Typography,
-  Alert,
-  Divider,
-  Avatar,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Chip,
-} from "@mui/material";
+import { Box, Button, Container, Paper, Stack, Typography } from "@mui/material";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { ProfileHeader } from "@/components/profile/ProfileHeader";
+import { ProfileForm } from "@/components/profile/ProfileForm";
+import { PasswordChangeForm } from "@/components/profile/PasswordChangeForm";
+import { UserManagementTable } from "@/components/profile/UserManagementTable";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePasswordChange, useProfileForm } from "@/hooks";
 import type { User } from "@itinavi/schema";
 import { api } from "@/lib/api";
 
@@ -37,17 +24,14 @@ export default function ProfilePage() {
 function ProfilePageContent() {
   const router = useRouter();
   const { user, updateUser } = useAuth();
-  const [displayName, setDisplayName] = useState(user?.displayName || "");
-  const [email, setEmail] = useState(user?.email || "");
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [profileError, setProfileError] = useState("");
-  const [profileSuccess, setProfileSuccess] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [passwordSuccess, setPasswordSuccess] = useState("");
-  const [profileLoading, setProfileLoading] = useState(false);
-  const [passwordLoading, setPasswordLoading] = useState(false);
+  
+  const profileForm = useProfileForm(
+    user?.displayName || "",
+    user?.email || "",
+    updateUser
+  );
+  
+  const passwordChange = usePasswordChange();
 
   // Dev features
   const [allUsers, setAllUsers] = useState<User[]>([]);
@@ -68,65 +52,6 @@ function ProfilePageContent() {
       setAllUsers(users as User[]);
     } catch (err: any) {
       console.error("Failed to load users:", err);
-    }
-  };
-
-  const handleProfileSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setProfileError("");
-    setProfileSuccess("");
-    setProfileLoading(true);
-
-    try {
-      const updatedUser = await api.auth.updateProfile({
-        displayName: displayName || undefined,
-        email: email || undefined,
-      });
-
-      updateUser(updatedUser as any);
-      setProfileSuccess("Profile updated successfully!");
-    } catch (err: any) {
-      setProfileError(
-        err?.data?.message || err.message || "Failed to update profile"
-      );
-    } finally {
-      setProfileLoading(false);
-    }
-  };
-
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPasswordError("");
-    setPasswordSuccess("");
-
-    if (newPassword !== confirmPassword) {
-      setPasswordError("New passwords do not match");
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      setPasswordError("New password must be at least 6 characters");
-      return;
-    }
-
-    setPasswordLoading(true);
-
-    try {
-      await api.auth.changePassword({
-        currentPassword,
-        newPassword,
-      });
-
-      setPasswordSuccess("Password changed successfully!");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-    } catch (err: any) {
-      setPasswordError(
-        err?.data?.message || err.message || "Failed to change password"
-      );
-    } finally {
-      setPasswordLoading(false);
     }
   };
 
@@ -168,199 +93,46 @@ function ProfilePageContent() {
         {/* Profile Information */}
         <Paper elevation={2} sx={{ p: 3 }}>
           <Stack spacing={3}>
-            <Box display="flex" alignItems="center" gap={2}>
-              <Avatar sx={{ width: 64, height: 64 }}>
-                {user?.displayName?.[0] || user?.username?.[0] || "?"}
-              </Avatar>
-              <Box>
-                <Typography variant="h6">{user?.username}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {user?.userType} Account
-                </Typography>
-              </Box>
-            </Box>
+            <ProfileHeader user={user!} />
 
-            <Divider />
-
-            <Typography variant="h6">Profile Information</Typography>
-
-            {profileError && <Alert severity="error">{profileError}</Alert>}
-            {profileSuccess && (
-              <Alert severity="success">{profileSuccess}</Alert>
-            )}
-
-            <form onSubmit={handleProfileSubmit}>
-              <Stack spacing={2}>
-                <TextField
-                  label="Username"
-                  value={user?.username || ""}
-                  disabled
-                  fullWidth
-                  helperText="Username cannot be changed"
-                />
-
-                <TextField
-                  label="Display Name"
-                  value={displayName}
-                  onChange={(e) => {
-                    setDisplayName(e.target.value);
-                    setProfileSuccess("");
-                  }}
-                  fullWidth
-                  disabled={profileLoading}
-                />
-
-                <TextField
-                  label="Email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    setProfileSuccess("");
-                  }}
-                  fullWidth
-                  disabled={profileLoading}
-                />
-
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={profileLoading}
-                  sx={{ alignSelf: "flex-start" }}
-                >
-                  {profileLoading ? "Updating..." : "Update Profile"}
-                </Button>
-              </Stack>
-            </form>
+            <ProfileForm
+              user={user!}
+              displayName={profileForm.displayName}
+              setDisplayName={profileForm.setDisplayName}
+              email={profileForm.email}
+              setEmail={profileForm.setEmail}
+              error={profileForm.error}
+              success={profileForm.success}
+              loading={profileForm.loading}
+              onSubmit={profileForm.handleSubmit}
+            />
           </Stack>
         </Paper>
 
         {/* Change Password */}
-        <Paper elevation={2} sx={{ p: 3 }}>
-          <Stack spacing={3}>
-            <Typography variant="h6">Change Password</Typography>
-
-            {passwordError && <Alert severity="error">{passwordError}</Alert>}
-            {passwordSuccess && (
-              <Alert severity="success">{passwordSuccess}</Alert>
-            )}
-
-            <form onSubmit={handlePasswordSubmit}>
-              <Stack spacing={2}>
-                <TextField
-                  label="Current Password"
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => {
-                    setCurrentPassword(e.target.value);
-                    setPasswordSuccess("");
-                  }}
-                  required
-                  fullWidth
-                  disabled={passwordLoading}
-                />
-
-                <TextField
-                  label="New Password"
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => {
-                    setNewPassword(e.target.value);
-                    setPasswordSuccess("");
-                  }}
-                  required
-                  fullWidth
-                  disabled={passwordLoading}
-                  helperText="At least 6 characters"
-                />
-
-                <TextField
-                  label="Confirm New Password"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                    setPasswordSuccess("");
-                  }}
-                  required
-                  fullWidth
-                  disabled={passwordLoading}
-                />
-
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={passwordLoading}
-                  sx={{ alignSelf: "flex-start" }}
-                >
-                  {passwordLoading ? "Changing..." : "Change Password"}
-                </Button>
-              </Stack>
-            </form>
-          </Stack>
-        </Paper>
+        <PasswordChangeForm
+          currentPassword={passwordChange.currentPassword}
+          setCurrentPassword={passwordChange.setCurrentPassword}
+          newPassword={passwordChange.newPassword}
+          setNewPassword={passwordChange.setNewPassword}
+          confirmPassword={passwordChange.confirmPassword}
+          setConfirmPassword={passwordChange.setConfirmPassword}
+          error={passwordChange.error}
+          success={passwordChange.success}
+          loading={passwordChange.loading}
+          onSubmit={passwordChange.handleSubmit}
+        />
 
         {/* Dev Features */}
         {isDev && (
-          <Paper elevation={2} sx={{ p: 3 }}>
-            <Stack spacing={3}>
-              <Box>
-                <Chip label="DEV ONLY" color="error" size="small" />
-                <Typography variant="h6" sx={{ mt: 1 }}>
-                  User Management
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Reset user passwords to default: &quot;password&quot;
-                </Typography>
-              </Box>
-
-              {devError && <Alert severity="error">{devError}</Alert>}
-              {devSuccess && <Alert severity="success">{devSuccess}</Alert>}
-
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Username</TableCell>
-                      <TableCell>Display Name</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell>Type</TableCell>
-                      <TableCell>Action</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {allUsers.map((u) => (
-                      <TableRow key={u.id}>
-                        <TableCell>{u.username}</TableCell>
-                        <TableCell>{u.displayName || "-"}</TableCell>
-                        <TableCell>{u.email || "-"}</TableCell>
-                        <TableCell>
-                          <Chip
-                            label={u.userType}
-                            size="small"
-                            color={u.userType === "Dev" ? "error" : "default"}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            color="warning"
-                            onClick={() =>
-                              handleDevResetPassword(u.id, u.username)
-                            }
-                            disabled={devLoading || u.id === user?.id}
-                          >
-                            Reset Password
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Stack>
-          </Paper>
+          <UserManagementTable
+            allUsers={allUsers}
+            currentUserId={user?.id}
+            error={devError}
+            success={devSuccess}
+            loading={devLoading}
+            onResetPassword={handleDevResetPassword}
+          />
         )}
       </Stack>
     </Container>
