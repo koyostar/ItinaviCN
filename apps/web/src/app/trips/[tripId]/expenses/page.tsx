@@ -24,13 +24,11 @@ import {
   useTrip,
 } from "@/hooks";
 import { api } from "@/lib/api";
-import { EXPENSE_CATEGORY_LABELS } from "@/lib/constants";
 import {
   calculateTotalsByCurrency,
   groupExpensesByDate,
 } from "@/lib/utils/expenses";
 import type {
-  ExpenseCategory,
   ExpenseResponse,
   UpdateExpenseRequest,
 } from "@itinavi/schema";
@@ -89,46 +87,7 @@ export default function ExpensesPage({
     async (_: void) => {
       if (!editDialog.item) return;
 
-      if (
-        !editFormData.title ||
-        !editFormData.amount ||
-        !editFormData.expenseDateTime
-      ) {
-        throw new Error("Please fill in all required fields");
-      }
-
-      const amountValue = parseFloat(editFormData.amount);
-      if (isNaN(amountValue) || amountValue < 0) {
-        throw new Error("Please enter a valid amount");
-      }
-
-      let exchangeRate = editFormData.exchangeRateUsed
-        ? parseFloat(editFormData.exchangeRateUsed)
-        : undefined;
-
-      if (
-        !exchangeRate &&
-        trip?.originCurrency &&
-        editFormData.destinationCurrency !== trip.originCurrency
-      ) {
-        const expenseDate = new Date(editFormData.expenseDateTime)
-          .toISOString()
-          .split("T")[0];
-        const fetchedRate = await fetchRate(
-          trip.originCurrency,
-          editFormData.destinationCurrency,
-          expenseDate
-        );
-        if (fetchedRate !== null) {
-          exchangeRate = fetchedRate;
-        }
-      }
-
-      const payload: UpdateExpenseRequest = {
-        tformData.title ||
-        !formData.amount ||
-        !formData.expenseDateTime
-      ) {
+      if (!formData.title || !formData.amount || !formData.expenseDateTime) {
         throw new Error("Please fill in all required fields");
       }
 
@@ -183,7 +142,11 @@ export default function ExpensesPage({
   };
 
   const handleFetchRate = () => {
-    if (formData.expenseDateTime && formData.destinationCurrency && trip?.originCurrency) {
+    if (
+      formData.expenseDateTime &&
+      formData.destinationCurrency &&
+      trip?.originCurrency
+    ) {
       const expenseDate = new Date(formData.expenseDateTime)
         .toISOString()
         .split("T")[0];
@@ -193,7 +156,42 @@ export default function ExpensesPage({
         expenseDate
       );
     }
+  };
+
+  const filteredExpenses = expenses.filter((expense) => {
+    if (filterCategory !== "all" && expense.category !== filterCategory)
+      return false;
+    return true;
+  });
+
+  const groupedByDate = groupExpensesByDate(filteredExpenses);
+  const totalsByCurrency = calculateTotalsByCurrency(expenses);
+
+  if (loading || tripLoading) {
+    return <PageLoadingState message="Loading expenses..." />;
   }
+
+  if (error) {
+    return <PageErrorState error={error} onRetry={refetch} />;
+  }
+
+  return (
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Stack spacing={3}>
+        <PageHeader
+          title="Expenses"
+          backButton={{
+            onClick: () => router.push(`/trips/${tripId}`),
+          }}
+          action={{
+            label: "Add Expense",
+            href: `/trips/${tripId}/expenses/new`,
+          }}
+        />
+
+        {/* Summary Cards */}
+        <ExpenseSummaryCards totalsByCurrency={totalsByCurrency} />
+
         {/* Filter */}
         <ExpenseCategoryFilter
           value={filterCategory}
@@ -272,7 +270,7 @@ export default function ExpensesPage({
         >
           <ExpenseEditForm
             formData={formData}
-            trip={trip}
+            trip={trip ?? undefined}
             itineraryItems={itineraryItems}
             rateLoading={rateLoading}
             rateError={rateError}

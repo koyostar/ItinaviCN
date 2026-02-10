@@ -34,9 +34,9 @@ interface ExpenseEditFormProps {
   rateError: string | null;
   submitError: string | null;
   submitting: boolean;
-  onFieldChange: <K extends keyof typeof formData>(
+  onFieldChange: <K extends keyof ExpenseEditFormProps["formData"]>(
     field: K,
-    value: (typeof formData)[K]
+    value: ExpenseEditFormProps["formData"][K]
   ) => void;
   onFetchRate: () => void;
   onSubmit: (e: React.FormEvent) => void;
