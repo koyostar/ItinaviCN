@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
   CreateExpenseRequestSchema,
@@ -19,6 +20,8 @@ import {
 import { Prisma } from '@prisma/client';
 import { validate } from '../../common/validate';
 import { ExpensesService } from './expenses.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 /**
  * Transforms a database expense record to API response format.
@@ -68,6 +71,7 @@ function toExpenseResponse(expense: {
  * Base path: /api/trips/:tripId/expenses
  */
 @Controller('api/trips/:tripId/expenses')
+@UseGuards(JwtAuthGuard)
 export class ExpensesController {
   constructor(private readonly expenses: ExpensesService) {}
 
@@ -194,5 +198,47 @@ export class ExpensesController {
     const { tripId } = validate(TripIdParamSchema, params);
     const { expenseId } = validate(ExpenseIdParamSchema, params);
     await this.expenses.deleteExpense(tripId, expenseId);
+  }
+
+  /**
+   * POST /api/trips/:tripId/expenses/:expenseId/settle/:userId
+   * Marks an expense split as settled for a specific user.
+   *
+   * @param params - Route parameters
+   * @returns The updated expense split
+   */
+  @Post(':expenseId/settle/:userId')
+  async settleSplit(
+    @Param('expenseId') expenseId: string,
+    @Param('userId') userId: string,
+  ) {
+    return this.expenses.settleExpenseSplit(expenseId, userId);
+  }
+
+  /**
+   * GET /api/trips/:tripId/balances
+   * Gets the balance summary for all users in the trip.
+   *
+   * @param params - Route parameters containing tripId
+   * @returns Balance information showing who owes whom
+   */
+  @Get('../balances')
+  async getTripBalances(@Param() params: unknown) {
+    const { tripId } = validate(TripIdParamSchema, params);
+    return this.expenses.getTripBalances(tripId);
+  }
+
+  /**
+   * GET /api/trips/:tripId/my-balance
+   * Gets the balance summary for the current user.
+   *
+   * @param params - Route parameters containing tripId
+   * @param user - The authenticated user
+   * @returns Balance summary for the user
+   */
+  @Get('../my-balance')
+  async getMyBalance(@Param() params: unknown, @CurrentUser() user: any) {
+    const { tripId } = validate(TripIdParamSchema, params);
+    return this.expenses.getUserBalanceSummary(tripId, user.id);
   }
 }
