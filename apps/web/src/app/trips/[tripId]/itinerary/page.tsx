@@ -26,6 +26,7 @@ import {
   useDeleteConfirmation,
   useDetailsDialog,
   useEditDialog,
+  useItineraryFilters,
   useItineraryItems,
   useTripTimezone,
 } from "@/hooks";
@@ -61,7 +62,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { use, useState } from "react";
+import { use } from "react";
 
 export default function ItineraryPage({
   params,
@@ -70,10 +71,9 @@ export default function ItineraryPage({
 }) {
   const { tripId } = use(params);
   const router = useRouter();
-  const [filterType, setFilterType] = useState<string>("all");
-  const [filterStatus, setFilterStatus] = useState<string>("all");
 
   const { items, loading, error, refetch } = useItineraryItems(tripId);
+  const { filterType, setFilterType, filterStatus, setFilterStatus, filteredItems } = useItineraryFilters(items);
 
   const deleteConfirmation = useDeleteConfirmation(async (id) => {
     await api.itinerary.delete(tripId, id);
@@ -82,12 +82,6 @@ export default function ItineraryPage({
   const editDialog = useEditDialog<ItineraryItemResponse>();
   const detailsDialog = useDetailsDialog<ItineraryItemResponse>();
   const { timezone: defaultTimezone } = useTripTimezone(tripId);
-
-  const filteredItems = items.filter((item) => {
-    if (filterType !== "all" && item.type !== filterType) return false;
-    if (filterStatus !== "all" && item.status !== filterStatus) return false;
-    return true;
-  });
 
   // Group by day - items spanning multiple days appear in each day
   const groupedByDay = filteredItems.reduce(
