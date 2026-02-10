@@ -140,6 +140,27 @@ export const api = {
       fetchApi(`/api/trips/${tripId}`, {
         method: "DELETE",
       }),
+    
+    // Trip Member Management
+    /** List all members of a trip */
+    listMembers: (tripId: string) => fetchApi(`/api/trips/${tripId}/members`),
+    /** Add a member to a trip */
+    addMember: (tripId: string, data: unknown) =>
+      fetchApi(`/api/trips/${tripId}/members`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    /** Update a member's role */
+    updateMemberRole: (tripId: string, userId: string, data: unknown) =>
+      fetchApi(`/api/trips/${tripId}/members/${userId}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }),
+    /** Remove a member from a trip */
+    removeMember: (tripId: string, userId: string) =>
+      fetchApi(`/api/trips/${tripId}/members/${userId}`, {
+        method: "DELETE",
+      }),
   },
 
   /**
