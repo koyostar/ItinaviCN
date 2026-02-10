@@ -10,6 +10,7 @@ import {
 } from "@/components/ui";
 import { useDeleteConfirmation, useLocationFilters, useLocations, useSnackbar, useSyncLocations } from "@/hooks";
 import { api } from "@/lib/api";
+import { addLocationToItinerary } from "@/lib/locationUtils";
 import {
   Alert,
   Autocomplete,
@@ -62,27 +63,7 @@ export default function LocationsPage({
 
   const handleAddToItinerary = async (location: any) => {
     try {
-      // Create a Place itinerary item from the location
-      await api.itinerary.create(tripId, {
-        type: "Place",
-        title: location.name,
-        startDateTime: new Date().toISOString(),
-        timezone: "Asia/Shanghai",
-        locationId: location.id,
-        details: {
-          city: location.city || undefined,
-          district: location.district || undefined,
-          province: location.province || undefined,
-          address: location.address || undefined,
-          latitude: location.latitude || undefined,
-          longitude: location.longitude || undefined,
-          adcode: location.adcode || undefined,
-          citycode: location.citycode || undefined,
-          amapPoiId: location.amapPoiId || undefined,
-        },
-        notes: location.notes || undefined,
-      });
-
+      await addLocationToItinerary(tripId, location);
       showSuccess(`Added "${location.name}" to itinerary`);
     } catch (error) {
       showError(
