@@ -23,6 +23,7 @@ export { useLocationFilters } from "./useLocationFilters";
 export { useLoginForm } from "./useLoginForm";
 export { usePasswordChange } from "./usePasswordChange";
 export { useProfileForm } from "./useProfileForm";
+export { useRegisterForm } from "./useRegisterForm";
 export { useSnackbar } from "./useSnackbar";
 export { useSyncLocations } from "./useSyncLocations";
 export { useTripTimezone } from "./useTripTimezone";

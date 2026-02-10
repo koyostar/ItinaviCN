@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   Box,
   Button,
@@ -15,59 +13,33 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRegisterForm } from "@/hooks";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { register, isAuthenticated } = useAuth();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [displayName, setDisplayName] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const {
+    username,
+    setUsername,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    email,
+    setEmail,
+    displayName,
+    setDisplayName,
+    error,
+    loading,
+    handleSubmit,
+  } = useRegisterForm();
 
   // Redirect if already authenticated
   if (isAuthenticated) {
     router.push("/trips");
     return null;
   }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return;
-    }
-
-    if (username.length < 3) {
-      setError("Username must be at least 3 characters");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      await register(
-        username,
-        password,
-        email || undefined,
-        displayName || undefined
-      );
-      router.push("/trips");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Registration failed");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <Container maxWidth="sm">
