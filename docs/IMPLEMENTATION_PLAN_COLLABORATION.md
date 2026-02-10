@@ -1,7 +1,8 @@
 # Implementation Plan: Multi-User Collaboration & Expense Management
 
 **Created**: February 10, 2026  
-**Status**: Planning Phase  
+**Last Updated**: February 11, 2026  
+**Status**: In Progress - Phase 2 (Frontend Integration)  
 **Priority**: High
 
 ## 📋 Overview
@@ -202,19 +203,22 @@ model Location {
 
 ## 🚀 Implementation Phases
 
-### Phase 1: User Authentication (5-7 days)
+### Phase 1: User Authentication ✅ COMPLETED
 
 **Priority**: Critical  
-**Dependencies**: None
+**Dependencies**: None  
+**Status**: ✅ Phase 1 Complete (February 11, 2026)
 
 #### Backend Tasks
-- [x] Install dependencies: `passport`, `passport-jwt`, `bcrypt`, `jsonwebtoken`
-- [ ] Create User model and migration
-- [ ] Implement AuthService (register, login, verify, refresh token)
-- [ ] Create AuthController with endpoints
-- [ ] Implement JWT strategy with Passport
-- [ ] Add authentication guards/middleware
-- [ ] Add password reset flow with email
+- [x] Install dependencies: `passport`, `passport-jwt`, `bcrypt`, `jsonwebtoken`, `class-validator`, `class-transformer`
+- [x] Create User model and migration (username-based authentication)
+- [x] Implement AuthService (register, login, validateUser, token generation)
+- [x] Create AuthController with endpoints (@Public decorator for auth routes)
+- [x] Implement JWT strategy with Passport + ConfigService
+- [x] Add authentication guards/middleware (JwtAuthGuard with global scope)
+- [x] Add decorators (@CurrentUser, @Public)
+- [ ] Add password reset flow with email ⏸️ Deferred
+- [ ] Add refresh token rotation ⏸️ Deferred
 
 **API Endpoints**:
 ```typescript
@@ -226,15 +230,17 @@ GET    /api/auth/me              // Get current user
 PATCH  /api/auth/profile         // Update profile
 POST   /api/auth/forgot-password // Request password reset
 POST   /api/auth/reset-password  // Reset password with token
-```
-
-#### Frontend Tasks
-- [ ] Create auth context/provider
-- [ ] Build login page
-- [ ] Build registration page
-- [ ] Build forgot password page
-- [ ] Implement token storage (localStorage/cookies)
-- [ ] Add auth interceptor to API client
+```x] Create auth context/provider (AuthContext with login/register/logout)
+- [x] Build login page (`/login` with username/password)
+- [x] Build registration page (`/register` with validation)
+- [x] Implement token storage (localStorage: `itinavi_token`, `itinavi_user`)
+- [x] Add auth interceptor to API client (automatic Bearer token injection)
+- [x] Create ProtectedRoute component (with loading states and redirect)
+- [x] Add logout functionality (Navigation menu with user dropdown)
+- [x] Update Navigation component (show auth state, login/register CTAs)
+- [x] Update home page (auto-redirect to trips if authenticated)
+- [ ] Build forgot password page ⏸️ Deferred
+- [ ] Build user profile page ⏸️ Deferred API client
 - [ ] Create ProtectedRoute component
 - [ ] Add logout functionality
 - [ ] Build user profile page
@@ -261,34 +267,41 @@ Frontend:
     ├── LoginForm.tsx
     ├── RegisterForm.tsx
     └── ProtectedRoute.tsx
-```
-
-**Estimated Time**: 5-7 days
+``Completed**: February 11, 2026  
+**Actual Time**: 2 days
 
 ---
 
-### Phase 2: Trip Collaboration (7-10 days)
+### Phase 2: Trip Collaboration ⚡ MOSTLY COMPLETE (Backend Done)
 
 **Priority**: High  
-**Dependencies**: Phase 1 (Authentication)
+**Dependencies**: Phase 1 (Authentication) ✅  
+**Status**: Backend ✅ | Frontend 🚧 In Progress
 
 #### Backend Tasks
-- [ ] Create TripMember model and migration
-- [ ] Add ownerId to Trip model
-- [ ] Implement TripMemberService (add, remove, update role)
-- [ ] Add authorization checks to all trip endpoints
-- [ ] Add member list endpoint
+- [x] Create TripMember model and migration (with TripRole: OWNER/EDITOR/VIEWER)
+- [x] Add ownerId to Trip model (foreign key to User)
+- [x] Implement trip member management in TripsService (add, remove, update role)
+- [x] Add authorization checks to all trip endpoints (requireTripAccess, requireTripEditAccess, requireTripOwnership)
+- [x] Add member management endpoints (list, add, update, remove)
+- [x] Create DTOs for member operations (AddTripMemberDto, UpdateTripMemberDto)
+- [ ] Send email invitations to buddies ⏸️ Deferred
+- [ ] Add activity log for collaborative changes ⏸️ Optional
 - [ ] Send email invitations to buddies
 - [ ] Add activity log for collaborative changes (optional)
-
-**API Endpoints**:
-```typescript
-// Trip Member Management
+ ✅ Implemented
 POST   /api/trips/:tripId/members        // Add member to trip
 GET    /api/trips/:tripId/members        // List all members
 PATCH  /api/trips/:tripId/members/:userId // Update member role
 DELETE /api/trips/:tripId/members/:userId // Remove member
+
+// Email Invitations ⏸️ Deferred
 POST   /api/trips/:tripId/invite         // Send email invitation
+
+// Updated Authorization ✅ Implemented
+// All trip, location, itinerary, expense endpoints check:
+// - User is owner OR member with appropriate role
+// - OWNER: full control, EDITOR: can modify, VIEWER: read-only
 
 // Updated Authorization
 // All existing trip endpoints check user is owner or member with appropriate role
@@ -323,34 +336,35 @@ Backend:
     └── guards/trip-authorization.guard.ts
 
 Frontend:
-  apps/web/src/components/trips/
-    ├── ShareTripDialog.tsx
-    ├── MemberList.tsx
-    ├── MemberInviteForm.tsx
-    └── MemberCard.tsx
-```
-
-**Estimated Time**: 7-10 days
+  Backend Completed**: February 11, 2026  
+**Frontend Status**: 🚧 Pending
 
 ---
 
-### Phase 3: Expense Splitting (5-7 days)
+### Phase 3: Expense Splitting ✅ BACKEND COMPLETE
 
 **Priority**: High  
-**Dependencies**: Phase 2 (Trip Collaboration)
+**Dependencies**: Phase 2 (Trip Collaboration) ✅  
+**Status**: Backend ✅ | Frontend ⏸️ Not Started
 
+#### Backend Tasks
+- [x] Create ExpenseSplit model and migration (amountOwed, isSettled, settledAt)
+- [x] Update Expense model with paidByUserId and paymentMethod (Cash/Card/App enum)
+- [x] Implement expense split methods in ExpensesService
+- [x] Add auto-split and custom split support
+- [x] Add settlement calculation endpoints (getUserBalanceSummary, getTripBalances)
+- [x] Settlement tracking (settleExpenseSplit method)
+- [x] Update expense responses to include split detail
 #### Backend Tasks
 - [ ] Create ExpenseSplit model and migration
 - [ ] Update Expense model with paidBy field
-- [ ] Implement ExpenseSplitService (create, update, delete splits)
-- [ ] Add auto-split calculation (equal, custom, percentage)
-- [ ] Add settlement calculation endpoints
-- [ ] Update expense response to include splits
+- [ ] Implement ExpenseSpli ✅ Implemented
+POST   /api/trips/:tripId/expenses/:expenseId/settle/:userId // Settle a specific split
+GET    /api/trips/:tripId/balances                           // Get trip-wide balance summary
+GET    /api/trips/:tripId/my-balance                         // Get current user's balance
 
-**API Endpoints**:
-```typescript
-// Expense Split Management
-POST   /api/trips/:tripId/expenses/:expenseId/splits  // Create/update splits
+// Split creation is handled in expense create/update
+// ExpenseSplit records are created automatically on expense creatione splits
 GET    /api/trips/:tripId/expenses/:expenseId/splits  // Get expense splits
 DELETE /api/trips/:tripId/expenses/:expenseId/splits/:userId // Remove split
 POST   /api/trips/:tripId/expenses/:expenseId/auto-split // Auto split equally
@@ -400,23 +414,26 @@ Frontend:
   apps/web/src/app/trips/[tripId]/settlements/
     └── page.tsx
 ```
-
-**Estimated Time**: 5-7 days
+Backend Completed**: February 11, 2026 (schema only)  
+**Frontend Status**: ⏸️ Not Started
 
 ---
 
-### Phase 4: Receipt Image Upload (4-6 days)
+### Phase 4: Receipt Image Upload 🚧 SCHEMA READY
 
 **Priority**: Medium  
-**Dependencies**: Phase 1 (Authentication)
+**Dependencies**: Phase 1 (Authentication) ✅  
+**Status**: Schema ✅ | Implementation ⏸️ Pending
 
 #### Backend Tasks
-- [ ] Install dependencies: `multer`, `@aws-sdk/client-s3` (or local storage)
-- [ ] Create Receipt model and migration
-- [ ] Implement FileUploadService (upload, delete, get URL)
-- [ ] Add receipt upload endpoint with file validation
-- [ ] Configure storage (S3/R2 or local uploads folder)
-- [ ] Add image compression/optimization (optional)
+- [x] Create ExpenseImage model in schema (supports Receipt/Item/Other types)
+- [x] Schema supports multiple images per expense with metadata
+- [ ] Install dependencies: `multer`, `@aws-sdk/client-s3` (or local storage) ⏸️
+- [ ] Implement FileUploadService (upload, delete, get URL) ⏸️
+- [ ] Add image upload endpoint with file validation ⏸️
+- [ ] Configure storage (S3/R2 or local uploads folder) ⏸️
+- [ ] Add image compression/optimization (optional) ⏸️
+- [ ] Implement delete image endpoint ⏸️n (optional)
 - [ ] Implement delete receipt endpoint
 
 **Storage Options**:
@@ -472,7 +489,35 @@ Frontend:
   apps/web/src/components/expenses/
     ├── ReceiptUpload.tsx
     ├── ReceiptGallery.tsx
-    ├── ReceiptPreview.tsx
+  Status**: Schema ready, implementation pending
+
+---
+
+## ✅ Additional Completed Features
+
+### API Testing Infrastructure ✅
+**Completed**: February 11, 2026
+
+- [x] Comprehensive api.rest file with all endpoints
+- [x] Auto-extract JWT token from login response (`{{login.response.body.accessToken}}`)
+- [x] China-themed sample data (Sichuan cities: Chengdu, Leshan, Emeishan)
+- [x] Complete test cases for trips, locations, itinerary, expenses, auth
+- [x] Ready-to-use REST client for development testing
+
+### Payment Method Tracking ✅
+**Completed**: February 11, 2026
+
+- [x] PaymentMethod enum in schema (Cash/Card/App)
+- [x] Track payment method on each expense
+- [x] Support for different payment types common in China
+
+### Schema Enhancements ✅
+**Completed**: February 11, 2026
+
+- [x] UserType enum (Dev/User) for user categorization
+- [x] ExpenseImageType enum (Receipt/Item/Other)
+- [x] Timezone support in ItineraryItem
+- [x] Geographic fields for AMap integration (amapId, province, city, district)
     └── ReceiptLightbox.tsx
 ```
 
@@ -542,29 +587,50 @@ Frontend:
 - Expense categories with icons
 - Export expenses to Excel/CSV
 - Expense approval workflow (optional)
+Timeline & Progress
 
-### 9. Trip Templates & Cloning (3-5 days)
+### ✅ Completed (February 10-11, 2026)
+1. **Phase 1**: User Authentication (Backend + Frontend) - 2 days
+2. **Phase 2**: Trip Collaboration (Backend) - 1 day
+3. **Phase 3**: Expense Splitting (Backend) - 1 day
+4. **API Testing**: Comprehensive test infrastructure - 1 day  
+   **Milestone Achieved**: ✅ Users can register, login, collaborate on trips, split expenses (backend ready)
 
-**Why**: Save time for similar trips
+### 🚧 In Progress (Week of February 11, 2026)
+1. **Phase 2 Frontend**: Trip member management UI
+   - Share trip dialog
+   - Member list with roles
+   - Add/remove members interface
+2. **Phase 3 Frontend**: Expense split UI
+   - Split calculator
+   - Settlement summary
+   - Balance tracking display
 
-**Features**:
-- Save trip as template
-- Browse public templates
-- Clone past trips
-- Copy itinerary between trips
+### 📋 Immediate Next Steps (Weeks 2-3)
+3. **Trip Detail Pages**: Complete CRUD UI for locations, itinerary, expenses
+4. **Phase 4**: Receipt image upload implementation
+5. **Testing & Polish**: E2E testing, responsive design  
+   **Target Milestone**: Full collaborative trip planning with expense management
 
-### 10. Social Features (10-15 days)
+### 🎯 Short-term (Month 2)
+6. Email notifications for trip invitations
+7. Activity feed for trip changes
+8. Mobile responsiveness optimization
+9. Performance optimization & caching  
+   **Target Milestone**: Production-ready MVP
 
-**Features**:
-- Public trip sharing (read-only link)
-- Trip reviews and ratings
-- Photo gallery per trip
-- Comments on itinerary items
-- Like/reaction system
+### 🚀 Medium-term (Months 3-4)
+10. Advanced expense features (OCR, budgets)
+11. Trip templates and cloning
+12. Public trip sharing
+13. Real-time collaboration (Socket.io)  
+    **Target Milestone**: Feature-complete collaborative platform
 
-### 11. AI-Powered Features (15-30 days)
-
-**Features**:
+### 🌟 Long-term (Months 5-6+)
+14. Mobile App (React Native)
+15. AI-Powered Features (itinerary suggestions)
+16. Social Features (reviews, ratings, photo gallery)
+17. Multi-language support expansion
 - AI itinerary suggestions based on destination
 - Budget recommendations
 - Weather-aware packing lists
@@ -645,22 +711,36 @@ NEXT_PUBLIC_API_URL=http://localhost:3001
     "passport-jwt": "^4.0.0",
     "bcrypt": "^5.1.0",
     "@types/bcrypt": "^5.0.0",
-    "@aws-sdk/client-s3": "^3.400.0",
-    "multer": "^1.4.5-lts.1",
-    "@types/multer": "^1.4.7",
-    "nodemailer": "^6.9.0",
-    "@types/nodemailer": "^6.4.0",
-    "socket.io": "^4.6.0" // optional for real-time
-  }
-}
-```
+   x] Users can register and login ✅
+- [x] Authentication persists across page refreshes ✅
+- [x] Protected routes redirect to login ✅
+- [x] Backend authorization checks all trip access ✅
+- [ ] Users can invite buddies via UI 🚧 Backend ready
+- [ ] Multiple users can edit same trip 🚧 Backend ready
+- [ ] Changes are visible to all members 🚧 Frontend pending
 
-**Frontend** (`apps/web/package.json`):
-```json
-{
-  "dependencies": {
-    "react-dropzone": "^14.2.3",
-    "react-image-lightbox": "^5.1.4",
+### Phase 3-4 Success Criteria
+- [x] Expense split schema supports multiple users ✅
+- [x] Settlement calculations are accurate ✅
+- [x] Balance tracking endpoints working ✅
+- [ ] Expenses can be split via UI ⏸️ Frontend pending
+- [ ] Settlement summary displays correctly ⏸️ Frontend pending
+- [ ] Receipts can be uploaded ⏸️ Not implemented
+- [ ] Image uploads work reliably ⏸️ Not implemented
+
+### Current Technical Metrics
+- [x] API build passes without errors ✅
+- [x] All auth endpoints tested and working ✅
+- [x] JWT token validation functional ✅
+- [x] Database schema migration successful ✅
+- [x] Frontend authentication flow complete ✅
+
+### Target Overall Metrics (Post-Launch)
+- User retention rate > 60% after 1 month
+- Average trip has 2+ collaborators
+- 80%+ of expenses include receipt images
+- Load time < 2 seconds for all pages
+- 95%+ API success rate
     "socket.io-client": "^4.6.0", // optional for real-time
     "zustand": "^4.4.0" // optional, alternative to Context API
   }
@@ -668,17 +748,69 @@ NEXT_PUBLIC_API_URL=http://localhost:3001
 ```
 
 ### Schema Package Updates
+Immediate Next Steps (February 11, 2026)
 
-Add new Zod schemas in `packages/schema/src/`:
-- `user.ts` - User schemas
-- `tripMember.ts` - Trip member schemas
-- `expenseSplit.ts` - Expense split schemas
-- `receipt.ts` - Receipt schemas
-- Update `expense.ts` with paidBy and splits
+### Priority 1: Complete Phase 2 Frontend
+1. **Build trip member management UI**
+   - [ ] ShareTripDialog component
+   - [ ] MemberList with role badges
+   - [ ] Add/remove member functionality
+   - [ ] Role update dropdown (owner only)
 
-## 🧪 Testing Strategy
+### Priority 2: Build Trip Detail Pages
+2. **Create comprehensive trip detail UI**
+   - [ ] Trip overview page with tabs
+   - [ ] Location management (list, add, edit, delete)
+   - [ ] Itinerary builder (timeline view)
+   - [ ] Expense tracker with splits
 
-### Unit Tests
+### Priority 3: Complete Phase 3 Frontend
+3. **Implement expense split UI**
+   - [ ] Expense form with split calculator
+   - [ ] Settlement summary page
+   - [ ] Balance display (who owes whom)
+   - [ ] Mark as settled functionality
+
+### Priority 4: Testing & Polish
+4. **Ensure quality and usability**
+   - [ ] Test full user journey (register → create trip → invite → add expense)
+   - [ ] Responsive design for mobile
+   - [ ] Error handling and loading states
+   - [ ] Performance optimization
+
+### Priority 5: Phase 4 Implementation
+5. **Add receipt upload feature**
+   - [ ] Install multer and configure storage
+   - [ ] Implement upload endpoints
+   - [ ] Build frontend upload component
+   - [ ] Image gallery view
+
+---
+
+## 📝 Development Notes
+
+### Key Implementation Decisions Made
+1. **Username-based auth** instead of email-only (more flexible for China users)
+2. **ConfigService for JWT** to properly load environment variables
+3. **PaymentMethod enum** supports Cash/Card/App (local payment methods)
+4. **ExpenseImage** instead of Receipt (supports multiple image types)
+5. **localStorage** for token storage (simple, works for SPA)
+
+### Technical Debt Identified
+- [ ] Email notifications not implemented (deferred)
+- [ ] Refresh token rotation not implemented (deferred)
+- [ ] Password reset flow not implemented (deferred)
+- [ ] Real-time updates not implemented (optional)
+
+### Performance Considerations
+- All endpoints use proper indexing (userId, tripId, etc.)
+- Authorization checks happen early in request lifecycle
+- JWT tokens properly cached in browser localStorage
+
+---
+
+**Last Updated**: February 11, 2026  
+**Next Review**: After Phase 2 Frontend completion
 - Auth service: registration, login, token validation
 - Authorization guards: role checks
 - Expense split calculations
