@@ -8,6 +8,8 @@ export { useExpenses } from "./useExpenses";
 export { useItineraryItems } from "./useItineraryItems";
 export { useLocations } from "./useLocations";
 export { useTrip } from "./useTrip";
+export { useTripCounts } from "./useTripCounts";
+export { useTripDetail } from "./useTripDetail";
 export { useTrips } from "./useTrips";
 
 // Dialog management hooks
