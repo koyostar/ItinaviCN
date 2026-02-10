@@ -101,7 +101,7 @@ export function AmapPlaceAutocomplete({
       if (data.status === "1" && data.tips) {
         const suggestions: PlaceSuggestion[] = (
           data.tips as Array<{
-            location?: string;
+            location?: string | { lng: number; lat: number };
             name: string;
             address?: string;
             district?: string;
@@ -112,15 +112,26 @@ export function AmapPlaceAutocomplete({
         )
           .filter((item) => item.location) // Only include results with location
           .map((item) => {
-            const [lng, lat] = item.location!.split(",").map(Number);
-            
+            // Handle location as either string or object
+            let lng: number | undefined;
+            let lat: number | undefined;
+
+            if (typeof item.location === "string") {
+              [lng, lat] = item.location.split(",").map(Number);
+            } else if (item.location && typeof item.location === "object") {
+              lng = item.location.lng;
+              lat = item.location.lat;
+            }
+
             // Parse district to extract city and province
             // Format is usually: "省份省市区" or "直辖市区"
-            const districtParts = item.district ? item.district.split(/省|市/) : [];
+            const districtParts = item.district
+              ? item.district.split(/省|市/)
+              : [];
             const province = districtParts[0] || undefined;
             const city = districtParts[1] || districtParts[0] || undefined;
             const district = item.district || undefined;
-            
+
             return {
               name: item.name,
               address: item.address || item.district || "",

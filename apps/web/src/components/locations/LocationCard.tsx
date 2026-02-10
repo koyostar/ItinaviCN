@@ -1,7 +1,7 @@
 import { getLocationCategoryChipSx } from "@/lib/constants";
 import type { LocationResponse } from "@itinavi/schema";
+import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
   Card,
@@ -9,6 +9,7 @@ import {
   Chip,
   IconButton,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 
@@ -16,15 +17,36 @@ interface LocationCardProps {
   location: LocationResponse;
   tripId: string;
   onDelete: (id: string) => void;
+  onClick?: (locationId: string) => void;
+  onAddToItinerary?: (location: LocationResponse) => void;
 }
 
 export function LocationCard({
   location,
   tripId,
   onDelete,
+  onClick,
+  onAddToItinerary,
 }: LocationCardProps) {
   return (
-    <Card>
+    <Card
+      sx={{
+        cursor: onClick ? "pointer" : "default",
+        transition: "all 0.2s",
+        "&:hover": onClick
+          ? {
+              boxShadow: 3,
+              transform: "translateY(-2px)",
+            }
+          : {},
+      }}
+      onClick={(e) => {
+        // Only trigger if not clicking on buttons
+        if (onClick && !(e.target as HTMLElement).closest("button, a")) {
+          onClick(location.id);
+        }
+      }}
+    >
       <CardContent>
         <Stack
           direction="row"
@@ -54,18 +76,30 @@ export function LocationCard({
             />
           </Box>
 
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row">
+            {onAddToItinerary && (
+              <Tooltip title="Add to Itinerary">
+                <IconButton
+                  size="medium"
+                  color="success"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAddToItinerary(location);
+                  }}
+                  sx={{ p: 1 }}
+                >
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+            )}
             <IconButton
-              size="small"
-              color="primary"
-              href={`/trips/${tripId}/locations/${location.id}/edit`}
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              size="small"
+              size="medium"
               color="error"
-              onClick={() => onDelete(location.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(location.id);
+              }}
+              sx={{ p: 1 }}
             >
               <DeleteIcon />
             </IconButton>

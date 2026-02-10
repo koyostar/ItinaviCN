@@ -1,4 +1,12 @@
 import {
+  CreateItineraryItemRequestSchema,
+  ItineraryItemIdParamSchema,
+  ItineraryItemResponseSchema,
+  ListItineraryItemsResponseSchema,
+  TripIdParamSchema,
+  UpdateItineraryItemRequestSchema,
+} from '@itinavi/schema';
+import {
   Body,
   Controller,
   Delete,
@@ -7,22 +15,15 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import {
-  CreateItineraryItemRequestSchema,
-  ItineraryItemIdParamSchema,
-  ItineraryItemResponseSchema,
-  ListItineraryItemsResponseSchema,
-  TripIdParamSchema,
-  UpdateItineraryItemRequestSchema,
-} from '@itinavi/schema';
 import { validate } from '../../common/validate';
 import { ItineraryService } from './itinerary.service';
 
 /**
  * Transforms a database itinerary item record to API response format.
  * Converts Date objects to ISO strings and validates response schema.
+ * If the item is pinned to a location, merges location's geographic details.
  *
- * @param item - Raw itinerary item data from database
+ * @param item - Raw itinerary item data from database (with optional location)
  * @returns Validated itinerary item response conforming to schema
  */
 function toItineraryItemResponse(item: {
@@ -43,7 +44,44 @@ function toItineraryItemResponse(item: {
   details: unknown;
   createdAt: Date;
   updatedAt: Date;
+  location?: {
+    city: string | null;
+    district: string | null;
+    province: string | null;
+    address: string | null;
+    latitude: { toNumber(): number } | null;
+    longitude: { toNumber(): number } | null;
+    adcode: string | null;
+    citycode: string | null;
+    amapPoiId: string | null;
+  } | null;
 }) {
+  // Merge location's Amap details into item details if location is pinned
+  let mergedDetails = item.details as Record<string, unknown> | null;
+  if (item.location) {
+    const locationDetails = {
+      ...(item.location.city && { city: item.location.city }),
+      ...(item.location.district && { district: item.location.district }),
+      ...(item.location.province && { province: item.location.province }),
+      ...(item.location.address && { address: item.location.address }),
+      ...(item.location.latitude && {
+        latitude: item.location.latitude.toNumber(),
+      }),
+      ...(item.location.longitude && {
+        longitude: item.location.longitude.toNumber(),
+      }),
+      ...(item.location.adcode && { adcode: item.location.adcode }),
+      ...(item.location.citycode && { citycode: item.location.citycode }),
+      ...(item.location.amapPoiId && { amapPoiId: item.location.amapPoiId }),
+    };
+
+    // Merge with existing details, with location details taking precedence
+    mergedDetails = {
+      ...(mergedDetails || {}),
+      ...locationDetails,
+    };
+  }
+
   return ItineraryItemResponseSchema.parse({
     id: item.id,
     tripId: item.tripId,
@@ -59,7 +97,7 @@ function toItineraryItemResponse(item: {
     bookingRef: item.bookingRef,
     url: item.url,
     notes: item.notes,
-    details: item.details,
+    details: mergedDetails,
     createdAt: item.createdAt.toISOString(),
     updatedAt: item.updatedAt.toISOString(),
   });

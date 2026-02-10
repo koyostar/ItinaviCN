@@ -20,6 +20,7 @@ export class ItineraryService {
   async listItems(tripId: string) {
     return this.prisma.itineraryItem.findMany({
       where: { tripId },
+      include: { location: true },
       orderBy: { startDateTime: 'asc' },
     });
   }
@@ -34,6 +35,7 @@ export class ItineraryService {
   async getItem(itemId: string) {
     const item = await this.prisma.itineraryItem.findUnique({
       where: { id: itemId },
+      include: { location: true },
     });
     if (!item) throw new NotFoundException('Itinerary item not found');
     return item;
@@ -41,7 +43,7 @@ export class ItineraryService {
 
   /**
    * Creates a new itinerary item for a trip.
-   * Automatically creates a location if the item has an address.
+   * Automatically links to existing location (by amapPoiId) or creates new one if item has an address.
    *
    * @param {string} tripId - The unique identifier of the trip
    * @param {Omit<Prisma.ItineraryItemCreateInput, 'trip'>} input - Itinerary item creation data
@@ -58,7 +60,7 @@ export class ItineraryService {
     >;
     const type = input.type as string;
 
-    // Auto-create location for items with addresses (only if no manual locationId provided)
+    // Auto-create or link to existing location for items with addresses (only if no manual locationId provided)
     if (
       !input.location &&
       details.address &&
@@ -75,14 +77,39 @@ export class ItineraryService {
           ? String(details.hotelName)
           : input.title;
 
-      const location = await this.prisma.location.create({
-        data: {
-          tripId,
-          name: locationName,
-          category: categoryMap[type],
-          address: String(details.address),
-        },
-      });
+      // Check if a location with the same amapPoiId already exists
+      let location;
+      if (details.amapPoiId) {
+        location = await this.prisma.location.findFirst({
+          where: {
+            tripId,
+            amapPoiId: String(details.amapPoiId),
+          },
+        });
+      }
+
+      // If no existing location found, create a new one
+      if (!location) {
+        location = await this.prisma.location.create({
+          data: {
+            tripId,
+            name: locationName,
+            category: categoryMap[type],
+            ...(details.city && { city: String(details.city) }),
+            ...(details.district && { district: String(details.district) }),
+            ...(details.province && { province: String(details.province) }),
+            address: String(details.address),
+            ...(details.latitude !== undefined &&
+              details.longitude !== undefined && {
+                latitude: Number(details.latitude),
+                longitude: Number(details.longitude),
+              }),
+            ...(details.adcode && { adcode: String(details.adcode) }),
+            ...(details.citycode && { citycode: String(details.citycode) }),
+            ...(details.amapPoiId && { amapPoiId: String(details.amapPoiId) }),
+          },
+        });
+      }
 
       return this.prisma.itineraryItem.create({
         data: {
@@ -133,10 +160,10 @@ export class ItineraryService {
 
   /**
    * Syncs existing itinerary items with locations.
-   * Creates locations for items that have addresses but no linked location.
+   * Links items to existing locations (by amapPoiId) or creates new ones if needed.
    *
    * @param {string} tripId - The unique identifier of the trip
-   * @returns {Promise} Count of locations created
+   * @returns {Promise} Count of new locations created
    */
   async syncLocations(tripId: string) {
     const items = await this.prisma.itineraryItem.findMany({
@@ -175,34 +202,47 @@ export class ItineraryService {
             ? String(details.hotelName)
             : item.title;
 
-        const locationData = {
-          tripId,
-          name: locationName,
-          category: categoryMap[item.type],
-          ...(details.city && { city: String(details.city) }),
-          ...(details.district && { district: String(details.district) }),
-          ...(details.province && { province: String(details.province) }),
-          address: String(details.address),
-          ...(details.latitude !== undefined &&
-            details.longitude !== undefined && {
-              latitude: Number(details.latitude),
-              longitude: Number(details.longitude),
-            }),
-          ...(details.adcode && { adcode: String(details.adcode) }),
-          ...(details.citycode && { citycode: String(details.citycode) }),
-          ...(details.amapPoiId && { amapPoiId: String(details.amapPoiId) }),
-        };
+        // Check if a location with the same amapPoiId already exists
+        let location;
+        if (details.amapPoiId) {
+          location = await this.prisma.location.findFirst({
+            where: {
+              tripId,
+              amapPoiId: String(details.amapPoiId),
+            },
+          });
+        }
 
-        const location = await this.prisma.location.create({
-          data: locationData,
-        });
+        // If no existing location found, create a new one
+        if (!location) {
+          const locationData = {
+            tripId,
+            name: locationName,
+            category: categoryMap[item.type],
+            ...(details.city && { city: String(details.city) }),
+            ...(details.district && { district: String(details.district) }),
+            ...(details.province && { province: String(details.province) }),
+            address: String(details.address),
+            ...(details.latitude !== undefined &&
+              details.longitude !== undefined && {
+                latitude: Number(details.latitude),
+                longitude: Number(details.longitude),
+              }),
+            ...(details.adcode && { adcode: String(details.adcode) }),
+            ...(details.citycode && { citycode: String(details.citycode) }),
+            ...(details.amapPoiId && { amapPoiId: String(details.amapPoiId) }),
+          };
+
+          location = await this.prisma.location.create({
+            data: locationData,
+          });
+          createdCount++;
+        }
 
         await this.prisma.itineraryItem.update({
           where: { id: item.id },
           data: { locationId: location.id },
         });
-
-        createdCount++;
       }
     }
 
