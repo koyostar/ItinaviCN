@@ -222,15 +222,24 @@ model Location {
 
 **API Endpoints**:
 ```typescript
-POST   /api/auth/register        // Register new user
-POST   /api/auth/login           // Login (returns access + refresh tokens)
-POST   /api/auth/refresh         // Refresh access token
-POST   /api/auth/logout          // Invalidate refresh token
-GET    /api/auth/me              // Get current user
-PATCH  /api/auth/profile         // Update profile
-POST   /api/auth/forgot-password // Request password reset
-POST   /api/auth/reset-password  // Reset password with token
-```x] Create auth context/provider (AuthContext with login/register/logout)
+// ✅ Implemented
+POST   /api/auth/register          // Register new user
+POST   /api/auth/login             // Login (returns access token)
+GET    /api/auth/me                // Get current user
+PATCH  /api/auth/profile           // Update profile (displayName, email)
+POST   /api/auth/change-password   // Change password
+GET    /api/auth/users             // Get all users (dev only)
+POST   /api/auth/dev-reset-password // Reset user password (dev only)
+
+// ⏸️ Deferred
+POST   /api/auth/refresh           // Refresh access token
+POST   /api/auth/logout            // Invalidate refresh token
+POST   /api/auth/forgot-password   // Request password reset
+POST   /api/auth/reset-password    // Reset password with token
+```
+
+#### Frontend Tasks
+- [x] Create auth context/provider (AuthContext with login/register/logout)
 - [x] Build login page (`/login` with username/password)
 - [x] Build registration page (`/register` with validation)
 - [x] Implement token storage (localStorage: `itinavi_token`, `itinavi_user`)
@@ -239,11 +248,10 @@ POST   /api/auth/reset-password  // Reset password with token
 - [x] Add logout functionality (Navigation menu with user dropdown)
 - [x] Update Navigation component (show auth state, login/register CTAs)
 - [x] Update home page (auto-redirect to trips if authenticated)
+- [x] Build user profile page with edit form and password change
+- [x] Add dev-only user management with password reset
+- [x] Add profile menu item to navigation
 - [ ] Build forgot password page ⏸️ Deferred
-- [ ] Build user profile page ⏸️ Deferred API client
-- [ ] Create ProtectedRoute component
-- [ ] Add logout functionality
-- [ ] Build user profile page
 
 **Files to Create**:
 ```
@@ -267,7 +275,10 @@ Frontend:
     ├── LoginForm.tsx
     ├── RegisterForm.tsx
     └── ProtectedRoute.tsx
-``Completed**: February 11, 2026  
+  apps/web/src/app/profile/page.tsx
+```
+
+**Completed**: February 11, 2026  
 **Actual Time**: 2 days
 
 ---
@@ -495,6 +506,29 @@ Frontend:
 
 ## ✅ Additional Completed Features
 
+### Shared Schema Package ✅
+**Completed**: February 11, 2026
+
+- [x] Created @itinavi/schema package as single source of truth
+- [x] Auth schemas with Zod validation (RegisterRequest, LoginRequest, UpdateProfile, etc.)
+- [x] Location constants (COUNTRIES, CITIES) with bilingual support (English/Chinese)
+- [x] Timezone constants (COMMON_TIMEZONES, COUNTRY_TIMEZONES) and helper functions
+- [x] Trip collaboration schemas (TripRole, AddTripMemberRequest, UpdateTripMemberRequest)
+- [x] ExchangeRateApiResponse interface for external API integration
+- [x] Migrated all API DTOs to use Zod schemas
+- [x] Migrated all frontend types to use shared schemas
+- [x] Deleted duplicate code (locations.ts, timezone.ts utilities)
+
+### User Profile Management ✅
+**Completed**: February 11, 2026
+
+- [x] Full profile editing page (displayName, email)
+- [x] Password change functionality with validation
+- [x] Dev-only user management table
+- [x] Password reset for any user (dev admin feature)
+- [x] Profile menu item in navigation
+- [x] API endpoints: updateProfile, changePassword, getAllUsers, devResetPassword
+
 ### API Testing Infrastructure ✅
 **Completed**: February 11, 2026
 
@@ -502,6 +536,7 @@ Frontend:
 - [x] Auto-extract JWT token from login response (`{{login.response.body.accessToken}}`)
 - [x] China-themed sample data (Sichuan cities: Chengdu, Leshan, Emeishan)
 - [x] Complete test cases for trips, locations, itinerary, expenses, auth
+- [x] Added profile and password test endpoints
 - [x] Ready-to-use REST client for development testing
 
 ### Payment Method Tracking ✅
@@ -591,10 +626,22 @@ Timeline & Progress
 
 ### ✅ Completed (February 10-11, 2026)
 1. **Phase 1**: User Authentication (Backend + Frontend) - 2 days
+   - ✅ Auth system with JWT tokens
+   - ✅ Login/register pages with full validation
+   - ✅ User profile management with password change
+   - ✅ Dev admin features (user management, password reset)
 2. **Phase 2**: Trip Collaboration (Backend) - 1 day
+   - ✅ Complete backend API with role-based access
+   - ✅ Authorization guards on all endpoints
 3. **Phase 3**: Expense Splitting (Backend) - 1 day
-4. **API Testing**: Comprehensive test infrastructure - 1 day  
-   **Milestone Achieved**: ✅ Users can register, login, collaborate on trips, split expenses (backend ready)
+   - ✅ Schema and API for expense splits
+   - ✅ Settlement calculation endpoints
+4. **Shared Schema Package**: Single source of truth - 1 day
+   - ✅ Migrated all DTOs to Zod schemas
+   - ✅ Consolidated constants (locations, timezones)
+   - ✅ Eliminated code duplication
+5. **API Testing**: Comprehensive test infrastructure - 1 day  
+   **Milestone Achieved**: ✅ Full auth system, backend collaboration ready, shared schema established
 
 ### 🚧 In Progress (Week of February 11, 2026)
 1. **Phase 2 Frontend**: Trip member management UI
@@ -711,10 +758,14 @@ NEXT_PUBLIC_API_URL=http://localhost:3001
     "passport-jwt": "^4.0.0",
     "bcrypt": "^5.1.0",
     "@types/bcrypt": "^5.0.0",
-   x] Users can register and login ✅
+### Phase 1-2 Success Criteria
+- [x] Users can register and login ✅
 - [x] Authentication persists across page refreshes ✅
 - [x] Protected routes redirect to login ✅
+- [x] Users can edit their profile and change password ✅
+- [x] Dev users can manage all users ✅
 - [x] Backend authorization checks all trip access ✅
+- [x] Shared schema package eliminates type duplication ✅
 - [ ] Users can invite buddies via UI 🚧 Backend ready
 - [ ] Multiple users can edit same trip 🚧 Backend ready
 - [ ] Changes are visible to all members 🚧 Frontend pending
@@ -731,9 +782,12 @@ NEXT_PUBLIC_API_URL=http://localhost:3001
 ### Current Technical Metrics
 - [x] API build passes without errors ✅
 - [x] All auth endpoints tested and working ✅
+- [x] Profile management fully functional ✅
 - [x] JWT token validation functional ✅
 - [x] Database schema migration successful ✅
 - [x] Frontend authentication flow complete ✅
+- [x] Shared schema package established ✅
+- [x] Zero code duplication for types and constants ✅
 
 ### Target Overall Metrics (Post-Launch)
 - User retention rate > 60% after 1 month
@@ -795,6 +849,9 @@ Immediate Next Steps (February 11, 2026)
 3. **PaymentMethod enum** supports Cash/Card/App (local payment methods)
 4. **ExpenseImage** instead of Receipt (supports multiple image types)
 5. **localStorage** for token storage (simple, works for SPA)
+6. **Shared @itinavi/schema package** for single source of truth (eliminates duplication)
+7. **Zod validation** instead of class-validator (better type inference, smaller bundle)
+8. **Dev user type** for admin features (user management, password reset)
 
 ### Technical Debt Identified
 - [ ] Email notifications not implemented (deferred)
@@ -809,8 +866,34 @@ Immediate Next Steps (February 11, 2026)
 
 ---
 
-**Last Updated**: February 11, 2026  
+**Last Updated**: February 11, 2026 (Evening)  
 **Next Review**: After Phase 2 Frontend completion
+
+---
+
+## 📦 Recent Commits (February 11, 2026)
+
+### Architecture Improvements
+1. **feat(schema)**: Create shared schema package with auth, constants, and types
+   - Established @itinavi/schema as single source of truth
+   - Added auth schemas, location/timezone constants, trip collaboration types
+   - 17 files changed, 975 insertions
+
+2. **refactor(api)**: Migrate to shared schema with Zod validation
+   - Replaced class-validator DTOs with Zod schemas
+   - Added profile management and dev admin endpoints
+   - 8 files changed, 218 insertions, 77 deletions
+
+3. **refactor(web)**: Migrate to shared schema package
+   - Updated all imports to use @itinavi/schema
+   - Eliminated duplicate location and timezone utilities
+   - 19 files changed, 29 insertions, 238 deletions
+
+4. **feat(web)**: Add user profile management page
+   - Built complete profile editing interface
+   - Added password change functionality
+   - Implemented dev admin user management
+   - 3 files changed, 393 insertions
 - Auth service: registration, login, token validation
 - Authorization guards: role checks
 - Expense split calculations
