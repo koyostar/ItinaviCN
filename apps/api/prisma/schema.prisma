@@ -44,6 +44,64 @@ enum ExchangeRateSource {
   Provider
 }
 
+enum TripRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+enum PaymentMethod {
+  Cash
+  Card
+  App
+}
+
+enum UserType {
+  Dev
+  User
+}
+
+enum ExpenseImageType {
+  Receipt
+  Item
+  Other
+}
+
+model User {
+  id            String   @id @default(uuid())
+  username      String   @unique
+  email         String?  @unique  // Optional - kept for password recovery
+  passwordHash  String
+  displayName   String?
+  avatar        String?
+  userType      UserType @default(User)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  ownedTrips    Trip[]   @relation("TripOwner")
+  tripMembers   TripMember[]
+  paidExpenses  Expense[] @relation("ExpensePaidBy")
+  expenseSplits ExpenseSplit[]
+  
+  @@index([email])
+  @@index([username])
+}
+
+model TripMember {
+  id        String   @id @default(uuid())
+  tripId    String
+  userId    String
+  role      TripRole @default(EDITOR)
+  joinedAt  DateTime @default(now())
+  
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([tripId, userId])
+  @@index([tripId])
+  @@index([userId])
+}
+
 model Trip {
   id                  String              @id @default(uuid())
   title               String
@@ -54,6 +112,11 @@ model Trip {
   destinationCurrency String              @default("CNY")
   originCurrency      String              @default("SGD")
   notes               String?
+  
+  ownerId             String
+  owner               User                @relation("TripOwner", fields: [ownerId], references: [id])
+  members             TripMember[]
+  isShared            Boolean             @default(false)
 
   locations           Location[]
   itineraryItems      ItineraryItem[]
@@ -62,6 +125,8 @@ model Trip {
 
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
+  
+  @@index([ownerId])
 }
 
 model Location {
@@ -81,6 +146,9 @@ model Location {
   citycode     String?
   amapPoiId    String?
   notes        String?
+  
+  createdBy    String?
+  updatedBy    String?
 
   itineraryItems ItineraryItem[]
   expenses       Expense[]
@@ -89,6 +157,7 @@ model Location {
   updatedAt     DateTime         @updatedAt
 
   @@index([tripId])
+  @@index([createdBy])
 }
 
 model ItineraryItem {
@@ -112,6 +181,9 @@ model ItineraryItem {
   url           String?
   notes         String?
   details       Json?
+  
+  createdBy     String?
+  updatedBy     String?
 
   expenses      Expense[]
 
@@ -120,6 +192,7 @@ model ItineraryItem {
 
   @@index([tripId])
   @@index([locationId])
+  @@index([createdBy])
 }
 
 model ExchangeRate {
@@ -160,6 +233,13 @@ model Expense {
   linkedLocation        Location?       @relation(fields: [linkedLocationId], references: [id], onDelete: SetNull)
 
   notes                 String?
+  
+  paidByUserId          String?
+  paidByUser            User?           @relation("ExpensePaidBy", fields: [paidByUserId], references: [id])
+  paymentMethod         PaymentMethod?  @default(Cash)
+  
+  splits                ExpenseSplit[]
+  images                ExpenseImage[]
 
   createdAt             DateTime        @default(now())
   updatedAt             DateTime        @updatedAt
@@ -167,4 +247,48 @@ model Expense {
   @@index([tripId])
   @@index([linkedItineraryItemId])
   @@index([linkedLocationId])
+  @@index([paidByUserId])
+}
+
+model ExpenseSplit {
+  id              String    @id @default(uuid())
+  expenseId       String
+  userId          String
+  
+  // Amount this user owes for this expense (in destination currency minor units)
+  amountOwed      Int
+  
+  // Settlement tracking
+  isSettled       Boolean   @default(false)
+  settledAt       DateTime?
+  
+  expense         Expense   @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@unique([expenseId, userId])
+  @@index([expenseId])
+  @@index([userId])
+}
+
+model ExpenseImage {
+  id           String           @id @default(uuid())
+  expenseId    String
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int              // bytes
+  url          String           // S3/R2 URL or local path
+  type         ExpenseImageType @default(Receipt)
+  description  String?          // Optional additional description
+  uploadedAt   DateTime         @default(now())
+  uploadedBy   String?          // userId
+  
+  expense      Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime @default(now())
+  
+  @@index([expenseId])
 }
