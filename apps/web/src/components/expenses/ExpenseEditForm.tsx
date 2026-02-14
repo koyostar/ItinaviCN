@@ -15,7 +15,7 @@ import type {
   ItineraryItemResponse,
   TripResponse,
 } from "@itinavi/schema";
-import { EXPENSE_CATEGORY_LABELS } from "@/lib/constants";
+import { EXPENSE_CATEGORY_LABELS } from "@/lib/constants/expense";
 
 interface ExpenseEditFormProps {
   formData: {

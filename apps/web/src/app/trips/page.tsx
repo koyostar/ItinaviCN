@@ -1,6 +1,6 @@
 "use client";
 
-import { TripForm } from "@/components/forms";
+import { TripForm } from "@/components/forms/TripForm";
 import { TripCard } from "@/components/TripCard";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ShareTripDialog } from "@/components/trips/ShareTripDialog";

@@ -1,6 +1,6 @@
 "use client";
 
-import { ITINERARY_STATUSES, ITINERARY_TYPES } from "@/lib/constants";
+import { ITINERARY_STATUSES, ITINERARY_TYPES } from "@/lib/constants/itinerary";
 import {
   dateTimeLocalToUTC,
   utcToDateTimeLocal,

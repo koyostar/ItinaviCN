@@ -1,4 +1,4 @@
-import { getLocationCategoryChipSx } from "@/lib/constants";
+import { getLocationCategoryChipSx } from "@/lib/constants/location";
 import type { LocationResponse } from "@itinavi/schema";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";

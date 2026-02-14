@@ -6,7 +6,7 @@ import {
   TextField,
 } from "@mui/material";
 import type { TransportMode } from "@itinavi/schema";
-import { TRANSPORT_MODES } from "@/lib/constants";
+import { TRANSPORT_MODES } from "@/lib/constants/itinerary";
 import { DateTimeFields } from "./DateTimeFields";
 
 interface TransportDetails {

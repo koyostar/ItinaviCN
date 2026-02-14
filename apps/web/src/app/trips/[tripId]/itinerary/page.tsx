@@ -1,20 +1,16 @@
 "use client";
 
-import { ItineraryForm } from "@/components/forms";
-import {
-  AccommodationCard,
-  FlightCard,
-  FoodCard,
-  PlaceCard,
-  TransportCard,
-} from "@/components/itinerary/cards";
-import {
-  AccommodationDetailsComponent,
-  FlightDetailsComponent,
-  FoodDetailsComponent,
-  PlaceDetailsComponent,
-  TransportDetailsComponent,
-} from "@/components/itinerary/details";
+import { ItineraryForm } from "@/components/forms/ItineraryForm";
+import { AccommodationCard } from "@/components/itinerary/cards/AccommodationCard";
+import { FlightCard } from "@/components/itinerary/cards/FlightCard";
+import { FoodCard } from "@/components/itinerary/cards/FoodCard";
+import { PlaceCard } from "@/components/itinerary/cards/PlaceCard";
+import { TransportCard } from "@/components/itinerary/cards/TransportCard";
+import { AccommodationDetailsComponent } from "@/components/itinerary/details/AccommodationDetails";
+import { FlightDetailsComponent } from "@/components/itinerary/details/FlightDetails";
+import { FoodDetailsComponent } from "@/components/itinerary/details/FoodDetails";
+import { PlaceDetailsComponent } from "@/components/itinerary/details/PlaceDetails";
+import { TransportDetailsComponent } from "@/components/itinerary/details/TransportDetails";
 import {
   ConfirmDialog,
   FormDialog,
@@ -36,7 +32,7 @@ import {
   getItineraryTypeChipSx,
   ITINERARY_TYPE_COLORS,
   ITINERARY_TYPE_ICONS,
-} from "@/lib/constants";
+} from "@/lib/constants/itinerary";
 import { formatUTCDate } from "@/lib/dateUtils";
 import type { ItineraryItemResponse } from "@itinavi/schema";
 import {

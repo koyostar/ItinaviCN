@@ -1,6 +1,7 @@
 "use client";
 
-import { LocationCard, LocationsMap } from "@/components/locations";
+import { LocationCard } from "@/components/locations/LocationCard";
+import { LocationsMap } from "@/components/locations/LocationsMap";
 import {
   ConfirmDialog,
   EmptyState,

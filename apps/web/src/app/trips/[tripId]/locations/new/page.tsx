@@ -18,7 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import { api } from "@/lib/api";
-import { LOCATION_CATEGORIES } from "@/lib/constants";
+import { LOCATION_CATEGORIES } from "@/lib/constants/location";
 import { useFormSubmit } from "@/hooks";
 import { AmapPlaceAutocomplete } from "@/components/AmapPlaceAutocomplete";
 
