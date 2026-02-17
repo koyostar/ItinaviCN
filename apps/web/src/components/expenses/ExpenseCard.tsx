@@ -5,8 +5,11 @@ import {
   getExpenseCategoryIconColor,
 } from "@/lib/constants/expense";
 import type { ExpenseResponse, ItineraryItemResponse } from "@itinavi/schema";
+import CallSplitIcon from "@mui/icons-material/CallSplit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import PersonIcon from "@mui/icons-material/Person";
+import PaymentIcon from "@mui/icons-material/Payment";
 
 import {
   Box,
@@ -18,8 +21,6 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { BiTransfer } from "react-icons/bi";
-import { MdPayment, MdPerson } from "react-icons/md";
 
 interface ExpenseCardProps {
   expense: ExpenseResponse;
@@ -92,7 +93,7 @@ export function ExpenseCard({
                       color="secondary"
                       onClick={() => onSplit(expense)}
                     >
-                      <BiTransfer />
+                      <CallSplitIcon />
                     </IconButton>
                   </Tooltip>
                 )}
@@ -130,7 +131,7 @@ export function ExpenseCard({
                   <Stack direction="row" spacing={3}>
                     {expense.paidByUser && (
                       <Stack direction="row" spacing={0.5} alignItems="center">
-                        <MdPerson fontSize="small" color="action" />
+                        <PersonIcon fontSize="small" color="action" />
                         <Typography variant="body2" color="text.secondary">
                           Paid by{" "}
                           {expense.paidByUser.displayName ||
@@ -140,7 +141,7 @@ export function ExpenseCard({
                     )}
                     {expense.paymentMethod && (
                       <Stack direction="row" spacing={0.5} alignItems="center">
-                        <MdPayment fontSize="small" color="action" />
+                        <PaymentIcon fontSize="small" color="action" />
                         <Typography variant="body2" color="text.secondary">
                           {expense.paymentMethod}
                         </Typography>
