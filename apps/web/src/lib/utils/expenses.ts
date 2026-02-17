@@ -1,5 +1,23 @@
-import type { ExpenseResponse } from "@itinavi/schema";
+import type { ExpenseResponse, ExpenseSplit, ExpenseSplitInput, UserInfo } from "@itinavi/schema";
 import { formatUTCDate } from "../dateUtils";
+
+/**
+ * Gets display name for a user
+ */
+export function getUserDisplay(user: UserInfo | null | undefined): string {
+  if (!user) return "Unknown User";
+  return user.displayName || user.username || "Unknown User";
+}
+
+/**
+ * Maps expense splits to split inputs for editing
+ */
+export function mapSplitsToInput(splits: ExpenseSplit[]): ExpenseSplitInput[] {
+  return splits.map((split) => ({
+    userId: split.userId,
+    amountOwed: split.amountOwed,
+  }));
+}
 
 /**
  * Groups expenses by their date

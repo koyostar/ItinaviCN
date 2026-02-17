@@ -10,6 +10,7 @@ export { useLocations } from "./useLocations";
 export { useTrip } from "./useTrip";
 export { useTripCounts } from "./useTripCounts";
 export { useTripDetail } from "./useTripDetail";
+export { useTripMembers } from "./useTripMembers";
 export { useTrips } from "./useTrips";
 
 // Dialog management hooks

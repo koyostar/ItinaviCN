@@ -74,12 +74,23 @@ export class TripsService {
 
   /**
    * Creates a new trip.
+   * Automatically adds the creator as a trip member with OWNER role.
    *
    * @param {Prisma.TripCreateInput} input - Trip creation data
    * @returns {Promise} The newly created trip
    */
   async createTrip(input: Prisma.TripCreateInput) {
-    return this.prisma.trip.create({ data: input });
+    return this.prisma.trip.create({
+      data: {
+        ...input,
+        members: {
+          create: {
+            userId: (input.owner as any).connect.id,
+            role: 'OWNER',
+          },
+        },
+      },
+    });
   }
 
   /**

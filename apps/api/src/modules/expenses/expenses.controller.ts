@@ -42,8 +42,30 @@ function toExpenseResponse(expense: {
   linkedItineraryItemId: string | null;
   linkedLocationId: string | null;
   notes: string | null;
+  paidByUserId: string | null;
+  paymentMethod: string | null;
   createdAt: Date;
   updatedAt: Date;
+  paidByUser?: {
+    id: string;
+    username: string;
+    displayName: string | null;
+  } | null;
+  splits?: Array<{
+    id: string;
+    expenseId: string;
+    userId: string;
+    amountOwed: number;
+    isSettled: boolean;
+    settledAt: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
+    user?: {
+      id: string;
+      username: string;
+      displayName: string | null;
+    };
+  }>;
 }) {
   return ExpenseResponseSchema.parse({
     id: expense.id,
@@ -59,6 +81,20 @@ function toExpenseResponse(expense: {
     linkedItineraryItemId: expense.linkedItineraryItemId,
     linkedLocationId: expense.linkedLocationId,
     notes: expense.notes,
+    paidByUserId: expense.paidByUserId,
+    paidByUser: expense.paidByUser || null,
+    paymentMethod: expense.paymentMethod,
+    splits: expense.splits?.map((split) => ({
+      id: split.id,
+      expenseId: split.expenseId,
+      userId: split.userId,
+      amountOwed: split.amountOwed,
+      isSettled: split.isSettled,
+      settledAt: split.settledAt?.toISOString() ?? null,
+      user: split.user,
+      createdAt: split.createdAt.toISOString(),
+      updatedAt: split.updatedAt.toISOString(),
+    })),
     createdAt: expense.createdAt.toISOString(),
     updatedAt: expense.updatedAt.toISOString(),
   });
@@ -111,10 +147,15 @@ export class ExpensesController {
    *
    * @param params - Route parameters containing tripId
    * @param body - Expense creation data
+   * @param user - The authenticated user
    * @returns The newly created expense
    */
   @Post()
-  async create(@Param() params: unknown, @Body() body: unknown) {
+  async create(
+    @Param() params: unknown,
+    @Body() body: unknown,
+    @CurrentUser() user: any,
+  ) {
     const { tripId } = validate(TripIdParamSchema, params);
     const input = validate(CreateExpenseRequestSchema, body);
 
@@ -126,11 +167,23 @@ export class ExpensesController {
       destinationCurrency: input.destinationCurrency,
       exchangeRateUsed: input.exchangeRateUsed,
       notes: input.notes,
+      paidByUser: input.paidByUserId
+        ? { connect: { id: input.paidByUserId } }
+        : { connect: { id: user.id } }, // Default to current user
+      paymentMethod: input.paymentMethod,
       linkedItineraryItem: input.linkedItineraryItemId
         ? { connect: { id: input.linkedItineraryItemId } }
         : undefined,
       linkedLocation: input.linkedLocationId
         ? { connect: { id: input.linkedLocationId } }
+        : undefined,
+      splits: input.splits
+        ? {
+            create: input.splits.map((split) => ({
+              userId: split.userId,
+              amountOwed: split.amountOwed,
+            })),
+          }
         : undefined,
     });
 
@@ -164,6 +217,14 @@ export class ExpensesController {
     if (input.exchangeRateUsed !== undefined)
       updateData.exchangeRateUsed = input.exchangeRateUsed;
     if (input.notes !== undefined) updateData.notes = input.notes;
+    if (input.paymentMethod !== undefined)
+      updateData.paymentMethod = input.paymentMethod;
+
+    if (input.paidByUserId !== undefined) {
+      updateData.paidByUser = input.paidByUserId
+        ? { connect: { id: input.paidByUserId } }
+        : { disconnect: true };
+    }
 
     if (input.linkedItineraryItemId !== undefined) {
       updateData.linkedItineraryItem = input.linkedItineraryItemId
@@ -175,6 +236,17 @@ export class ExpensesController {
       updateData.linkedLocation = input.linkedLocationId
         ? { connect: { id: input.linkedLocationId } }
         : { disconnect: true };
+    }
+
+    // Handle splits update - delete all existing and recreate
+    if (input.splits !== undefined) {
+      updateData.splits = {
+        deleteMany: {},
+        create: input.splits.map((split) => ({
+          userId: split.userId,
+          amountOwed: split.amountOwed,
+        })),
+      };
     }
 
     const row = await this.expenses.updateExpense(

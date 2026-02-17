@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { ExpenseCategory, ExpenseResponse } from "@itinavi/schema";
+import type { ExpenseCategory, ExpenseResponse, PaymentMethod } from "@itinavi/schema";
 
 export function useExpenseEditForm(expense: ExpenseResponse | null) {
   const [formData, setFormData] = useState({
@@ -11,6 +11,8 @@ export function useExpenseEditForm(expense: ExpenseResponse | null) {
     exchangeRateUsed: "",
     linkedItineraryItemId: "",
     notes: "",
+    paidByUserId: "",
+    paymentMethod: "Cash" as PaymentMethod,
   });
 
   // Update form when editing an expense
@@ -32,6 +34,8 @@ export function useExpenseEditForm(expense: ExpenseResponse | null) {
         exchangeRateUsed: expense.exchangeRateUsed?.toString() || "",
         linkedItineraryItemId: expense.linkedItineraryItemId || "",
         notes: expense.notes || "",
+        paidByUserId: expense.paidByUserId || "",
+        paymentMethod: expense.paymentMethod || "Cash",
       });
     }
   }, [expense]);

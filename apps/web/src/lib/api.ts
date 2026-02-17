@@ -250,6 +250,17 @@ export const api = {
       fetchApi(`/api/trips/${tripId}/expenses/${expenseId}`, {
         method: "DELETE",
       }),
+    /** Settle an expense split for a user */
+    settleSplit: (tripId: string, expenseId: string, userId: string) =>
+      fetchApi(`/api/trips/${tripId}/expenses/${expenseId}/settle/${userId}`, {
+        method: "POST",
+      }),
+    /** Get balance summary for current user */
+    getMyBalance: (tripId: string) =>
+      fetchApi(`/api/trips/${tripId}/my-balance`),
+    /** Get all trip balances (who owes whom) */
+    getTripBalances: (tripId: string) =>
+      fetchApi(`/api/trips/${tripId}/balances`),
   },
 
   /**

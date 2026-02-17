@@ -13,7 +13,9 @@ import {
 import type {
   ExpenseCategory,
   ItineraryItemResponse,
+  PaymentMethod,
   TripResponse,
+  UserInfo,
 } from "@itinavi/schema";
 import { EXPENSE_CATEGORY_LABELS } from "@/lib/constants/expense";
 
@@ -27,9 +29,12 @@ interface ExpenseEditFormProps {
     exchangeRateUsed: string;
     linkedItineraryItemId: string;
     notes: string;
+    paidByUserId: string;
+    paymentMethod: PaymentMethod;
   };
   trip: TripResponse | undefined;
   itineraryItems: ItineraryItemResponse[];
+  availableUsers: UserInfo[];
   rateLoading: boolean;
   rateError: string | null;
   submitError: string | null;
@@ -47,6 +52,7 @@ export function ExpenseEditForm({
   formData,
   trip,
   itineraryItems,
+  availableUsers,
   rateLoading,
   rateError,
   submitError,
@@ -97,6 +103,40 @@ export function ExpenseEditForm({
             ))}
           </Select>
         </FormControl>
+
+        <Stack direction="row" spacing={2}>
+          <FormControl fullWidth>
+            <InputLabel>Who Paid?</InputLabel>
+            <Select
+              value={formData.paidByUserId}
+              label="Who Paid?"
+              onChange={(e) =>
+                onFieldChange("paidByUserId", e.target.value)
+              }
+            >
+              {availableUsers.map((user) => (
+                <MenuItem key={user.id} value={user.id}>
+                  {user.displayName || user.username}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <InputLabel>Payment Method</InputLabel>
+            <Select
+              value={formData.paymentMethod}
+              label="Payment Method"
+              onChange={(e) =>
+                onFieldChange("paymentMethod", e.target.value as PaymentMethod)
+              }
+            >
+              <MenuItem value="Cash">Cash</MenuItem>
+              <MenuItem value="Card">Card</MenuItem>
+              <MenuItem value="App">App</MenuItem>
+            </Select>
+          </FormControl>
+        </Stack>
 
         <TextField
           label="Date & Time"
