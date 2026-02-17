@@ -1,11 +1,10 @@
 "use client";
 
-import {
-  ExpenseCard,
-  ExpenseCategoryFilter,
-  ExpenseEditForm,
-  ExpenseSummaryCards,
-} from "@/components/expenses";
+import { ExpenseCard } from "@/components/expenses/ExpenseCard";
+import { ExpenseCategoryFilter } from "@/components/expenses/ExpenseCategoryFilter";
+import { ExpenseEditForm } from "@/components/expenses/ExpenseEditForm";
+import { ExpenseSplitManager } from "@/components/expenses/ExpenseSplitManager";
+import { ExpenseSummaryCards } from "@/components/expenses/ExpenseSummaryCards";
 import {
   ConfirmDialog,
   FormDialog,
@@ -22,17 +21,21 @@ import {
   useFormSubmit,
   useItineraryItems,
   useTrip,
+  useTripMembers,
 } from "@/hooks";
 import { api } from "@/lib/api";
 import {
   calculateTotalsByCurrency,
   groupExpensesByDate,
+  mapSplitsToInput,
 } from "@/lib/utils/expenses";
 import type {
   ExpenseResponse,
+  ExpenseSplitInput,
   UpdateExpenseRequest,
 } from "@itinavi/schema";
 import AddIcon from "@mui/icons-material/Add";
+import BalanceIcon from "@mui/icons-material/AccountBalance";
 import {
   Box,
   Button,
@@ -57,12 +60,16 @@ export default function ExpensesPage({
   const { trip, loading: tripLoading } = useTrip(tripId);
   const { expenses, loading, error, refetch } = useExpenses(tripId);
   const { items: itineraryItems } = useItineraryItems(tripId);
+  const { members } = useTripMembers(tripId);
 
   const deleteConfirmation = useDeleteConfirmation(async (id) => {
     await api.expenses.delete(tripId, id);
   }, refetch);
 
   const editDialog = useEditDialog<ExpenseResponse>();
+  const splitDialog = useEditDialog<ExpenseResponse>();
+  const [splits, setSplits] = useState<ExpenseSplitInput[]>([]);
+
   const {
     rate,
     loading: rateLoading,
@@ -127,6 +134,8 @@ export default function ExpensesPage({
         ...(exchangeRate && { exchangeRateUsed: exchangeRate }),
         linkedItineraryItemId: formData.linkedItineraryItemId || undefined,
         notes: formData.notes || undefined,
+        paidByUserId: formData.paidByUserId || undefined,
+        paymentMethod: formData.paymentMethod,
       };
 
       await api.expenses.update(tripId, editDialog.item.id, payload);
@@ -150,12 +159,42 @@ export default function ExpensesPage({
       const expenseDate = new Date(formData.expenseDateTime)
         .toISOString()
         .split("T")[0];
-      fetchRate(
-        trip.originCurrency,
-        formData.destinationCurrency,
-        expenseDate
-      );
+      fetchRate(trip.originCurrency, formData.destinationCurrency, expenseDate);
     }
+  };
+
+  const handleOpenSplit = (expense: ExpenseResponse) => {
+    splitDialog.openEdit(expense);
+    setSplits(
+      expense.splits && expense.splits.length > 0
+        ? mapSplitsToInput(expense.splits)
+        : []
+    );
+  };
+
+  const {
+    handleSubmit: submitSplit,
+    submitting: splitSubmitting,
+    error: splitSubmitError,
+  } = useFormSubmit(
+    async (_: void) => {
+      if (!splitDialog.item) return;
+
+      const payload: UpdateExpenseRequest = {
+        splits,
+      };
+
+      await api.expenses.update(tripId, splitDialog.item.id, payload);
+      await refetch();
+      splitDialog.closeEdit();
+      setSplits([]);
+    },
+    { onSuccess: () => {} }
+  );
+
+  const handleSplitSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submitSplit(undefined as void);
   };
 
   const filteredExpenses = expenses.filter((expense) => {
@@ -188,6 +227,17 @@ export default function ExpensesPage({
             href: `/trips/${tripId}/expenses/new`,
           }}
         />
+
+        {/* Quick Actions */}
+        <Stack direction="row" spacing={2}>
+          <Button
+            variant="outlined"
+            startIcon={<BalanceIcon />}
+            href={`/trips/${tripId}/expenses/balances`}
+          >
+            View Balances
+          </Button>
+        </Stack>
 
         {/* Summary Cards */}
         <ExpenseSummaryCards totalsByCurrency={totalsByCurrency} />
@@ -243,6 +293,7 @@ export default function ExpensesPage({
                         originCurrency={trip?.originCurrency}
                         onEdit={editDialog.openEdit}
                         onDelete={deleteConfirmation.handleDelete}
+                        onSplit={handleOpenSplit}
                       />
                     );
                   })}
@@ -272,6 +323,7 @@ export default function ExpensesPage({
             formData={formData}
             trip={trip ?? undefined}
             itineraryItems={itineraryItems}
+            availableUsers={members}
             rateLoading={rateLoading}
             rateError={rateError}
             submitError={submitError}
@@ -281,6 +333,53 @@ export default function ExpensesPage({
             onSubmit={handleEditSubmit}
             onCancel={editDialog.closeEdit}
           />
+        </FormDialog>
+
+        <FormDialog
+          open={splitDialog.open}
+          title="Manage Expense Split"
+          onClose={splitDialog.closeEdit}
+        >
+          <Box component="form" onSubmit={handleSplitSubmit}>
+            <Stack spacing={3}>
+              {splitSubmitError && (
+                <Typography color="error" variant="body2">
+                  {splitSubmitError}
+                </Typography>
+              )}
+
+              {splitDialog.item && (
+                <ExpenseSplitManager
+                  splits={splits}
+                  totalAmount={splitDialog.item.amountDestinationMinor}
+                  currency={splitDialog.item.destinationCurrency}
+                  availableUsers={members}
+                  paidByUserId={splitDialog.item.paidByUserId || undefined}
+                  paidByUser={splitDialog.item.paidByUser}
+                  paymentMethod={splitDialog.item.paymentMethod || undefined}
+                  expenseTitle={splitDialog.item.title}
+                  onChange={setSplits}
+              />
+              )}
+
+              <Stack direction="row" spacing={2} justifyContent="flex-end">
+                <Button
+                  variant="outlined"
+                  onClick={splitDialog.closeEdit}
+                  disabled={splitSubmitting}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={splitSubmitting}
+                >
+                  {splitSubmitting ? "Saving..." : "Save Split"}
+                </Button>
+              </Stack>
+            </Stack>
+          </Box>
         </FormDialog>
       </Stack>
     </Container>
