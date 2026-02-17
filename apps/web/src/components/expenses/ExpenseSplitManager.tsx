@@ -387,20 +387,26 @@ export function ExpenseSplitManager({
         )}
 
         {inputSplits.length > 0 ? (
-          <Box sx={{ border: 1, borderColor: "divider", borderRadius: 1 }}>
-            <Table size="small">
+          <Box sx={{ 
+            border: 1, 
+            borderColor: "divider", 
+            borderRadius: 1,
+            overflowX: { xs: "auto", sm: "visible" },
+            WebkitOverflowScrolling: "touch"
+          }}>
+            <Table size="small" sx={{ minWidth: { xs: 600, sm: "auto" } }}>
               <TableHead>
                 <TableRow>
-                  <TableCell>User</TableCell>
-                  <TableCell align="right">Saved Split</TableCell>
-                  <TableCell align="right" sx={{ minWidth: 140 }}>
+                  <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>User</TableCell>
+                  <TableCell align="right" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Saved Split</TableCell>
+                  <TableCell align="right" sx={{ minWidth: 140, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                     {splitMode === "percentage"
                       ? "Percentage"
                       : splitMode === "amount"
                         ? "Split Amount"
                         : "Split"}
                   </TableCell>
-                  <TableCell align="center" sx={{ width: 100 }}>
+                  <TableCell align="center" sx={{ width: 100, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                     Actions
                   </TableCell>
                 </TableRow>
@@ -421,7 +427,7 @@ export function ExpenseSplitManager({
                     >
                       <TableCell>
                         <Box display="flex" alignItems="center" gap={1}>
-                          <Typography variant="body2">
+                          <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                             {getUserDisplayById(inputSplit.userId)}
                           </Typography>
                           {isPayer && (
@@ -429,7 +435,7 @@ export function ExpenseSplitManager({
                               label="Payer"
                               size="small"
                               color="primary"
-                              sx={{ height: 20 }}
+                              sx={{ height: 20, fontSize: { xs: '0.6rem', sm: '0.7rem' } }}
                             />
                           )}
                           {lockedFields.has(inputSplit.userId) && (
@@ -444,7 +450,7 @@ export function ExpenseSplitManager({
                         </Box>
                       </TableCell>
                       <TableCell align="right">
-                        <Typography variant="body2">
+                        <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                           {savedSplit ? `${currency} ${(savedSplit.amountOwed / 100).toFixed(2)}` : '-'}
                         </Typography>
                       </TableCell>

@@ -255,6 +255,17 @@ export const api = {
       fetchApi(`/api/trips/${tripId}/expenses/${expenseId}/settle/${userId}`, {
         method: "POST",
       }),
+    /** Unsettle an expense split for a user (undo) */
+    unsettleSplit: (tripId: string, expenseId: string, userId: string) =>
+      fetchApi(`/api/trips/${tripId}/expenses/${expenseId}/unsettle/${userId}`, {
+        method: "POST",
+      }),
+    /** Batch settle all splits between two users */
+    batchSettle: (tripId: string, fromUserId: string, toUserId: string) =>
+      fetchApi(`/api/trips/${tripId}/expenses/batch-settle`, {
+        method: "POST",
+        body: JSON.stringify({ fromUserId, toUserId }),
+      }),
     /** Get balance summary for current user */
     getMyBalance: (tripId: string) =>
       fetchApi(`/api/trips/${tripId}/my-balance`),

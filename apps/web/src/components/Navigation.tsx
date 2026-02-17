@@ -15,13 +15,11 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useUserPreferences } from "@/contexts/UserPreferencesContext";
 import { useAuth } from "@/contexts/AuthContext";
 
 export function Navigation() {
   const router = useRouter();
   const pathname = usePathname();
-  const { language, setLanguage } = useUserPreferences();
   const { user, isAuthenticated, logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -61,27 +59,6 @@ export function Navigation() {
                 My Trips
               </Button>
             )}
-
-            <Box sx={{ borderLeft: 1, borderColor: "divider", height: 24 }} />
-
-            <Button
-              size="small"
-              variant={language === "zh" ? "contained" : "outlined"}
-              onClick={() => setLanguage("zh")}
-              sx={{ minWidth: 50 }}
-            >
-              中文
-            </Button>
-            <Button
-              size="small"
-              variant={language === "en" ? "contained" : "outlined"}
-              onClick={() => setLanguage("en")}
-              sx={{ minWidth: 50 }}
-            >
-              EN
-            </Button>
-
-            <Box sx={{ borderLeft: 1, borderColor: "divider", height: 24 }} />
 
             {isAuthenticated ? (
               <>

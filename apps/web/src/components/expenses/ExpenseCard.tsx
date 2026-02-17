@@ -50,10 +50,10 @@ export function ExpenseCard({
 
   return (
     <Card>
-      <CardContent>
-        <Stack direction="row" spacing={2}>
+      <CardContent sx={{ p: { xs: 2, sm: 2 }, '&:last-child': { pb: { xs: 2, sm: 2 } } }}>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
           {/* Icon - vertically centered */}
-          <Box display="flex" alignItems="center">
+          <Box display={{ xs: "none", sm: "flex" }} alignItems="center">
             <Icon
               sx={{
                 fontSize: 32,
@@ -66,11 +66,12 @@ export function ExpenseCard({
           <Stack spacing={2} sx={{ flex: 1 }}>
             {/* Chips and Actions */}
             <Stack
-              direction="row"
+              direction={{ xs: "column", sm: "row" }}
               justifyContent="space-between"
-              alignItems="center"
+              alignItems={{ xs: "flex-start", sm: "center" }}
+              spacing={{ xs: 1, sm: 0 }}
             >
-              <Stack direction="row" spacing={1} flexWrap="wrap">
+              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                 <Chip
                   label={EXPENSE_CATEGORY_LABELS[expense.category]}
                   size="small"
@@ -120,15 +121,16 @@ export function ExpenseCard({
 
             {/* Title and Amount */}
             <Stack
-              direction="row"
+              direction={{ xs: "column", sm: "row" }}
               justifyContent="space-between"
-              alignItems="flex-start"
+              alignItems={{ xs: "flex-start", sm: "flex-start" }}
+              spacing={{ xs: 2, sm: 0 }}
             >
-              <Stack spacing={3}>
+              <Stack spacing={{ xs: 1, sm: 3 }}>
                 <Typography variant="h6">{expense.title}</Typography>{" "}
                 {/* Payment Info */}
                 {(expense.paidByUser || expense.paymentMethod) && (
-                  <Stack direction="row" spacing={3}>
+                  <Stack direction={{ xs: "column", sm: "row" }} spacing={{ xs: 0.5, sm: 3 }}>
                     {expense.paidByUser && (
                       <Stack direction="row" spacing={0.5} alignItems="center">
                         <PersonIcon fontSize="small" color="action" />
@@ -150,7 +152,7 @@ export function ExpenseCard({
                   </Stack>
                 )}
               </Stack>
-              <Stack spacing={0} textAlign="right">
+              <Stack spacing={0} textAlign={{ xs: "left", sm: "right" }}>
                 <Typography variant="h6">
                   {expense.destinationCurrency} {amount.toFixed(2)}
                 </Typography>

@@ -1,9 +1,9 @@
 "use client";
 
+import { ExpenseBalanceTracker } from "@/components/expenses/ExpenseBalanceTracker";
 import { ExpenseCard } from "@/components/expenses/ExpenseCard";
 import { ExpenseCategoryFilter } from "@/components/expenses/ExpenseCategoryFilter";
 import { ExpenseEditForm } from "@/components/expenses/ExpenseEditForm";
-import { ExpenseBalanceTracker } from "@/components/expenses/ExpenseBalanceTracker";
 import { ExpenseSettlementTracker } from "@/components/expenses/ExpenseSettlementTracker";
 import { ExpenseSplitManager } from "@/components/expenses/ExpenseSplitManager";
 import { ExpenseSummaryCards } from "@/components/expenses/ExpenseSummaryCards";
@@ -14,6 +14,7 @@ import {
   PageHeader,
   PageLoadingState,
 } from "@/components/ui";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   useDeleteConfirmation,
   useEditDialog,
@@ -25,7 +26,6 @@ import {
   useTrip,
   useTripMembers,
 } from "@/hooks";
-import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
 import {
   calculateTotalsByCurrency,
@@ -49,7 +49,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { use, useState, useEffect } from "react";
+import { use, useEffect, useState } from "react";
 
 export default function ExpensesPage({
   params,
@@ -66,7 +66,9 @@ export default function ExpensesPage({
   const { items: itineraryItems } = useItineraryItems(tripId);
   const { members } = useTripMembers(tripId);
   const [myBalance, setMyBalance] = useState<BalanceSummary | null>(null);
-  const [tripBalances, setTripBalances] = useState<Record<string, Record<string, number>>>({});
+  const [tripBalances, setTripBalances] = useState<
+    Record<string, Record<string, number>>
+  >({});
 
   // Fetch balance data
   useEffect(() => {
@@ -77,7 +79,9 @@ export default function ExpensesPage({
           api.expenses.getTripBalances(tripId),
         ]);
         setMyBalance(balanceData as BalanceSummary);
-        setTripBalances(tripBalanceData as Record<string, Record<string, number>>);
+        setTripBalances(
+          tripBalanceData as Record<string, Record<string, number>>
+        );
       } catch (err) {
         console.error("Failed to fetch balance:", err);
         setMyBalance(null);
@@ -235,14 +239,34 @@ export default function ExpensesPage({
   const handleSettle = async (expenseId: string, userId: string) => {
     try {
       setSettling(true);
-      await api.expenses.settleSplit(
-        tripId,
-        expenseId,
-        userId
-      );
+      await api.expenses.settleSplit(tripId, expenseId, userId);
       await refetch();
     } catch (error) {
       console.error("Failed to settle split:", error);
+    } finally {
+      setSettling(false);
+    }
+  };
+
+  const handleUnsettle = async (expenseId: string, userId: string) => {
+    try {
+      setSettling(true);
+      await api.expenses.unsettleSplit(tripId, expenseId, userId);
+      await refetch();
+    } catch (error) {
+      console.error("Failed to unsettle split:", error);
+    } finally {
+      setSettling(false);
+    }
+  };
+
+  const handleBatchSettle = async (fromUserId: string, toUserId: string) => {
+    try {
+      setSettling(true);
+      await api.expenses.batchSettle(tripId, fromUserId, toUserId);
+      await refetch();
+    } catch (error) {
+      console.error("Failed to batch settle:", error);
     } finally {
       setSettling(false);
     }
@@ -256,11 +280,18 @@ export default function ExpensesPage({
 
   const groupedByDate = groupExpensesByDate(filteredExpenses);
   const totalsByCurrency = calculateTotalsByCurrency(expenses);
-  
+
   // Calculate settlement statistics
-  const allSplits = expenses.flatMap(expense => expense.splits || []);
+  const allSplits = expenses.flatMap((expense) =>
+    (expense.splits || []).map((split) => ({
+      ...split,
+      isPayer: split.userId === expense.paidByUserId,
+    }))
+  );
   const totalSplits = allSplits.length;
-  const settledSplits = allSplits.filter(split => split.isSettled).length;
+  const settledSplits = allSplits.filter(
+    (split) => split.isSettled || split.isPayer
+  ).length;
 
   if (loading || tripLoading) {
     return <PageLoadingState message="Loading expenses..." />;
@@ -271,7 +302,10 @@ export default function ExpensesPage({
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Container
+      maxWidth="lg"
+      sx={{ mt: { xs: 2, sm: 4 }, mb: { xs: 2, sm: 4 }, px: { xs: 2, sm: 3 } }}
+    >
       <Stack spacing={3}>
         <PageHeader
           title="Expenses"
@@ -279,13 +313,13 @@ export default function ExpensesPage({
             onClick: () => router.push(`/trips/${tripId}`),
           }}
           action={{
-            label: "Add Expense",
+            label: "Add",
             href: `/trips/${tripId}/expenses/new`,
           }}
         />
 
         {/* Summary Cards */}
-        <ExpenseSummaryCards 
+        <ExpenseSummaryCards
           totalsByCurrency={totalsByCurrency}
           totalSplits={totalSplits}
           settledSplits={settledSplits}
@@ -316,7 +350,7 @@ export default function ExpensesPage({
                   startIcon={<AddIcon />}
                   href={`/trips/${tripId}/expenses/new`}
                 >
-                  Add Expense
+                  Add
                 </Button>
               </Stack>
             </CardContent>
@@ -411,7 +445,7 @@ export default function ExpensesPage({
                   paymentMethod={splitDialog.item.paymentMethod || undefined}
                   expenseTitle={splitDialog.item.title}
                   onChange={setSplits}
-              />
+                />
               )}
 
               <Stack direction="row" spacing={2} justifyContent="flex-end">
@@ -445,6 +479,8 @@ export default function ExpensesPage({
             members={members}
             currentUserId={user?.id}
             onSettle={handleSettle}
+            onUnsettle={handleUnsettle}
+            onBatchSettle={handleBatchSettle}
             settling={settling}
           />
         </FormDialog>

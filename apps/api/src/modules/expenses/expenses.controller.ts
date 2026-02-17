@@ -287,6 +287,43 @@ export class ExpensesController {
     return this.expenses.settleExpenseSplit(expenseId, userId);
   }
 
+  /**
+   * POST /api/trips/:tripId/expenses/:expenseId/unsettle/:userId
+   * Marks an expense split as unsettled for a specific user (undo).
+   *
+   * @param params - Route parameters
+   * @returns The updated expense split
+   */
+  @Post(':expenseId/unsettle/:userId')
+  async unsettleSplit(
+    @Param('expenseId') expenseId: string,
+    @Param('userId') userId: string,
+  ) {
+    return this.expenses.unsettleExpenseSplit(expenseId, userId);
+  }
+
+  /**
+   * POST /api/trips/:tripId/expenses/batch-settle
+   * Settles all splits between two users.
+   *
+   * @param params - Route parameters
+   * @param body - { fromUserId, toUserId }
+   * @returns Count of settled splits
+   */
+  @Post('batch-settle')
+  @HttpCode(200)
+  async batchSettle(
+    @Param() params: unknown,
+    @Body() body: { fromUserId: string; toUserId: string },
+  ) {
+    const { tripId } = validate(TripIdParamSchema, params);
+    return this.expenses.batchSettleSplits(
+      tripId,
+      body.fromUserId,
+      body.toUserId,
+    );
+  }
+
   // NOTE: Balance routes have been moved to TripsController
   // to match the expected route structure: /api/trips/:tripId/balances
   // and /api/trips/:tripId/my-balance

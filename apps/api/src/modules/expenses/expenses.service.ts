@@ -172,6 +172,84 @@ export class ExpensesService {
   }
 
   /**
+   * Unsets an expense split for a user (undo settlement).
+   *
+   * @param {string} expenseId - The expense ID
+   * @param {string} userId - The user ID
+   * @returns {Promise} The updated expense split
+   */
+  async unsettleExpenseSplit(expenseId: string, userId: string) {
+    const split = await this.prisma.expenseSplit.findUnique({
+      where: {
+        expenseId_userId: {
+          expenseId,
+          userId,
+        },
+      },
+    });
+
+    if (!split) {
+      throw new NotFoundException('Expense split not found');
+    }
+
+    return this.prisma.expenseSplit.update({
+      where: {
+        expenseId_userId: {
+          expenseId,
+          userId,
+        },
+      },
+      data: {
+        isSettled: false,
+        settledAt: null,
+      },
+    });
+  }
+
+  /**
+   * Settles multiple expense splits in a batch (for simplified settlement).
+   * Used when user wants to settle all debts to a specific person at once.
+   *
+   * @param {string} tripId - The trip ID
+   * @param {string} fromUserId - The user who owes
+   * @param {string} toUserId - The user who is owed
+   * @returns {Promise} Count of updated splits
+   */
+  async batchSettleSplits(
+    tripId: string,
+    fromUserId: string,
+    toUserId: string,
+  ) {
+    // Get all expenses in this trip where toUserId is the payer
+    const expenses = await this.prisma.expense.findMany({
+      where: {
+        tripId,
+        paidByUserId: toUserId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const expenseIds = expenses.map((e) => e.id);
+
+    // Update all unsettled splits where fromUserId owes toUserId
+    const result = await this.prisma.expenseSplit.updateMany({
+      where: {
+        expenseId: { in: expenseIds },
+        userId: fromUserId,
+        isSettled: false,
+      },
+      data: {
+        isSettled: true,
+        settledAt: new Date(),
+      },
+    });
+
+    return result;
+  }
+
+  /**
    * Calculates the balance summary for a user in a trip.
    * Returns how much the user paid vs owes, and their net balance.
    *
