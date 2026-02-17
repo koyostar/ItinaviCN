@@ -19,6 +19,7 @@ import {
 } from '@itinavi/schema';
 import { validate } from '../../common/validate';
 import { TripsService } from './trips.service';
+import { ExpensesService } from '../expenses/expenses.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
@@ -68,7 +69,10 @@ function toTripResponse(trip: {
 @Controller('api/trips')
 @UseGuards(JwtAuthGuard)
 export class TripsController {
-  constructor(private readonly trips: TripsService) {}
+  constructor(
+    private readonly trips: TripsService,
+    private readonly expenses: ExpensesService,
+  ) {}
 
   /**
    * GET /api/trips
@@ -265,5 +269,35 @@ export class TripsController {
     await this.trips.requireTripOwnership(tripId, user.id);
     await this.trips.removeTripMember(tripId, userId);
     return { success: true };
+  }
+
+  /**
+   * GET /api/trips/:tripId/balances
+   * Gets the balance summary for all users in the trip.
+   *
+   * @param params - Route parameters containing tripId
+   * @param user - The authenticated user
+   * @returns Balance information showing who owes whom
+   */
+  @Get(':tripId/balances')
+  async getTripBalances(@Param() params: unknown, @CurrentUser() user: any) {
+    const { tripId } = validate(TripIdParamSchema, params);
+    await this.trips.requireTripAccess(tripId, user.id);
+    return this.expenses.getTripBalances(tripId);
+  }
+
+  /**
+   * GET /api/trips/:tripId/my-balance
+   * Gets the balance summary for the current user.
+   *
+   * @param params - Route parameters containing tripId
+   * @param user - The authenticated user
+   * @returns Balance summary for the user
+   */
+  @Get(':tripId/my-balance')
+  async getMyBalance(@Param() params: unknown, @CurrentUser() user: any) {
+    const { tripId } = validate(TripIdParamSchema, params);
+    await this.trips.requireTripAccess(tripId, user.id);
+    return this.expenses.getUserBalanceSummary(tripId, user.id);
   }
 }

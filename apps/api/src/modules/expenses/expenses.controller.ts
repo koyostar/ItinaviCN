@@ -287,30 +287,7 @@ export class ExpensesController {
     return this.expenses.settleExpenseSplit(expenseId, userId);
   }
 
-  /**
-   * GET /api/trips/:tripId/balances
-   * Gets the balance summary for all users in the trip.
-   *
-   * @param params - Route parameters containing tripId
-   * @returns Balance information showing who owes whom
-   */
-  @Get('../balances')
-  async getTripBalances(@Param() params: unknown) {
-    const { tripId } = validate(TripIdParamSchema, params);
-    return this.expenses.getTripBalances(tripId);
-  }
-
-  /**
-   * GET /api/trips/:tripId/my-balance
-   * Gets the balance summary for the current user.
-   *
-   * @param params - Route parameters containing tripId
-   * @param user - The authenticated user
-   * @returns Balance summary for the user
-   */
-  @Get('../my-balance')
-  async getMyBalance(@Param() params: unknown, @CurrentUser() user: any) {
-    const { tripId } = validate(TripIdParamSchema, params);
-    return this.expenses.getUserBalanceSummary(tripId, user.id);
-  }
+  // NOTE: Balance routes have been moved to TripsController
+  // to match the expected route structure: /api/trips/:tripId/balances
+  // and /api/trips/:tripId/my-balance
 }
