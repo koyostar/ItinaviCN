@@ -26,11 +26,12 @@ interface TransportFieldsProps {
 export function TransportFields({
   transportDetails,
   onTransportDetailsChange,
-}: TransportFieldsProps) {
+  nameLabel = "Title",
+}: TransportFieldsProps & { nameLabel?: string }) {
   return (
     <>
       <TextField
-        label="Title"
+        label={nameLabel}
         required
         fullWidth
         value={transportDetails.title}
@@ -40,7 +41,7 @@ export function TransportFields({
             title: e.target.value,
           })
         }
-        placeholder="e.g., Metro to Summer Palace"
+        placeholder={`e.g., ${nameLabel}`}
       />
       <FormControl fullWidth>
         <InputLabel>Transport Mode</InputLabel>

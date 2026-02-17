@@ -472,12 +472,45 @@ export function ItineraryForm({
   return (
     <Box component="form" onSubmit={handleSubmit}>
       <Stack spacing={3}>
+
         <FormControl fullWidth required>
           <InputLabel>Type</InputLabel>
           <Select
             value={type}
             label="Type"
-            onChange={(e) => setType(e.target.value as ItineraryItemType)}
+            onChange={(e) => {
+              const newType = e.target.value as ItineraryItemType;
+              // Preserve name/title when switching between types
+              // Map: type -> { get: (details) => string, set: (details, value) => details }
+              const getTitle = {
+                Place: () => placeDetails.title,
+                Food: () => foodDetails.title,
+                Accommodation: () => accommodationDetails.hotelName,
+                Transport: () => transportDetails.title,
+                Flight: () => `${flightDetails.departureCity}${flightDetails.arrivalCity ? ' - ' + flightDetails.arrivalCity : ''}`,
+              };
+              const setTitle = {
+                Place: (v: string) => setPlaceDetails((prev) => ({ ...prev, title: prev.title || v })),
+                Food: (v: string) => setFoodDetails((prev) => ({ ...prev, title: prev.title || v })),
+                Accommodation: (v: string) => setAccommodationDetails((prev) => ({ ...prev, hotelName: prev.hotelName || v })),
+                Transport: (v: string) => setTransportDetails((prev) => ({ ...prev, title: prev.title || v })),
+                Flight: (v: string) => {
+                  // Only set if both are empty
+                  if (!flightDetails.departureCity && !flightDetails.arrivalCity && v) {
+                    const [dep, arr] = v.split(' - ');
+                    setFlightDetails((prev) => ({ ...prev, departureCity: prev.departureCity || dep || "", arrivalCity: prev.arrivalCity || arr || "" }));
+                  }
+                },
+              };
+              // Copy the name/title from the previous type to the new type if the new type's field is empty
+              if (type !== newType) {
+                const prevValue = getTitle[type]?.() || "";
+                if (prevValue) {
+                  setTitle[newType]?.(prevValue);
+                }
+              }
+              setType(newType);
+            }}
           >
             {ITINERARY_TYPES.map((t) => (
               <MenuItem key={t} value={t}>
@@ -487,6 +520,7 @@ export function ItineraryForm({
           </Select>
         </FormControl>
 
+        {/* Dynamically set the label for the name field in each type */}
         {type === "Flight" ? (
           <FlightFields
             flightDetails={flightDetails}
@@ -500,6 +534,7 @@ export function ItineraryForm({
             onAccommodationDetailsChange={(updates) =>
               setAccommodationDetails({ ...accommodationDetails, ...updates })
             }
+            nameLabel="Hotel Name"
           />
         ) : type === "Transport" ? (
           <TransportFields
@@ -507,6 +542,7 @@ export function ItineraryForm({
             onTransportDetailsChange={(updates) =>
               setTransportDetails({ ...transportDetails, ...updates })
             }
+            nameLabel="Title"
           />
         ) : type === "Place" ? (
           <PlaceFields
@@ -514,6 +550,7 @@ export function ItineraryForm({
             onPlaceDetailsChange={(updates) =>
               setPlaceDetails({ ...placeDetails, ...updates })
             }
+            nameLabel="Place Name"
           />
         ) : type === "Food" ? (
           <FoodFields
@@ -521,6 +558,7 @@ export function ItineraryForm({
             onFoodDetailsChange={(updates) =>
               setFoodDetails({ ...foodDetails, ...updates })
             }
+            nameLabel="Restaurant Name"
           />
         ) : null}
 

@@ -30,11 +30,12 @@ interface PlaceFieldsProps {
 export function PlaceFields({
   placeDetails,
   onPlaceDetailsChange,
-}: PlaceFieldsProps) {
+  nameLabel = "Place Name",
+}: PlaceFieldsProps & { nameLabel?: string }) {
   return (
     <>
       <AmapPlaceAutocomplete
-        label="Place Name"
+        label={nameLabel}
         value={placeDetails.title}
         onPlaceSelect={(place) =>
           onPlaceDetailsChange({
@@ -52,7 +53,7 @@ export function PlaceFields({
             }),
           })
         }
-        placeholder="Search for place..."
+        placeholder={`Search for ${nameLabel.toLowerCase()}...`}
         required
       />
       <TextField

@@ -31,11 +31,12 @@ interface FoodFieldsProps {
 export function FoodFields({
   foodDetails,
   onFoodDetailsChange,
-}: FoodFieldsProps) {
+  nameLabel = "Restaurant Name",
+}: FoodFieldsProps & { nameLabel?: string }) {
   return (
     <>
       <AmapPlaceAutocomplete
-        label="Restaurant Name"
+        label={nameLabel}
         value={foodDetails.title}
         onPlaceSelect={(place) =>
           onFoodDetailsChange({
@@ -53,7 +54,7 @@ export function FoodFields({
             }),
           })
         }
-        placeholder="Search for restaurant..."
+        placeholder={`Search for ${nameLabel.toLowerCase()}...`}
         required
       />
       <TextField

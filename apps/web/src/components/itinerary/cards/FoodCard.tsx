@@ -58,7 +58,7 @@ export function FoodCard({
         <Stack direction="row" spacing={2} mt={1} flexWrap="wrap">
           {details?.openingTime && details?.closingTime && (
             <Typography variant="body2" color="text.secondary">
-              🕒 {details.openingTime} - {details.closingTime}
+              🏪 {details.openingTime} - {details.closingTime}
             </Typography>
           )}
           {details?.reservationInfo && (

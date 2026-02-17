@@ -73,7 +73,7 @@ export function FoodDetailsComponent({
               Opening Hours
             </Typography>
             <Typography variant="body1">
-              🕒 {details.openingTime} - {details.closingTime}
+              🏪 {details.openingTime} - {details.closingTime}
             </Typography>
           </Stack>
         </>

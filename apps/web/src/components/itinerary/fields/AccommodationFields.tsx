@@ -30,11 +30,12 @@ interface AccommodationFieldsProps {
 export function AccommodationFields({
   accommodationDetails,
   onAccommodationDetailsChange,
-}: AccommodationFieldsProps) {
+  nameLabel = "Hotel Name",
+}: AccommodationFieldsProps & { nameLabel?: string }) {
   return (
     <>
       <AmapPlaceAutocomplete
-        label="Hotel Name"
+        label={nameLabel}
         value={accommodationDetails.hotelName}
         onPlaceSelect={(place) =>
           onAccommodationDetailsChange({
@@ -52,7 +53,7 @@ export function AccommodationFields({
             }),
           })
         }
-        placeholder="Search for hotel..."
+        placeholder={`Search for ${nameLabel.toLowerCase()}...`}
         required
       />
       <TextField
