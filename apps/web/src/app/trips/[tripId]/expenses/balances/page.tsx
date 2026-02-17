@@ -21,6 +21,7 @@ import { PageHeader, PageLoadingState, PageErrorState } from "@/components/ui";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { use } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import type { BalanceSummary, UserInfo } from "@itinavi/schema";
 
@@ -37,6 +38,7 @@ export default function ExpenseBalancesPage({
   params: Promise<{ tripId: string }>;
 }) {
   const { tripId } = use(params);
+  const router = useRouter();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -88,6 +90,9 @@ export default function ExpenseBalancesPage({
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <PageHeader
         title="Expense Balances"
+        backButton={{
+          onClick: () => router.push(`/trips/${tripId}/expenses`),
+        }}
       />
       <Typography variant="subtitle1" color="text.secondary" mb={3}>
         Track who owes whom and settle up
