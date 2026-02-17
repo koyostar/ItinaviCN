@@ -3,6 +3,8 @@
 import { ExpenseCard } from "@/components/expenses/ExpenseCard";
 import { ExpenseCategoryFilter } from "@/components/expenses/ExpenseCategoryFilter";
 import { ExpenseEditForm } from "@/components/expenses/ExpenseEditForm";
+import { ExpenseBalanceTracker } from "@/components/expenses/ExpenseBalanceTracker";
+import { ExpenseSettlementTracker } from "@/components/expenses/ExpenseSettlementTracker";
 import { ExpenseSplitManager } from "@/components/expenses/ExpenseSplitManager";
 import { ExpenseSummaryCards } from "@/components/expenses/ExpenseSummaryCards";
 import {
@@ -23,6 +25,7 @@ import {
   useTrip,
   useTripMembers,
 } from "@/hooks";
+import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
 import {
   calculateTotalsByCurrency,
@@ -30,12 +33,12 @@ import {
   mapSplitsToInput,
 } from "@/lib/utils/expenses";
 import type {
+  BalanceSummary,
   ExpenseResponse,
   ExpenseSplitInput,
   UpdateExpenseRequest,
 } from "@itinavi/schema";
 import AddIcon from "@mui/icons-material/Add";
-import BalanceIcon from "@mui/icons-material/AccountBalance";
 import {
   Box,
   Button,
@@ -46,7 +49,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
 
 export default function ExpensesPage({
   params,
@@ -56,11 +59,36 @@ export default function ExpensesPage({
   const { tripId } = use(params);
   const router = useRouter();
   const [filterCategory, setFilterCategory] = useState<string>("all");
+  const { user } = useAuth();
 
   const { trip, loading: tripLoading } = useTrip(tripId);
   const { expenses, loading, error, refetch } = useExpenses(tripId);
   const { items: itineraryItems } = useItineraryItems(tripId);
   const { members } = useTripMembers(tripId);
+  const [myBalance, setMyBalance] = useState<BalanceSummary | null>(null);
+  const [tripBalances, setTripBalances] = useState<Record<string, Record<string, number>>>({});
+
+  // Fetch balance data
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        const [balanceData, tripBalanceData] = await Promise.all([
+          api.expenses.getMyBalance(tripId),
+          api.expenses.getTripBalances(tripId),
+        ]);
+        setMyBalance(balanceData as BalanceSummary);
+        setTripBalances(tripBalanceData as Record<string, Record<string, number>>);
+      } catch (err) {
+        console.error("Failed to fetch balance:", err);
+        setMyBalance(null);
+        setTripBalances({});
+      }
+    };
+
+    if (tripId) {
+      fetchBalance();
+    }
+  }, [tripId, expenses]); // Re-fetch when expenses change
 
   const deleteConfirmation = useDeleteConfirmation(async (id) => {
     await api.expenses.delete(tripId, id);
@@ -68,7 +96,10 @@ export default function ExpensesPage({
 
   const editDialog = useEditDialog<ExpenseResponse>();
   const splitDialog = useEditDialog<ExpenseResponse>();
+  const [settlementDialogOpen, setSettlementDialogOpen] = useState(false);
+  const [balanceDialogOpen, setBalanceDialogOpen] = useState(false);
   const [splits, setSplits] = useState<ExpenseSplitInput[]>([]);
+  const [settling, setSettling] = useState(false);
 
   const {
     rate,
@@ -197,6 +228,26 @@ export default function ExpensesPage({
     submitSplit(undefined as void);
   };
 
+  const handleOpenSettlement = () => {
+    setSettlementDialogOpen(true);
+  };
+
+  const handleSettle = async (expenseId: string, userId: string) => {
+    try {
+      setSettling(true);
+      await api.expenses.settleSplit(
+        tripId,
+        expenseId,
+        userId
+      );
+      await refetch();
+    } catch (error) {
+      console.error("Failed to settle split:", error);
+    } finally {
+      setSettling(false);
+    }
+  };
+
   const filteredExpenses = expenses.filter((expense) => {
     if (filterCategory !== "all" && expense.category !== filterCategory)
       return false;
@@ -205,6 +256,11 @@ export default function ExpensesPage({
 
   const groupedByDate = groupExpensesByDate(filteredExpenses);
   const totalsByCurrency = calculateTotalsByCurrency(expenses);
+  
+  // Calculate settlement statistics
+  const allSplits = expenses.flatMap(expense => expense.splits || []);
+  const totalSplits = allSplits.length;
+  const settledSplits = allSplits.filter(split => split.isSettled).length;
 
   if (loading || tripLoading) {
     return <PageLoadingState message="Loading expenses..." />;
@@ -228,19 +284,15 @@ export default function ExpensesPage({
           }}
         />
 
-        {/* Quick Actions */}
-        <Stack direction="row" spacing={2}>
-          <Button
-            variant="outlined"
-            startIcon={<BalanceIcon />}
-            href={`/trips/${tripId}/expenses/balances`}
-          >
-            View Balances
-          </Button>
-        </Stack>
-
         {/* Summary Cards */}
-        <ExpenseSummaryCards totalsByCurrency={totalsByCurrency} />
+        <ExpenseSummaryCards 
+          totalsByCurrency={totalsByCurrency}
+          totalSplits={totalSplits}
+          settledSplits={settledSplits}
+          onSettlementClick={handleOpenSettlement}
+          myBalance={myBalance}
+          onBalanceClick={() => setBalanceDialogOpen(true)}
+        />
 
         {/* Filter */}
         <ExpenseCategoryFilter
@@ -380,6 +432,34 @@ export default function ExpensesPage({
               </Stack>
             </Stack>
           </Box>
+        </FormDialog>
+
+        <FormDialog
+          open={settlementDialogOpen}
+          title="Manage Settlements"
+          onClose={() => setSettlementDialogOpen(false)}
+          maxWidth="md"
+        >
+          <ExpenseSettlementTracker
+            expenses={expenses}
+            members={members}
+            currentUserId={user?.id}
+            onSettle={handleSettle}
+            settling={settling}
+          />
+        </FormDialog>
+
+        <FormDialog
+          open={balanceDialogOpen}
+          title="Expense Balances"
+          onClose={() => setBalanceDialogOpen(false)}
+          maxWidth="md"
+        >
+          <ExpenseBalanceTracker
+            myBalance={myBalance}
+            tripBalances={tripBalances}
+            members={members}
+          />
         </FormDialog>
       </Stack>
     </Container>
